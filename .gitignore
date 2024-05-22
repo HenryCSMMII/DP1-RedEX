@@ -1,6 +1,3 @@
-# Ignora directorios y archivos generados por Visual Studio Code
-.vscode/
-
 # Ignora la carpeta de compilación de Java y los archivos generados por Maven
 /target/
 .classpath
