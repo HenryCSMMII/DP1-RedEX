@@ -1,0 +1,141 @@
+import React from 'react';
+import Modal from 'react-modal';
+import styled from 'styled-components';
+
+const ModalContent = styled.div`
+  background: #fff;
+  padding: 20px;
+  max-width: 800px;
+  margin: 40px auto;
+  border-radius: 10px;
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
+const FlightInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const FlightDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const TimeInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+`;
+
+const TimeBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+`;
+
+const ResumenEnvioPopup = ({ isOpen, onRequestClose, envio }) => {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      style={{
+        overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        },
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+          padding: 0,
+          border: 'none',
+          background: 'none',
+        },
+      }}
+    >
+      <ModalContent>
+        <Header>
+          <h2>Resumen de envío</h2>
+          <h3>Envio {envio.id}</h3>
+          <p>Estado actual: {envio.estado}</p>
+        </Header>
+        <FlightInfo>
+          <FlightDetails>
+            <h4>{envio.origen}</h4>
+            <p>Colombia</p>
+            <p>EST(UTC -05:00)</p>
+            <p>PROGRAMADO para {envio.fechaPartida} a las {envio.horaPartida}</p>
+          </FlightDetails>
+          <FlightDetails>
+            <h4>{envio.destino}</h4>
+            <p>Estados Unidos</p>
+            <p>EST(UTC -05:00)</p>
+            <p>PROGRAMADO para {envio.fechaLlegada} a las {envio.horaLlegada}</p>
+          </FlightDetails>
+        </FlightInfo>
+        <TimeInfo>
+          <TimeBox>
+            <p>Tiempo transcurrido:</p>
+            <p>{envio.tiempoTranscurrido}</p>
+          </TimeBox>
+          <TimeBox>
+            <p>Tiempo estimado de llegada:</p>
+            <p>{envio.tiempoEstimadoLlegada}</p>
+          </TimeBox>
+        </TimeInfo>
+        <Table>
+          <thead>
+            <tr>
+              <th>Punto de partida</th>
+              <th>Punto de destino</th>
+              <th>Hora de partida</th>
+              <th>Hora de llegada</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {envio.itinerario.map((item, index) => (
+              <tr key={index}>
+                <td>{item.partida}</td>
+                <td>{item.destino}</td>
+                <td>{item.horaPartida}</td>
+                <td>{item.horaLlegada}</td>
+                <td>{item.estado}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default ResumenEnvioPopup;
