@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#ignora los archivos dentro de la carpeta logs
+logs/
