@@ -1,15 +1,35 @@
-# Ignora la carpeta de compilación de Java y los archivos generados por Maven
-/target/
-.classpath
-.project
-.settings/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Ignora la carpeta de construcción de Next.js y los archivos generados por npm o yarn
-node_modules/
-.next/
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
 
-# Ignora archivos y directorios generados automáticamente por el sistema operativo
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
-Thumbs.db
-*.log
-logs/error.log
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
