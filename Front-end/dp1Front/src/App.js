@@ -85,6 +85,14 @@ function App() {
   const handleCloseReportesPopup = () => {
     setIsReportesPopupOpen(false);
   };
+  
+  
+  
+  
+  
+  
+  
+  
 
   const handleOpenSimulacionSidebar = () => {
     setIsSimulacionSidebarOpen(true);

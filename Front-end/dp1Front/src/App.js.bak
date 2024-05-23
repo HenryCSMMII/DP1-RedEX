@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
 import VuelosPopup from './components/VuelosPopup';
 import AeropuertosPopup from './components/AeropuertosPopup';
 import ReportesPopup from './components/ReportesPopup';
+import SimulacionSidebar from './components/SimulacionSidebar';
 
 const AppContainer = styled.div`
   display: flex;
@@ -29,6 +31,16 @@ const MainContent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+`;
+
+const MapContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Asegúrate de que sea interactivo */
 `;
 
 function App() {
@@ -36,9 +48,11 @@ function App() {
   const [isVuelosPopupOpen, setIsVuelosPopupOpen] = useState(false);
   const [isAeropuertosPopupOpen, setIsAeropuertosPopupOpen] = useState(false);
   const [isReportesPopupOpen, setIsReportesPopupOpen] = useState(false);
+  const [isSimulacionSidebarOpen, setIsSimulacionSidebarOpen] = useState(false);
 
   const handleOpenEnviosPopup = () => {
     setIsEnviosPopupOpen(true);
+    setIsSimulacionSidebarOpen(false);
   };
 
   const handleCloseEnviosPopup = () => {
@@ -47,6 +61,7 @@ function App() {
 
   const handleOpenVuelosPopup = () => {
     setIsVuelosPopupOpen(true);
+    setIsSimulacionSidebarOpen(false);
   };
 
   const handleCloseVuelosPopup = () => {
@@ -55,6 +70,7 @@ function App() {
 
   const handleOpenAeropuertosPopup = () => {
     setIsAeropuertosPopupOpen(true);
+    setIsSimulacionSidebarOpen(false);
   };
 
   const handleCloseAeropuertosPopup = () => {
@@ -63,10 +79,23 @@ function App() {
 
   const handleOpenReportesPopup = () => {
     setIsReportesPopupOpen(true);
+    setIsSimulacionSidebarOpen(false);
   };
 
   const handleCloseReportesPopup = () => {
     setIsReportesPopupOpen(false);
+  };
+
+  const handleOpenSimulacionSidebar = () => {
+    setIsSimulacionSidebarOpen(true);
+    setIsEnviosPopupOpen(false);
+    setIsVuelosPopupOpen(false);
+    setIsAeropuertosPopupOpen(false);
+    setIsReportesPopupOpen(false);
+  };
+
+  const handleCloseSimulacionSidebar = () => {
+    setIsSimulacionSidebarOpen(false);
   };
 
   return (
@@ -76,10 +105,20 @@ function App() {
         onVuelosClick={handleOpenVuelosPopup}
         onAeropuertosClick={handleOpenAeropuertosPopup}
         onReportesClick={handleOpenReportesPopup}
+        onSimulacionClick={handleOpenSimulacionSidebar}
       />
       <Content>
         <MainContent>
-          {/* Aquí se insertaría el mapa */}
+          <MapContainer>
+            <LoadScript googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4">
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={{ lat: -3.745, lng: -38.523 }}
+                zoom={3}
+              />
+            </LoadScript>
+          </MapContainer>
+          {isSimulacionSidebarOpen && <SimulacionSidebar onClose={handleCloseSimulacionSidebar} />}
         </MainContent>
         <Legend />
       </Content>
