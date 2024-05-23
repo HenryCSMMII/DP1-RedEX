@@ -5,8 +5,8 @@
 .settings/
 
 # Ignora la carpeta de construcción de Next.js y los archivos generados por npm o yarn
-node_modules/
-.next/
+#node_modules/
+#.next/
 
 # Ignora archivos y directorios generados automáticamente por el sistema operativo
 .DS_Store
