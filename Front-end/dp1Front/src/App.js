@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -31,6 +32,15 @@ const MainContent = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+`;
+
+const MapContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0; /* Asegúrate de que sea interactivo */
 `;
 
 function App() {
@@ -99,7 +109,15 @@ function App() {
       />
       <Content>
         <MainContent>
-          {/* Aquí se insertaría el mapa */}
+          <MapContainer>
+            <LoadScript googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4">
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={{ lat: -3.745, lng: -38.523 }}
+                zoom={3}
+              />
+            </LoadScript>
+          </MapContainer>
           {isSimulacionSidebarOpen && <SimulacionSidebar onClose={handleCloseSimulacionSidebar} />}
         </MainContent>
         <Legend />
