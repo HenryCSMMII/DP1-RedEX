@@ -24,8 +24,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.edu.pucp.dp1.redex.model.BaseEntity;
-
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "flight")
@@ -36,11 +34,6 @@ import com.edu.pucp.dp1.redex.model.BaseEntity;
 @Getter @Setter
 
 public class Flight extends BaseEntity{
-
-    public Flight(String origin2, String destination2, String departureTime2, String arrivalTime2, int capacity2,
-            String flightnumber2, int currentLoad2, int duration2) {
-        //TODO Auto-generated constructor stub
-    }
 
     // Atributos estáticos
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");

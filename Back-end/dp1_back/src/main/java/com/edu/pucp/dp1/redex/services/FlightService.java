@@ -8,22 +8,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.annotations.common.util.impl.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.FlightRepository;
 
-import org.hibernate.annotations.Cache;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+
 
 @Service
 public class FlightService{
@@ -31,9 +24,7 @@ public class FlightService{
     @Autowired
     private FlightRepository flightRepository;
 
-    private static final Logger LOGGER = (Logger) LoggerFactory.logger(FlightService.class);
-    @PersistenceContext
-    EntityManager entityManager;
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlightService.class);
     
     public Flight register(Flight flight){
         try {
