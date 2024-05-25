@@ -7,8 +7,14 @@ public class Airport {
     private String country;
     private String shortName;
     private String continent;
+
+    private Double latitude;
+    private Double longitude;
     private int timezoneOffset;
     private int capacity;
+
+    public Airport() {
+    }
 
     public Airport(String code, String city, String country, String shortName, String continent, int timezoneOffset, int capacity) {
         this.code = code;
@@ -21,6 +27,23 @@ public class Airport {
     }
 
     // Getters
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public String getCode() {
         return code;
     }
