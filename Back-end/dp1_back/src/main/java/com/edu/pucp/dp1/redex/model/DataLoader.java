@@ -1,10 +1,12 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.model;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DataLoader {
 
@@ -21,14 +23,20 @@ public class DataLoader {
                     String departureTime = parts[2]; // Assuming date-time format is split by a '-'
                     String arrivalTime = parts[3] ;
                     int capacity = Integer.parseInt(parts[4].trim()); // Ensure there are no trailing spaces
+                    String flightnumber = "prueba";
+                    int currentLoad = 0,duration = 0; 
 
-                    flights.add(new Flight(origin, destination, departureTime, arrivalTime, capacity));
+
+                    flights.add(new Flight(origin, destination, departureTime, arrivalTime, capacity,flightnumber,currentLoad, duration));
                 } else {
                     System.err.println("Incorrect line format: " + line);
                 }
             }
         } catch (NumberFormatException e) {
             System.err.println("Error parsing integer value: " + e.getMessage());
+        }
+        for(Flight flight : flights){
+            System.out.println(flight.toString());
         }
         return flights;
     }
@@ -85,5 +93,4 @@ public class DataLoader {
         }
         return airports;
     }
-
 }

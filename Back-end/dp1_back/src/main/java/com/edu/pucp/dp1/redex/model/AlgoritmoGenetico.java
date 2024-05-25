@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.model;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class GeneticAlgorithm {
+public class AlgoritmoGenetico {
 
     private double MUTATION_RATE=0.05;
     private static final long MINUTES_IN_DAY = 24 * 60;
@@ -21,7 +21,7 @@ public class GeneticAlgorithm {
     private int elitismCount;
     private int tournamentSize;
 
-    public GeneticAlgorithm(int populationSize, double mutationRate, double crossoverRate, int elitismCount, int tournamentSize) {
+    public AlgoritmoGenetico(int populationSize, double mutationRate, double crossoverRate, int elitismCount, int tournamentSize) {
         this.populationSize = populationSize;
         this.mutationRate = mutationRate;
         this.crossoverRate = crossoverRate;

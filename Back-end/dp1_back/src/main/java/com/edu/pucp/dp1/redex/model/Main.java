@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.model;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -26,7 +26,7 @@ public class Main {
         int maxGenerations = 5; // Define el número máximo de generaciones
 
         // Inicializar el algoritmo con la configuración
-        GeneticAlgorithm ga = new GeneticAlgorithm(populationSize, mutationRate, crossoverRate, elitismCount, tournamentSize);
+        AlgoritmoGenetico ga = new AlgoritmoGenetico(populationSize, mutationRate, crossoverRate, elitismCount, tournamentSize);
 
         // Cargar datos
         List<Flight> flights = null;
@@ -35,12 +35,12 @@ public class Main {
         Map<Flight, Integer> flightCapacitiesUsed = new HashMap<>(); // Mapa para rastrear la capacidad usada de cada vuelo
 
         try {
-            flights = DataLoader.loadFlights("planes_vuelo.txt");
+            flights = DataLoader.loadFlights("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/planes_vuelo.v3.txt");
             for (Flight flight : flights) {
                 flightCapacitiesUsed.put(flight, 0); // Inicializa la capacidad usada de cada vuelo como 0
             }
-            packages = DataLoader.loadPackages("pack_enviado_SKBO.txt");
-            airports = DataLoader.loadAirports("Aeropuertos.txt");
+            packages = DataLoader.loadPackages("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/pack_enviado_SKBO.txt");
+            airports = DataLoader.loadAirports("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
         } catch (IOException e) {
             System.out.println("Error al leer los archivos: " + e.getMessage());
             e.printStackTrace();
