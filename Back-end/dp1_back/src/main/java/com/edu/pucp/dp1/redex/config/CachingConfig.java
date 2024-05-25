@@ -23,7 +23,7 @@ public class CachingConfig {
         //Cada vez que se usa un nuevo value, se actualiza esta zona
         //Se debe agregar la siguiente línea en cada tabla que se
         //genere en base de datos
-        caches.add(new ConcurrentMapCache("usuarios"));
+        caches.add(new ConcurrentMapCache("flight"));
 
         cacheManager.setCaches(caches);
         return cacheManager;

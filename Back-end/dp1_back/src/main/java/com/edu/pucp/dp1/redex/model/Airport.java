@@ -1,7 +1,6 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.model;
 
 public class Airport {
-
     private String code;
     private String city;
     private String country;
@@ -114,5 +113,4 @@ public class Airport {
                 ", capacity=" + capacity +
                 '}';
     }
-
 }

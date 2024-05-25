@@ -10,7 +10,7 @@ public class AsignacionVuelosController {
     @PostMapping(value = "/post/asignarVuelos")
     @ResponseBody
     public int AsignarVuelos(){
-
+        return 0;
     }
 
 
