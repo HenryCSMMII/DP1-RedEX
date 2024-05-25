@@ -1,0 +1,30 @@
+SKBO,Bogotá,Colombia,bogo,América del Sur,-5,430
+SEQM,Quito,Ecuador,quit,América del Sur,-5,410
+SVMI,Caracas,Venezuela,cara,América del Sur,-4,400
+SBBR,Brasilia,Brasil,bras,América del Sur,-3,480
+SPIM,Lima,Perú,lima,América del Sur,-5,440
+SLLP,La Paz,Bolivia,lapa,América del Sur,-4,420
+SCEL,Santiago de Chile,Chile,sant,América del Sur,-3,460
+SABE,Buenos Aires,Argentina,buen,América del Sur,-3,460
+SGAS,Asunción,Paraguay,asun,América del Sur,-4,400
+SUAA,Montevideo,Uruguay,mont,América del Sur,-3,400
+EHAM,Amsterdam,Holanda,amst,Europa,+2,400
+LATI,Tirana,Albania,tira,Europa,+2,410
+EDDI,Berlín,Alemania,berl,Europa,+2,480
+LOWW,Viena,Austria,vien,Europa,+2,430
+EBCI,Bruselas,Bélgica,brus,Europa,+2,440
+UMMS,Minsk,Bielorrusia,mins,Europa,+3,400
+LBSF,Sofía,Bulgaria,sofi,Europa,+3,400
+LKPR,Praga,Checa,prag,Europa,+2,400
+LDZA,Zagreb,Croacia,zagr,Europa,+2,420
+EKCH,Copenhague,Dinamarca,cope,Europa,+2,480
+VIDP,Delhi,India,delh,Asia,+5,480
+RKSI,Seúl,Corea del Sur,seul,Asia,+9,400
+VTBS,Bangkok,Tailandia,bang,Asia,+7,420
+OMDB,Dubai,Emiratos A.U,emir,Asia,+4,420
+ZBAA,Beijing,China,beij,Asia,+8,480
+RJTT,Tokio,Japón,toky,Asia,+9,460
+WMKK,Kuala Lumpur,Malasia,kual,Asia,+8,420
+WSSS,Singapur,Singapur,sing,Asia,+8,400
+WIII,Yakarta,Indonesia,jaka,Asia,+7,400
+RPLL,Manila,Filipinas,mani,Asia,+8,400
