@@ -24,6 +24,7 @@ public class CachingConfig {
         //Se debe agregar la siguiente línea en cada tabla que se
         //genere en base de datos
         caches.add(new ConcurrentMapCache("flight"));
+        caches.add(new ConcurrentMapCache("package"));
 
         cacheManager.setCaches(caches);
         return cacheManager;

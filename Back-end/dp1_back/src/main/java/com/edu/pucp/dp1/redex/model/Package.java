@@ -1,107 +1,72 @@
 package com.edu.pucp.dp1.redex.model;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
-public class Package {
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-    String origin;
-    String destination;
-    String departureTime;
-    private LocalDateTime shipmentDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public String getPackageId() {
-        return packageId;
-    }
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
-    public void setPackageId(String packageId) {
-        this.packageId = packageId;
-    }
-    public LocalDateTime getShipmentDateTime() {
-        return shipmentDateTime;
-    }
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    public void setShipmentDateTime(LocalDateTime dateTime) {
-        this.shipmentDateTime = dateTime;
-    }
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Entity
+@Table(name = "package")
+@SQLDelete(sql = "UPDATE package SET activo = 0 WHERE id = ?")
+@Where(clause = "activo = 1")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter @Setter
 
-    String packageId;
-    int quantity; // Asumiendo que este es el campo para la cantidad de paquetes
+public class Package extends BaseEntity{
+
+    // String origin;
+    // String destination;
+    // String departureTime;
+    // private LocalDateTime shipmentDateTime;
+    // String packageId;
+    // int quantity;
+    // private String assignedFlightId;
+    // private List<Flight> escalas;
+    // private long tiempoTotal;
+
+    @Column(name="origin", nullable = false)
+    private String origin;
+
+    @Column(name="destination", nullable = false)
+    private String destination;
+
+    @Column(name="departureTime", nullable = false)
+    private LocalTime departureTime;
+
+    @Column(name="shipmentDateTime", nullable = false)
+    private LocalDate shipmentDateTime;
+
+    @Column(name="packageId", nullable = false)
+    private String packageId;
+
+    @Column(name="quantity", nullable = false)
+    private int quantity;
+
+    @Column(name="assignedFlightId", nullable = false)
     private String assignedFlightId;
-    private List<Flight> escalas;
 
-    public long getTiempoTotal() {
-        return tiempoTotal;
-    }
-
-    public void setTiempoTotal(long tiempoTotal) {
-        this.tiempoTotal = tiempoTotal;
-    }
-
-    public List<Flight> getEscalas() {
-        return escalas;
-    }
-
-    public void setEscalas(List<Flight> escalas) {
-        this.escalas = escalas;
-    }
-
-    private long tiempoTotal;
-
-
-    public Package( String origin, String destination, String departureTime, int quantity , String packageId) {
-
-        this.origin = origin;
-        this.destination = destination;
-        this.departureTime = departureTime;
-        this.quantity = quantity;
-        this.packageId= packageId;
-        this.escalas = new ArrayList<>(); // Inicializar la lista aquí
-    }
-
-    // Getters y setters para todos los atributos
-
-
-    public void setAssignedFlightId(String assignedFlightId) {
-        this.assignedFlightId = assignedFlightId;
-    }
-
-    public String getAssignedFlightId() {
-        return assignedFlightId;
-    }
-
-    public String getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(String origin) {
-        this.origin = origin;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(String departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
+    @Column(name="tiempoTotal", nullable = false)
+    private double tiempoTotal;
 
 
 }

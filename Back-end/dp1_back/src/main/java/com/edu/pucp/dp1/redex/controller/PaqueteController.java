@@ -14,53 +14,51 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edu.pucp.dp1.redex.model.Flight;
-import com.edu.pucp.dp1.redex.services.FlightService;
+import com.edu.pucp.dp1.redex.services.PackageService;
 
 @RestController
-@RequestMapping("/vuelo")
+@RequestMapping("/package")
 @CrossOrigin
-public class FlightController {
+public class PaqueteController {
     
     @Autowired
-    private FlightService flightService;
+    private PackageService paqueteService;
 
-    //Trae todos los vuelos
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/")
-    List<Flight> getAll(){
-        return flightService.getAll();
+    List<Package> getAll(){
+        return paqueteService.getAll();
     }
 
     //Trae a un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/{id}")
-    Flight get(@PathVariable int id){
-        return flightService.get(id);
+    Package get(@PathVariable int id){
+        return paqueteService.get(id);
     }
 
     //Registra un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PostMapping(value = "/")
-    Flight register(@RequestBody Flight flight) throws SQLException{
+    Package register(@RequestBody Package paquete) throws SQLException{
          
         // if(flightService.duplicadoPropio(flight.getId())!=null){
         //     throw new SQLException();
         // }
-        return flightService.register(flight);
+        return paqueteService.register(paquete);
     }
 
     //Actualiza un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PutMapping(value = "/")
-    Flight update(@RequestBody Flight flight) throws SQLException{
-        return flightService.update(flight);
+    Package update(@RequestBody Package paquete) throws SQLException{
+        return paqueteService.update(paquete);
     }
     
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable int id){
-        flightService.delete(id);
-    }
+        paqueteService.delete(id);
+    }    
 
 }

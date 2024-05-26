@@ -1,7 +1,5 @@
 package com.edu.pucp.dp1.redex.repository;
 
-
-import com.edu.pucp.dp1.redex.model.Algorithm.Airport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

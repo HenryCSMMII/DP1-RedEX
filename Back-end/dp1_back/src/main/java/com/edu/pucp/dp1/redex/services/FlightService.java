@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.FlightRepository;
 
-
-
 @Service
 public class FlightService{
 
@@ -26,6 +24,16 @@ public class FlightService{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlightService.class);
     
+    public void registerListFlight(List<Flight> flights){
+        try {
+            for (Flight flight : flights) {
+                flightRepository.save(flight);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
     public Flight register(Flight flight){
         try {
             return flightRepository.save(flight);
