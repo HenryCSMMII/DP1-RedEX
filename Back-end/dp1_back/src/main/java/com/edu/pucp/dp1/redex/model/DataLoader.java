@@ -40,8 +40,7 @@ public class DataLoader {
         }
         return flights;
     }
-
-
+    
     public static List<Package> loadPackages(String filePath) throws IOException {
         List<Package> packages = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -59,8 +58,8 @@ public class DataLoader {
                     // Combinamos la ciudad de origen con el código de envío para formar un identificador único para este paquete
                     String packageId = origin + "-" + envioCode;
 
-                    Package pack = new Package(origin, destination, departureTime, quantity, packageId);
-                    packages.add(pack);
+                    //Package pack = new Package(origin, destination, departureTime, quantity, packageId);
+                    //packages.add(pack);
                 }
             }
 

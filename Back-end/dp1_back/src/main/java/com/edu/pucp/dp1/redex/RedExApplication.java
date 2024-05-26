@@ -13,6 +13,7 @@ public class RedExApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(RedExApplication.class, args);
+        System.out.println("Ejecutanding...");
 	}
 
 	@Bean

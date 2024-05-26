@@ -14,54 +14,54 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edu.pucp.dp1.redex.model.Flight;
-import com.edu.pucp.dp1.redex.services.FlightService;
+import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.services.AirportService;
 
 @RestController
-@RequestMapping("/vuelo")
+@RequestMapping("/aeropuerto")
 @CrossOrigin
-public class FlightController {
-    
+public class AirportController {
+
     @Autowired
-    private FlightService flightService;
+    private AirportService airportService;
 
     //Trae todos los vuelos
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/")
-    List<Flight> getAll(){
-        return flightService.getAll();
+    List<Airport> getAll(){
+        return airportService.getAll();
     }
 
     
     //Trae a un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/{id}")
-    Flight get(@PathVariable int id){
-        return flightService.get(id);
+    Airport get(@PathVariable int id){
+        return airportService.get(id);
     }
 
     //Registra un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PostMapping(value = "/")
-    Flight register(@RequestBody Flight flight) throws SQLException{
+    Airport register(@RequestBody Airport airport) throws SQLException{
          
         // if(flightService.duplicadoPropio(flight.getId())!=null){
         //     throw new SQLException();
         // }
-        return flightService.register(flight);
+        return airportService.register(airport);
     }
 
     //Actualiza un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PutMapping(value = "/")
-    Flight update(@RequestBody Flight flight) throws SQLException{
-        return flightService.update(flight);
+    Airport update(@RequestBody Airport airport) throws SQLException{
+        return airportService.update(airport);
     }
     
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable int id){
-        flightService.delete(id);
-    }
+        airportService.delete(id);
+    }    
 
 }
