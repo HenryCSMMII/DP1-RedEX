@@ -17,7 +17,6 @@ import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.FlightRepository;
 
 
-
 @Service
 public class FlightService{
 

@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -65,6 +66,7 @@ public class Flight extends BaseEntity{
     @Column(name = "duration", nullable = false)
     private int duration;
 
+    
     // Relaciones con otras entidades va en paquetes
     // @ManyToOne(fetch = FetchType.EAGER)
     // @JoinColumn(name = "id_paquete")

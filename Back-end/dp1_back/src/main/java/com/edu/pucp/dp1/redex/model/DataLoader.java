@@ -27,7 +27,7 @@ public class DataLoader {
                     int currentLoad = 0,duration = 0; 
 
 
-                    flights.add(new Flight(origin, destination, departureTime, arrivalTime, capacity,flightnumber,currentLoad, duration));
+                    //flights.add(new Flight(origin, destination, departureTime, arrivalTime, capacity,flightnumber,currentLoad, duration));
                 } else {
                     System.err.println("Incorrect line format: " + line);
                 }
@@ -40,8 +40,7 @@ public class DataLoader {
         }
         return flights;
     }
-
-
+    
     public static List<Package> loadPackages(String filePath) throws IOException {
         List<Package> packages = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {

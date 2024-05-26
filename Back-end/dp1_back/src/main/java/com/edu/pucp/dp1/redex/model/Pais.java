@@ -7,7 +7,7 @@ public class Pais {
 
     private int idPais;
     private String nombre;
-    private Continente continente;
+    private String continente;
 
     public Pais() {
     }
@@ -28,11 +28,11 @@ public class Pais {
         this.nombre = nombre;
     }
 
-    public Continente getContinente() {
+    public String getContinente() {
         return continente;
     }
 
-    public void setContinente(Continente continente) {
+    public void setContinente(String continente) {
         this.continente = continente;
     }
 }
