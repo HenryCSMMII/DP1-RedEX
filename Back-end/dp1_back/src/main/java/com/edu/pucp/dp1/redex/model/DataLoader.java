@@ -41,8 +41,8 @@ public class DataLoader {
         return flights;
     }
     
-    public static List<Package> loadPackages(String filePath) throws IOException {
-        List<Package> packages = new ArrayList<>();
+    public static List<Paquete> loadPackages(String filePath) throws IOException {
+        List<Paquete> packages = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {

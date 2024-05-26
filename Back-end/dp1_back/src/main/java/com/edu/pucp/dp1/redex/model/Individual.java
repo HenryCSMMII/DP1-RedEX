@@ -15,10 +15,10 @@ public class Individual<T> {
         this.chromosome = new ArrayList<>();
     }
 
-    public void randomizeChromosome(Map<Package, List<List<Flight>>> packageRoutes) {
+    public void randomizeChromosome(Map<Paquete, List<List<Flight>>> packageRoutes) {
         Random rand = new Random();
-        List<Package> packages = new ArrayList<>(packageRoutes.keySet());
-        Package pack = packages.get(rand.nextInt(packages.size()));
+        List<Paquete> packages = new ArrayList<>(packageRoutes.keySet());
+        Paquete pack = packages.get(rand.nextInt(packages.size()));
         List<List<Flight>> validRoutes = packageRoutes.get(pack).stream()
                 .filter(route -> isValidRoute(route, pack.getOrigin(), pack.getDestination()))
                 .collect(Collectors.toList());

@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edu.pucp.dp1.redex.services.PackageService;
+import com.edu.pucp.dp1.redex.model.Paquete;
+import com.edu.pucp.dp1.redex.services.PaqueteService;
 
 @RestController
 @RequestMapping("/package")
@@ -22,25 +23,25 @@ import com.edu.pucp.dp1.redex.services.PackageService;
 public class PaqueteController {
     
     @Autowired
-    private PackageService paqueteService;
+    private PaqueteService paqueteService;
 
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/")
-    List<Package> getAll(){
+    List<Paquete> getAll(){
         return paqueteService.getAll();
     }
 
     //Trae a un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/{id}")
-    Package get(@PathVariable int id){
+    Paquete get(@PathVariable int id){
         return paqueteService.get(id);
     }
 
     //Registra un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PostMapping(value = "/")
-    Package register(@RequestBody Package paquete) throws SQLException{
+    Paquete register(@RequestBody Paquete paquete) throws SQLException{
          
         // if(flightService.duplicadoPropio(flight.getId())!=null){
         //     throw new SQLException();
@@ -51,7 +52,7 @@ public class PaqueteController {
     //Actualiza un vuelo
     //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PutMapping(value = "/")
-    Package update(@RequestBody Package paquete) throws SQLException{
+    Paquete update(@RequestBody Paquete paquete) throws SQLException{
         return paqueteService.update(paquete);
     }
     

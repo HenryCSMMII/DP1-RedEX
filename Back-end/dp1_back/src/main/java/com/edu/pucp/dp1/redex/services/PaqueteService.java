@@ -13,17 +13,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.edu.pucp.dp1.redex.repository.PackageRepository;
+import com.edu.pucp.dp1.redex.model.Paquete;
+import com.edu.pucp.dp1.redex.repository.PaqueteRepository;
 
 @Service
-public class PackageService {
+public class PaqueteService {
     
     @Autowired
-    private PackageRepository paqueteRepository;
+    private PaqueteRepository paqueteRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PackageService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaqueteService.class);
 
-    public Package register(Package paquete){
+    public Paquete register(Paquete paquete){
         try {
             return paqueteRepository.save(paquete);
         } catch (Exception e) {
@@ -32,7 +33,7 @@ public class PackageService {
         }
     }
 
-    public List<Package> getAll(){
+    public List<Paquete> getAll(){
         try {
             return paqueteRepository.findAll();
         } catch (Exception e) {
@@ -41,7 +42,7 @@ public class PackageService {
         }
     }
 
-    public Package get(int id){
+    public Paquete get(int id){
         try {
             return paqueteRepository.findPackageById(id);
         } catch (Exception e) {
@@ -50,7 +51,7 @@ public class PackageService {
         }
     }
 
-    public Package update(Package paquete){
+    public Paquete update(Paquete paquete){
         try {
             return paqueteRepository.save(paquete);
         } catch (Exception e) {

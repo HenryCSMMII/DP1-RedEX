@@ -32,7 +32,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter @Setter
 
-public class Package extends BaseEntity{
+public class Paquete extends BaseEntity{
 
     // String origin;
     // String destination;

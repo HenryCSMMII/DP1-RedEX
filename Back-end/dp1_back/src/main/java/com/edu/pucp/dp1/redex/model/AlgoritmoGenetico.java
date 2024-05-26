@@ -34,7 +34,7 @@ public class AlgoritmoGenetico {
     }
 
 
-    public Population initPopulation(int populationSize, Map<Package, List<List<Flight>>> packageRoutes) {
+    public Population initPopulation(int populationSize, Map<Paquete, List<List<Flight>>> packageRoutes) {
         Population population = new Population(populationSize);
         for (int i = 0; i < populationSize; i++) {
             Individual individual = new Individual();
@@ -44,7 +44,7 @@ public class AlgoritmoGenetico {
         return population;
     }
 
-    public void evalPopulation(Population population, List<Flight> flights, List<Package> packages, Map<String, List<Flight>> packageFlights, Map<String, List<Flight>> airportToFlights, Map<String, AirportData> airportToContinentTimezoneData) {
+    public void evalPopulation(Population population, List<Flight> flights, List<Paquete> packages, Map<String, List<Flight>> packageFlights, Map<String, List<Flight>> airportToFlights, Map<String, AirportData> airportToContinentTimezoneData) {
         double bestFitness = Double.NEGATIVE_INFINITY;
         Individual bestIndividual = null;
 
@@ -81,7 +81,7 @@ public class AlgoritmoGenetico {
         }
     }
 
-    private void printBestRoute(Individual bestIndividual, List<Package> packages, Map<String, List<Flight>> packageFlights) {
+    private void printBestRoute(Individual bestIndividual, List<Paquete> packages, Map<String, List<Flight>> packageFlights) {
         List<Flight> route = bestIndividual.getChromosome();
         if (route.isEmpty()) {
             System.out.println("No available route for the individual.");

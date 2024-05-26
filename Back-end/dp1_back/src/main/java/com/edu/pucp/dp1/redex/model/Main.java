@@ -30,7 +30,7 @@ public class Main {
 
         // Cargar datos
         List<Flight> flights = null;
-        List<Package> packages = null;
+        List<Paquete> packages = null;
         List<Airport> airports = null;
         Map<Flight, Integer> flightCapacitiesUsed = new HashMap<>(); // Mapa para rastrear la capacidad usada de cada vuelo
 
@@ -57,19 +57,19 @@ public class Main {
         final int MAX_STOPS = 5; // Puedes ajustar este valor según sea necesario
 
         // Generar posibles rutas para cada paquete
-        Map<Package, List<List<Flight>>> packageRoutes = generatePossibleRoutesForPackages(packages, airportToFlights, MAX_STOPS);
+        Map<Paquete, List<List<Flight>>> packageRoutes = generatePossibleRoutesForPackages(packages, airportToFlights, MAX_STOPS);
         //    printPackageRoutes(packageRoutes);
         Map<String, List<Flight>> packageFlights = selectRoutesForPackages(packageRoutes, flightCapacitiesUsed);
 
         assignPackagesToFlights(packages, packageFlights, flightCapacitiesUsed);
         //    printAssignedRoutes(packageFlights,flightCapacitiesUsed);
 
-        Map<String, List<Package>> packagesByEnvioCode = new HashMap<>();
+        Map<String, List<Paquete>> packagesByEnvioCode = new HashMap<>();
 
         assignPackagesToFlights(packages, packageFlights, flightCapacitiesUsed);
 
 
-        for (Package p : packages) {
+        for (Paquete p : packages) {
             packagesByEnvioCode.computeIfAbsent(p.getPackageId(), k -> new ArrayList<>()).add(p);
             //  System.out.println("Agregando paquete " + p.getPackageId() + " al grupo de envío.");
         }
@@ -122,7 +122,7 @@ public class Main {
 
         // Reportar las mejores rutas para cada paquete
         System.out.println("\nMejores rutas para cada paquete:");
-        for (Package pkg : packages) {
+        for (Paquete pkg : packages) {
             List<Flight> bestRoute = packageFlights.get(pkg.getPackageId());
             System.out.println("Mejor ruta para el paquete " + pkg.getPackageId() + ":");
             if (bestRoute != null && !bestRoute.isEmpty()) {
@@ -202,10 +202,10 @@ public class Main {
         return totalDuration;
     }
 
-    private static Map<String, List<Flight>> selectRoutesForPackages(Map<Package, List<List<Flight>>> packageRoutes, Map<Flight, Integer> flightCapacitiesUsed) {
+    private static Map<String, List<Flight>> selectRoutesForPackages(Map<Paquete, List<List<Flight>>> packageRoutes, Map<Flight, Integer> flightCapacitiesUsed) {
         Map<String, List<Flight>> selectedRoutes = new HashMap<>();
-        for (Map.Entry<Package, List<List<Flight>>> entry : packageRoutes.entrySet()) {
-            Package pack = entry.getKey();
+        for (Map.Entry<Paquete, List<List<Flight>>> entry : packageRoutes.entrySet()) {
+            Paquete pack = entry.getKey();
             List<List<Flight>> routes = entry.getValue();
 
             List<Flight> selectedRoute = selectOptimalRoute(routes, flightCapacitiesUsed, pack);
@@ -219,7 +219,7 @@ public class Main {
         return selectedRoutes;
     }
 
-    private static List<Flight> selectOptimalRoute(List<List<Flight>> routes, Map<Flight, Integer> flightCapacitiesUsed, Package pack) {
+    private static List<Flight> selectOptimalRoute(List<List<Flight>> routes, Map<Flight, Integer> flightCapacitiesUsed, Paquete pack) {
         List<Flight> validRoute = null;
         int minimumCapacityIncrease = Integer.MAX_VALUE;
         boolean routeFound = false;
@@ -266,9 +266,9 @@ public class Main {
         return route.stream().mapToInt(Flight::getDuration).sum();
     }
 
-    private static void printPackageRoutes(Map<Package, List<List<Flight>>> packageRoutes) {
-        for (Map.Entry<Package, List<List<Flight>>> entry : packageRoutes.entrySet()) {
-            Package pack = entry.getKey();
+    private static void printPackageRoutes(Map<Paquete, List<List<Flight>>> packageRoutes) {
+        for (Map.Entry<Paquete, List<List<Flight>>> entry : packageRoutes.entrySet()) {
+            Paquete pack = entry.getKey();
             List<List<Flight>> routes = entry.getValue();
             System.out.println("Rutas para el paquete " + pack.getPackageId() + " desde " + pack.getOrigin() + " a " + pack.getDestination() + ":");
 
@@ -297,10 +297,10 @@ public class Main {
         return airportToFlights;
     }
 
-    private static Map<Package, List<List<Flight>>> generatePossibleRoutesForPackages(List<Package> packages, Map<String, List<Flight>> airportToFlights, int maxStops) {
-        Map<Package, List<List<Flight>>> packageRoutes = new HashMap<>();
+    private static Map<Paquete, List<List<Flight>>> generatePossibleRoutesForPackages(List<Paquete> packages, Map<String, List<Flight>> airportToFlights, int maxStops) {
+        Map<Paquete, List<List<Flight>>> packageRoutes = new HashMap<>();
 
-        for (Package pack : packages) {
+        for (Paquete pack : packages) {
             List<List<Flight>> possibleRoutes = findRoutes(pack.getOrigin(), pack.getDestination(), airportToFlights, maxStops);
 
             // Verificar si se encontraron rutas posibles
@@ -353,8 +353,8 @@ public class Main {
 
         visitedAirports.remove(current);
     }
-    private static void assignPackagesToFlights(List<Package> packages, Map<String, List<Flight>> packageFlights, Map<Flight, Integer> flightCapacitiesUsed) {
-        for (Package pkg : packages) {
+    private static void assignPackagesToFlights(List<Paquete> packages, Map<String, List<Flight>> packageFlights, Map<Flight, Integer> flightCapacitiesUsed) {
+        for (Paquete pkg : packages) {
             List<Flight> assignedFlights = packageFlights.get(pkg.getPackageId());
             if (assignedFlights != null && !assignedFlights.isEmpty()) {
                 // Obtener la capacidad del paquete (se mantiene constante para cada vuelo)
