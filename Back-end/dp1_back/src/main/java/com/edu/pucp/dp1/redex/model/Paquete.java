@@ -8,10 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -69,13 +68,8 @@ public class Paquete extends BaseEntity {
     @JsonBackReference
     private Shipment shipment;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "package_flight",
-        joinColumns = @JoinColumn(name = "package_id"),
-        inverseJoinColumns = @JoinColumn(name = "flight_id")
-    )
-    private List<Flight> flights;
+    @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<PackageFlight> packageFlights;
 
     // ToString method for debugging purposes
     @Override
