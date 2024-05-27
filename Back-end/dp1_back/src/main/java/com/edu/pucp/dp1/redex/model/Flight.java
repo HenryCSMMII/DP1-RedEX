@@ -68,6 +68,18 @@ public class Flight extends BaseEntity {
     )
     private List<Paquete> paquetes;
 
+    // Constructor adicional
+    public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration) {
+        this.origin = origin;
+        this.destination = destination;
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
+        this.capacity = capacity;
+        this.flightNumber = flightNumber;
+        this.currentLoad = currentLoad;
+        this.duration = duration;
+    }
+
     // ToString method for debugging purposes
     @Override
     public String toString() {
