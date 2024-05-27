@@ -15,4 +15,7 @@ public interface PackageFlightRepository extends JpaRepository<PackageFlight, In
     
     public List<PackageFlight> findAll();
     public PackageFlight findPackageFlightById(int id);
+
+    public List<PackageFlight> findByPaqueteId(int paqueteId);
+    public List<PackageFlight> findByFlightId(int flightId);
 }

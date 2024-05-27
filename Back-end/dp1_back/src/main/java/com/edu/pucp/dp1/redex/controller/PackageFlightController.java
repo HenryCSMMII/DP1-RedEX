@@ -35,6 +35,16 @@ public class PackageFlightController {
         return packageFlightService.get(id);
     }
 
+    @GetMapping(value = "/package/{paqueteId}")
+    List<PackageFlight> getByPaqueteId(@PathVariable int paqueteId){
+        return packageFlightService.getByPaqueteId(paqueteId);
+    }
+
+    @GetMapping(value = "/flight/{flightId}")
+    List<PackageFlight> getByFlightId(@PathVariable int flightId){
+        return packageFlightService.getByFlightId(flightId);
+    }
+
     @PostMapping(value = "/")
     PackageFlight register(@RequestBody PackageFlight packageFlight) throws SQLException{
         return packageFlightService.register(packageFlight);

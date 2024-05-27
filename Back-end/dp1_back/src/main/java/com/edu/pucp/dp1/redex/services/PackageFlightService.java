@@ -45,6 +45,24 @@ public class PackageFlightService {
         }
     }
 
+    public List<PackageFlight> getByPaqueteId(int paqueteId){
+        try {
+            return packageFlightRepository.findByPaqueteId(paqueteId);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<PackageFlight> getByFlightId(int flightId){
+        try {
+            return packageFlightRepository.findByFlightId(flightId);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
     public PackageFlight update(PackageFlight packageFlight){
         try {
             return packageFlightRepository.save(packageFlight);
