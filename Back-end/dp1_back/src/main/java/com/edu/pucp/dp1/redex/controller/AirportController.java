@@ -18,7 +18,7 @@ import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.services.AirportService;
 
 @RestController
-@RequestMapping("/aeropuerto")
+@RequestMapping("/airport")
 @CrossOrigin
 public class AirportController {
 
