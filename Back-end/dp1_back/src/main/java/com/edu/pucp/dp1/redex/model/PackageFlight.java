@@ -1,10 +1,12 @@
 package com.edu.pucp.dp1.redex.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
@@ -32,8 +34,9 @@ public class PackageFlight extends BaseEntity {
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 
-    @Column(name = "estado", nullable = false)
-    private int estado;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "estado_trazabilidad_id", nullable = false)
+    private EstadoTrazabilidad estadoTrazabilidad;
 
     // ToString method for debugging purposes
     @Override
@@ -42,7 +45,7 @@ public class PackageFlight extends BaseEntity {
                 "id=" + getId() +
                 ", paquete=" + (paquete != null ? paquete.getId() : "null") +
                 ", flight=" + (flight != null ? flight.getId() : "null") +
-                ", estado=" + estado +
+                ", estadoTrazabilidad=" + (estadoTrazabilidad != null ? estadoTrazabilidad.getEstado() : "null") +
                 '}';
     }
 }
