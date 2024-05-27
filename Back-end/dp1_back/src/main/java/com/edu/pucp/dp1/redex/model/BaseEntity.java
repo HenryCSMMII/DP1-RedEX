@@ -11,6 +11,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,10 +27,12 @@ public abstract class BaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "DATETIME", nullable = false)
+    @JsonIgnore
     protected Date fecha_creacion = new Date();
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition = "DATETIME", nullable = false)
+    @JsonIgnore
     protected Date fecha_modificacion = new Date();
 
     @Column(name = "activo")
@@ -43,7 +46,7 @@ public abstract class BaseEntity {
 
     @PrePersist
     private void onCreate(){
-        fecha_creacion=fecha_modificacion=addHoursToJavaUtilDate(new Date(), -5);
+        fecha_creacion = fecha_modificacion = addHoursToJavaUtilDate(new Date(), -5);
     }
 
     public Date addHoursToJavaUtilDate(Date date, int hours) {
@@ -52,5 +55,4 @@ public abstract class BaseEntity {
         calendar.add(Calendar.HOUR_OF_DAY, hours);
         return calendar.getTime();
     }
-
 }
