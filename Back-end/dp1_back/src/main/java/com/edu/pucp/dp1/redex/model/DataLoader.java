@@ -82,7 +82,7 @@ public class DataLoader {
                     int timezone = Integer.parseInt(parts[5].trim());
                     int capacity = Integer.parseInt(parts[6].trim());
 
-                    airports.add(new Airport(code, name, city, country, continent, timezone, capacity));
+                    //airports.add(new Airport(code, name, city, country, continent, timezone, capacity));
                 } else {
                     System.err.println("Incorrect line format for airports: " + line);
                 }

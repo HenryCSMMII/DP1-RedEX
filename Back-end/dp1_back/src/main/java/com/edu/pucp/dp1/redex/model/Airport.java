@@ -1,21 +1,15 @@
 package com.edu.pucp.dp1.redex.model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -33,24 +27,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
+public class Airport extends BaseEntity {
 
-public class Airport extends BaseEntity{
-
-
-    @Column(name = "code", nullable = false)
-    private String code;
-
-    @Column(name = "city", nullable = false)
-    private String city;
-
-    @Column(name = "country", nullable = false)
-    private String country;
-
-    @Column(name = "shortName", nullable = false)
-    private String shortName;
-
-    @Column(name = "continent", nullable = false)
-    private String continent;
+    @Column(name = "codigoIATA", nullable = false)
+    private String codigoIATA;
 
     @Column(name = "latitude", nullable = false)
     private Double latitude;
@@ -58,21 +38,19 @@ public class Airport extends BaseEntity{
     @Column(name = "longitude", nullable = false)
     private Double longitude;
 
-    @Column(name = "timezoneOffset", nullable = false)
-    private int timezoneOffset;
-
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
-    
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "city_id", nullable = false)
+    @JsonManagedReference
+    private City city;
 
-    public Airport(String code, String city, String country, String shortName, String continent, int timezoneOffset, int capacity) {
-        this.code = code;
+    public Airport(String codigoIATA, City city, Double latitude, Double longitude, int capacity) {
+        this.codigoIATA = codigoIATA;
         this.city = city;
-        this.country = country;
-        this.shortName = shortName;
-        this.continent = continent;
-        this.timezoneOffset = timezoneOffset;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.capacity = capacity;
     }
     
@@ -80,12 +58,11 @@ public class Airport extends BaseEntity{
     @Override
     public String toString() {
         return "Airport{" +
-                "code='" + code + '\'' +
-                ", city='" + city + '\'' +
-                ", country='" + country + '\'' +
-                ", shortName='" + shortName + '\'' +
-                ", continent='" + continent + '\'' +
-                ", timezoneOffset=" + timezoneOffset +
+                "codigoIATA='" + codigoIATA + '\'' +
+                ", city=" + (city != null ? city.getNombre() : "null") +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", timezoneOffset=" + (city != null ? city.getZonahoraria() : "null") +
                 ", capacity=" + capacity +
                 '}';
     }

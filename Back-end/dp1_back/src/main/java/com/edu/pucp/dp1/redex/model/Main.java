@@ -79,11 +79,11 @@ public class Main {
         // Llenar el mapa con datos de aeropuertos
         for (Airport airport : airports) {
             // Obtener datos del aeropuerto
-            String continent = airport.getContinent();
-            int timezoneOffset = airport.getTimezoneOffset();
+            String continent = airport.getCity().getCountry().getContinent().getName();
+            int timezoneOffset = airport.getCity().getZonahoraria();
 
             // Almacenar los datos en el mapa
-            airportToContinentTimezoneData.put(airport.getCode(), new AirportData(continent, timezoneOffset));
+            airportToContinentTimezoneData.put(airport.getCodigoIATA(), new AirportData(continent, timezoneOffset));
             // System.out.println("Agregando aeropuerto " + airport.getCode() + ": continente=" + continent + ", uso horario=" + timezoneOffset);
         }
 

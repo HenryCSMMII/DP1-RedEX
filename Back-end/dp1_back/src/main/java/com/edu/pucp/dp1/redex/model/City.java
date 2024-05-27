@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.hibernate.annotations.SQLDelete;
@@ -39,6 +41,10 @@ public class City extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPais", nullable = false)
     private Country country;
+
+    @OneToOne(mappedBy = "city", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private Airport airport;
 
     // ToString method for debugging purposes
     @Override
