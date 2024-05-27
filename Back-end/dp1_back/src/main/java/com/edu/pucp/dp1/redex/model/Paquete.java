@@ -12,8 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -31,18 +31,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-
-public class Paquete extends BaseEntity{
-
-    // String origin;
-    // String destination;
-    // String departureTime;
-    // private LocalDateTime shipmentDateTime;
-    // String packageId;
-    // int quantity;
-    // private String assignedFlightId;
-    // private List<Flight> escalas;
-    // private long tiempoTotal;
+public class Paquete extends BaseEntity {
 
     @Column(name="origin", nullable = false)
     private String origin;
@@ -71,9 +60,32 @@ public class Paquete extends BaseEntity{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idAeropuerto")
     private Airport airport;
-    
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "idEstadoPaquete")
     private EstadoPaquete estadoPaquete;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipment_id", nullable = false)
+    @JsonBackReference
+    private Shipment shipment;
+
+    // ToString method for debugging purposes
+    @Override
+    public String toString() {
+        return "Paquete{" +
+                "id=" + getId() +
+                ", origin='" + origin + '\'' +
+                ", destination='" + destination + '\'' +
+                ", departureTime=" + departureTime +
+                ", shipmentDateTime=" + shipmentDateTime +
+                ", packageId='" + packageId + '\'' +
+                ", quantity=" + quantity +
+                ", assignedFlightId='" + assignedFlightId + '\'' +
+                ", tiempoTotal=" + tiempoTotal +
+                ", airport=" + (airport != null ? airport.getCodigoIATA() : "null") +
+                ", estadoPaquete=" + (estadoPaquete != null ? estadoPaquete.getId() : "null") +
+                ", shipment=" + (shipment != null ? shipment.getId() : "null") +
+                '}';
+    }
 }

@@ -2,20 +2,18 @@ package com.edu.pucp.dp1.redex.model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-//import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -27,48 +25,67 @@ import lombok.Setter;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "flight")
-@SQLDelete(sql = "UPDATE flight SET activo = 0 WHERE id = ?")
+@Table(name = "package")
+@SQLDelete(sql = "UPDATE package SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
+public class Paquete extends BaseEntity {
 
-public class Flight extends BaseEntity{
-
-    // Atributos estáticos
-    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-    public static final LocalDate BASE_DATE = LocalDate.of(2024, 1, 1);  // Fecha base arbitraria
-
-    // Atributos de instancia
-
-    @Column(name = "origin", nullable = false)
+    @Column(name="origin", nullable = false)
     private String origin;
 
-    @Column(name = "destination", nullable = false)
+    @Column(name="destination", nullable = false)
     private String destination;
 
-    @Column(name = "departureTime", nullable = false)
+    @Column(name="departureTime", nullable = false)
     private LocalTime departureTime;
 
-    @Column(name = "arrivalTime", nullable = false)
-    private LocalTime arrivalTime;
+    @Column(name="shipmentDateTime", nullable = false)
+    private LocalDate shipmentDateTime;
 
-    @Column(name = "capacity", nullable = false)
-    private int capacity;
+    @Column(name="packageId", nullable = false)
+    private String packageId;
 
-    @Column(name = "flightNumber", nullable = false)
-    private String flightNumber;
+    @Column(name="quantity", nullable = false)
+    private int quantity;
 
-    @Column(name = "currentLoad", nullable = false)
-    private int currentLoad;
+    @Column(name="assignedFlightId", nullable = false)
+    private String assignedFlightId;
 
-    @Column(name = "duration", nullable = false)
-    private int duration;
+    @Column(name="tiempoTotal", nullable = false)
+    private double tiempoTotal;
 
-    // Relaciones con otras entidades va en paquetes
-    // @ManyToOne(fetch = FetchType.EAGER)
-    // @JoinColumn(name = "id_paquete")
-    // private Flight flight;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idAeropuerto")
+    private Airport airport;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "idEstadoPaquete")
+    private EstadoPaquete estadoPaquete;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shipment_id", nullable = false)
+    @JsonBackReference
+    private Shipment shipment;
+
+    // ToString method for debugging purposes
+    @Override
+    public String toString() {
+        return "Paquete{" +
+                "id=" + getId() +
+                ", origin='" + origin + '\'' +
+                ", destination='" + destination + '\'' +
+                ", departureTime=" + departureTime +
+                ", shipmentDateTime=" + shipmentDateTime +
+                ", packageId='" + packageId + '\'' +
+                ", quantity=" + quantity +
+                ", assignedFlightId='" + assignedFlightId + '\'' +
+                ", tiempoTotal=" + tiempoTotal +
+                ", airport=" + (airport != null ? airport.getCodigoIATA() : "null") +
+                ", estadoPaquete=" + (estadoPaquete != null ? estadoPaquete.getId() : "null") +
+                ", shipment=" + (shipment != null ? shipment.getId() : "null") +
+                '}';
+    }
 }
