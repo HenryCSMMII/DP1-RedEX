@@ -66,6 +66,10 @@ public class Flight extends BaseEntity{
     @Column(name = "duration", nullable = false)
     private int duration;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="idEstadoVuelo")
+    private EstadoVuelo estadoVuelo;
+
     // Relaciones con otras entidades va en paquetes
     // @ManyToOne(fetch = FetchType.EAGER)
     // @JoinColumn(name = "id_paquete")

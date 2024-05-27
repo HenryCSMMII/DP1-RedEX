@@ -91,4 +91,9 @@ public class FlightController {
         flightService.delete(id);
     }
 
+    @GetMapping(value = "/listarVuelosPorEstado/{idEstado}")
+    List<Flight> listarVuelosPorEstado(@PathVariable int idEstado){
+        return flightService.listarVuelosPorEstado(idEstado);
+    }
+
 }
