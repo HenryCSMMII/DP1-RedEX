@@ -1,7 +1,7 @@
 package com.edu.pucp.dp1.redex.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
+//import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -85,11 +85,11 @@ public class Population<T> {
     }
 
     public void shuffle() {
-        Collections.shuffle(individuals);
+        //Collections.shuffle(individuals);
     }
     public Individual getFittest(int numFittest) {
         // Ordenar la lista de individuos en orden descendente según su fitness
-        Collections.sort(individuals, Comparator.comparingDouble(Individual::getFitness).reversed());
+        //Collections.sort(individuals, Comparator.comparingDouble(Individual::getFitness).reversed());
 
         // Devolver el i-ésimo individuo, donde i es el valor de numFittest
         return individuals.get(numFittest);

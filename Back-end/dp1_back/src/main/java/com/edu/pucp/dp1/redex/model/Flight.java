@@ -11,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
@@ -60,13 +62,14 @@ public class Flight extends BaseEntity {
     @Column(name = "duration", nullable = false)
     private int duration;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-        name = "package_flight",
-        joinColumns = @JoinColumn(name = "flight_id"),
-        inverseJoinColumns = @JoinColumn(name = "package_id")
-    )
-    private List<Paquete> paquetes;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="idEstadoVuelo")
+    private EstadoVuelo estadoVuelo;
+
+    // Relaciones con otras entidades va en paquetes
+    // @ManyToOne(fetch = FetchType.EAGER)
+    // @JoinColumn(name = "id_paquete")
+    // private Flight flight;
 
     // Constructor adicional
     public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration) {
