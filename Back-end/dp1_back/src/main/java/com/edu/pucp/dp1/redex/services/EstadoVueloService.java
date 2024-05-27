@@ -10,60 +10,60 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.edu.pucp.dp1.redex.model.EstadoPaquete;
-import com.edu.pucp.dp1.redex.repository.EstadoPaqueteRepository;
+import com.edu.pucp.dp1.redex.model.EstadoVuelo;
+import com.edu.pucp.dp1.redex.repository.EstadoVueloRepository;
 
 
 @Service
-public class EstadoPaqueteService {
+public class EstadoVueloService {
     
     @Autowired
-    private EstadoPaqueteRepository estadoPaqueteRepository;
+    private EstadoVueloRepository estadoVueloRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EstadoPaqueteService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EstadoVueloService.class);
 
-    public EstadoPaquete register(EstadoPaquete estadoPaquete){
+    public EstadoVuelo register(EstadoVuelo estadoVuelo){
         try {
-            return estadoPaqueteRepository.save(estadoPaquete);
+            return estadoVueloRepository.save(estadoVuelo);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public List<EstadoPaquete> getAll(){
+    public List<EstadoVuelo> getAll(){
         try {
-            return estadoPaqueteRepository.findAll();
+            return estadoVueloRepository.findAll();
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public EstadoPaquete get(int id){
+    public EstadoVuelo get(int id){
         try {
-            return estadoPaqueteRepository.findEstadoPaqueteById(id);
+            return estadoVueloRepository.findEstadoVueloById(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public EstadoPaquete update(EstadoPaquete estadoPaquete){
+    public EstadoVuelo update(EstadoVuelo estadoVuelo){
         try {
-            return estadoPaqueteRepository.save(estadoPaquete);
+            return estadoVueloRepository.save(estadoVuelo);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
+
 
     public void delete(int id){
         try {
-            estadoPaqueteRepository.deleteById(id);
+            estadoVueloRepository.deleteById(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
     }
-
 }
