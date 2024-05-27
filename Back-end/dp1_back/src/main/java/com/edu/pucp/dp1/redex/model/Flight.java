@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
@@ -59,11 +60,15 @@ public class Flight extends BaseEntity {
     @Column(name = "duration", nullable = false)
     private int duration;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "estado_vuelo_id", nullable = false)
+    private EstadoVuelo estadoVuelo;
+
     @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PackageFlight> packageFlights;
 
     // Constructor adicional
-    public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration) {
+    public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration, EstadoVuelo estadoVuelo) {
         this.origin = origin;
         this.destination = destination;
         this.departureTime = departureTime;
@@ -72,6 +77,7 @@ public class Flight extends BaseEntity {
         this.flightNumber = flightNumber;
         this.currentLoad = currentLoad;
         this.duration = duration;
+        this.estadoVuelo = estadoVuelo;
     }
 
     // ToString method for debugging purposes
@@ -87,6 +93,7 @@ public class Flight extends BaseEntity {
                 ", flightNumber='" + flightNumber + '\'' +
                 ", currentLoad=" + currentLoad +
                 ", duration=" + duration +
+                ", estadoVuelo=" + (estadoVuelo != null ? estadoVuelo.getEstado() : "null") +
                 '}';
     }
 }
