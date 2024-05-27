@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.EstadoPaquete;
 import com.edu.pucp.dp1.redex.repository.PaqueteRepository;
 import com.edu.pucp.dp1.redex.repository.AirportRepository;
+import com.edu.pucp.dp1.redex.repository.EstadoPaqueteRepository;
 
 @Service
 public class PaqueteService {
@@ -26,6 +28,9 @@ public class PaqueteService {
 
     @Autowired
     private AirportRepository airportRepository;
+
+    @Autowired
+    private EstadoPaqueteRepository estadoPaqueteRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaqueteService.class);
 
@@ -78,6 +83,17 @@ public class PaqueteService {
             Airport airport = new Airport();
             airport = airportRepository.findAirportById(aeropuertoId);
             return paqueteRepository.findPackageByAirport(airport);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Paquete> listarPaquetesPorEstado(int estadoId){
+        try {
+            EstadoPaquete estado = new EstadoPaquete();
+            estado = estadoPaqueteRepository.findEstadoPaqueteById(estadoId);
+            return paqueteRepository.findPackageByEstadoPaquete(estado);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;

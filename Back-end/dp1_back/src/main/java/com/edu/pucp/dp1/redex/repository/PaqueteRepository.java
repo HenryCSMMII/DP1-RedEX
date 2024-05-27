@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.EstadoPaquete;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -21,4 +22,5 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer>{
     public Paquete findPackageById(int id);
 
     public List<Paquete> findPackageByAirport(Airport aeropuerto);
+    public List<Paquete> findPackageByEstadoPaquete(EstadoPaquete estado);
 }

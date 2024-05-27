@@ -67,4 +67,9 @@ public class PaqueteController {
         return paqueteService.listarPaquetesPorAeropuerto(idAeropuerto);
     }
 
+    @GetMapping(value = "/listarPaquetesPorEstado/{idEstado}")
+    List<Paquete> listarPaquetesPorEstado(@PathVariable int idEstado){
+        return paqueteService.listarPaquetesPorEstado(idEstado);
+    }
+
 }
