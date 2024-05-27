@@ -1,6 +1,7 @@
 package com.edu.pucp.dp1.redex.services;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -33,6 +34,17 @@ public class FlightService{
             LOGGER.error(e.getMessage());
         }
     }
+
+    public Flight parseFlightFromLine(String line) {
+        String[] parts = line.split("-");
+        String origin = parts[0];
+        String destination = parts[1];
+        LocalTime departureTime = LocalTime.parse(parts[2], DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime arrivalTime = LocalTime.parse(parts[3], DateTimeFormatter.ofPattern("HH:mm"));
+        int capacity = Integer.parseInt(parts[4]);
+
+        return new Flight(origin, destination, departureTime, arrivalTime, capacity, "0", 0, 0);
+    }    
 
     public Flight register(Flight flight){
         try {

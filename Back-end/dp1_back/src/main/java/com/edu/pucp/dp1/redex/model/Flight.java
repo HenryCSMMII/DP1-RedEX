@@ -15,7 +15,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -66,7 +66,6 @@ public class Flight extends BaseEntity{
     @Column(name = "duration", nullable = false)
     private int duration;
 
-    
     // Relaciones con otras entidades va en paquetes
     // @ManyToOne(fetch = FetchType.EAGER)
     // @JoinColumn(name = "id_paquete")
