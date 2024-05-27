@@ -69,7 +69,11 @@ public class Paquete extends BaseEntity{
     private double tiempoTotal;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "idAeropuerto", nullable = false)
+    @JoinColumn(name = "idAeropuerto")
     private Airport airport;
+    
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "idEstadoPaquete")
+    private EstadoPaquete estadoPaquete;
 
 }
