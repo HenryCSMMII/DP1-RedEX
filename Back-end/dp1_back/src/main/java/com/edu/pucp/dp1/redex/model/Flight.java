@@ -3,23 +3,18 @@ package com.edu.pucp.dp1.redex.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-//import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,8 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-
-public class Flight extends BaseEntity{
+public class Flight extends BaseEntity {
 
     // Atributos estáticos
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
@@ -66,9 +60,27 @@ public class Flight extends BaseEntity{
     @Column(name = "duration", nullable = false)
     private int duration;
 
-    // Relaciones con otras entidades va en paquetes
-    // @ManyToOne(fetch = FetchType.EAGER)
-    // @JoinColumn(name = "id_paquete")
-    // private Flight flight;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "package_flight",
+        joinColumns = @JoinColumn(name = "flight_id"),
+        inverseJoinColumns = @JoinColumn(name = "package_id")
+    )
+    private List<Paquete> paquetes;
 
+    // ToString method for debugging purposes
+    @Override
+    public String toString() {
+        return "Flight{" +
+                "id=" + getId() +
+                ", origin='" + origin + '\'' +
+                ", destination='" + destination + '\'' +
+                ", departureTime=" + departureTime +
+                ", arrivalTime=" + arrivalTime +
+                ", capacity=" + capacity +
+                ", flightNumber='" + flightNumber + '\'' +
+                ", currentLoad=" + currentLoad +
+                ", duration=" + duration +
+                '}';
+    }
 }
