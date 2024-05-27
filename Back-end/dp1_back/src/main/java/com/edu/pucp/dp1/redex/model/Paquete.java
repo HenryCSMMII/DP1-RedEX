@@ -68,5 +68,8 @@ public class Paquete extends BaseEntity{
     @Column(name="tiempoTotal", nullable = false)
     private double tiempoTotal;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idAeropuerto", nullable = false)
+    private Airport airport;
 
 }

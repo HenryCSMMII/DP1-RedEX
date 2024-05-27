@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.edu.pucp.dp1.redex.model.Paquete;
+import com.edu.pucp.dp1.redex.model.Airport;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -17,5 +18,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface PaqueteRepository extends JpaRepository<Paquete, Integer>{
 
     public List<Paquete> findAll();
-    public Paquete findPackageById(int id);    
+    public Paquete findPackageById(int id);
+
+    public List<Paquete> findPackageByAirport(Airport aeropuerto);
 }

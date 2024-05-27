@@ -14,13 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.edu.pucp.dp1.redex.model.Paquete;
+import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.repository.PaqueteRepository;
+import com.edu.pucp.dp1.redex.repository.AirportRepository;
 
 @Service
 public class PaqueteService {
     
     @Autowired
     private PaqueteRepository paqueteRepository;
+
+    @Autowired
+    private AirportRepository airportRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaqueteService.class);
 
@@ -65,6 +70,17 @@ public class PaqueteService {
             paqueteRepository.deleteById(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
+        }
+    }
+
+    public List<Paquete> listarPaquetesPorAeropuerto(int aeropuertoId){
+        try {
+            Airport airport = new Airport();
+            airport = airportRepository.findAirportById(aeropuertoId);
+            return paqueteRepository.findPackageByAirport(airport);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
         }
     }
 

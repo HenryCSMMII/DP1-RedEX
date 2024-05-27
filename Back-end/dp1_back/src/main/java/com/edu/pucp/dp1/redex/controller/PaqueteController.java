@@ -60,6 +60,11 @@ public class PaqueteController {
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable int id){
         paqueteService.delete(id);
-    }    
+    }
+
+    @GetMapping(value = "/listarPaquetesPorAeropuerto/{idAeropuerto}")
+    List<Paquete> listarPaquetesPorAeropuerto(@PathVariable int idAeropuerto){
+        return paqueteService.listarPaquetesPorAeropuerto(idAeropuerto);
+    }
 
 }
