@@ -52,7 +52,7 @@ public class Shipment extends BaseEntity {
     @Column(name = "tiempo_activo", nullable = false)
     private double tiempoActivo;
 
-    @OneToMany(mappedBy = "shipment", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "shipment", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Paquete> paquetes;
 

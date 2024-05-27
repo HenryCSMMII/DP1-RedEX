@@ -41,7 +41,7 @@ public class Airport extends BaseEntity {
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     @JsonManagedReference
     private City city;

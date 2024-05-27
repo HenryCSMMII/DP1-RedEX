@@ -15,7 +15,7 @@ public class RedExApplication {
 		SpringApplication.run(RedExApplication.class, args);
         System.out.println("Ejecutanding...");
 	}
-
+    
 	@Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {

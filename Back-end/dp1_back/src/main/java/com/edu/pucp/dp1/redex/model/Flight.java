@@ -60,11 +60,11 @@ public class Flight extends BaseEntity {
     @Column(name = "duration", nullable = false)
     private int duration;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "estado_vuelo_id", nullable = false)
     private EstadoVuelo estadoVuelo;
 
-    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
     private List<PackageFlight> packageFlights;
 
     // Constructor adicional

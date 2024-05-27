@@ -34,7 +34,7 @@ public class PackageFlight extends BaseEntity {
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "estado_trazabilidad_id", nullable = false)
     private EstadoTrazabilidad estadoTrazabilidad;
 

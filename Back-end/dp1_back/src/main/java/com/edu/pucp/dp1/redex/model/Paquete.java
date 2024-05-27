@@ -59,7 +59,7 @@ public class Paquete extends BaseEntity {
     @JoinColumn(name = "idAeropuerto")
     private Airport airport;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idEstadoPaquete")
     private EstadoPaquete estadoPaquete;
 
@@ -68,7 +68,7 @@ public class Paquete extends BaseEntity {
     @JsonBackReference
     private Shipment shipment;
 
-    @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY)
     private List<PackageFlight> packageFlights;
 
     // ToString method for debugging purposes
