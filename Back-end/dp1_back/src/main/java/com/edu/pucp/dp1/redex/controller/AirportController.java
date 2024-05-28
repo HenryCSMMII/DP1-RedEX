@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.dto.AirportDTO;
 import com.edu.pucp.dp1.redex.services.AirportService;
 
 @RestController
@@ -25,48 +25,33 @@ public class AirportController {
     @Autowired
     private AirportService airportService;
 
-    //Trae todos los vuelos
-    //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/")
-    List<Airport> getAll(){
+    List<AirportDTO> getAll(){
         return airportService.getAll();
     }
 
-    
-    //Trae a un vuelo
-    //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @GetMapping(value = "/{id}")
-    Airport get(@PathVariable int id){
+    AirportDTO get(@PathVariable int id){
         return airportService.get(id);
     }
 
-    //Registra un vuelo
-    //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PostMapping(value = "/")
-    Airport register(@RequestBody Airport airport) throws SQLException{
-         
-        // if(flightService.duplicadoPropio(flight.getId())!=null){
-        //     throw new SQLException();
-        // }
-        return airportService.register(airport);
+    AirportDTO register(@RequestBody AirportDTO airportDTO) throws SQLException{
+        return airportService.register(airportDTO);
     }
 
-    //Actualiza un vuelo
-    //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @PutMapping(value = "/")
-    Airport update(@RequestBody Airport airport) throws SQLException{
-        return airportService.update(airport);
+    AirportDTO update(@RequestBody AirportDTO airportDTO) throws SQLException{
+        return airportService.update(airportDTO);
     }
     
-    //@CrossOrigin(origins = "https://proyectaserver.inf.pucp.edu.pe")
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable int id){
         airportService.delete(id);
     }
 
     @GetMapping(value = "/{idInicio}/{idFinal}")
-    List<Airport> listaAirportsPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
+    List<AirportDTO> listaAirportsPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return airportService.listAirportsByIds(idInicio, idFinal);
     }
-
 }
