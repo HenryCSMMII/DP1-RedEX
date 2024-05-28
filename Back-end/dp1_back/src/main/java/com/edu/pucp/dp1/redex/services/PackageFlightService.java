@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.PackageFlight;
 import com.edu.pucp.dp1.redex.repository.PackageFlightRepository;
 
@@ -79,4 +80,14 @@ public class PackageFlightService {
             LOGGER.error(e.getMessage());
         }
     }
+
+    public List<PackageFlight> listFlightByIds(int idInicio, int idFinal){
+        try{
+            List<PackageFlight> pack_flights = packageFlightRepository.findPackageFlightByIds(idInicio, idFinal);
+            return pack_flights;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }    
 }

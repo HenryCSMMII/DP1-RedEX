@@ -54,5 +54,5 @@ public class CityController {
     @GetMapping(value = "/{idInicio}/{idFinal}")
     List<City> listaCitiesPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return cityService.listCityByIds(idInicio, idFinal);
-    }    
+    }
 }

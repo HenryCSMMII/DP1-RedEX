@@ -1,5 +1,6 @@
 package com.edu.pucp.dp1.redex.services;
 
+import com.edu.pucp.dp1.redex.model.Continent;
 import com.edu.pucp.dp1.redex.model.Country;
 import com.edu.pucp.dp1.redex.repository.CountryRepository;
 
@@ -59,6 +60,16 @@ public class CountryService {
             countryRepository.deleteById(id);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
+        }
+    }
+
+    public List<Country> listCountryByIds(int idInicio, int idFinal){
+        try{
+            List<Country> countries = countryRepository.findCountryByIds(idInicio, idFinal);
+            return countries;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
         }
     }
 }

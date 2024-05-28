@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.PackageFlight;
 import com.edu.pucp.dp1.redex.services.PackageFlightService;
 
@@ -59,4 +60,9 @@ public class PackageFlightController {
     void delete(@PathVariable int id){
         packageFlightService.delete(id);
     }
+
+    @GetMapping(value = "/{idInicio}/{idFinal}")
+    List<PackageFlight> listarPackageFlightsByIds(@PathVariable int idInicio, @PathVariable int idFinal){
+        return packageFlightService.listFlightByIds(idInicio, idFinal);
+    }    
 }

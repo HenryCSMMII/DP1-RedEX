@@ -23,8 +23,8 @@ import lombok.Setter;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "package")
-@SQLDelete(sql = "UPDATE package SET activo = 0 WHERE id = ?")
+@Table(name = "paquete")
+@SQLDelete(sql = "UPDATE paquete SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
 @NoArgsConstructor
 @AllArgsConstructor

@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.repository.ShipmentRepository;
@@ -82,4 +84,14 @@ public class ShipmentService {
             LOGGER.error(e.getMessage(), e);
         }
     }
+
+    public List<Shipment> listShipmentsByIds(int idInicio, int idFinal){
+        try{
+            List<Shipment> envios = shipmentRepository.findShipmentByIds(idInicio, idFinal);
+            return envios;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }    
 }
