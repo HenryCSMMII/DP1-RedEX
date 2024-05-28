@@ -5,16 +5,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.edu.pucp.dp1.redex.model.Continent;
+import com.edu.pucp.dp1.redex.dto.FlightDTO;
 import com.edu.pucp.dp1.redex.model.EstadoVuelo;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.EstadoVueloRepository;
@@ -30,7 +28,7 @@ public class FlightService{
     private EstadoVueloRepository estadoVueloRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlightService.class);
-    
+
     public void registerListFlight(List<Flight> flights){
         try {
             for (Flight flight : flights) {
@@ -41,7 +39,7 @@ public class FlightService{
         }
     }
 
-    public Flight parseFlightFromLine(String line) {
+    public FlightDTO parseFlightFromLine(String line) {
         String[] parts = line.split("-");
         String origin = parts[0];
         String destination = parts[1];
@@ -52,60 +50,70 @@ public class FlightService{
         estadoVuelo.setId(1);
         estadoVuelo.setEstado("PENDIENTE");
 
-        return new Flight(origin, destination, departureTime, arrivalTime, capacity, "0", 0, 0, estadoVuelo);
+        Flight flight = new Flight(origin, destination, departureTime, arrivalTime, capacity, "0", 0, 0, estadoVuelo);
+        return convertToDTO(flight);
     }
 
-    public List<Flight> listarVuelosPorEstado(int idEstado){
+    public List<FlightDTO> listarVuelosPorEstado(int idEstado){
         try {
-            EstadoVuelo estado = new EstadoVuelo();
-            estado = estadoVueloRepository.findEstadoVueloById(idEstado);
-            return flightRepository.findFlightByEstadoVuelo(estado);
+            EstadoVuelo estado = estadoVueloRepository.findEstadoVueloById(idEstado);
+            return flightRepository.findFlightByEstadoVuelo(estado).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public List<Flight> listFlightByIds(int idInicio, int idFinal){
+    public List<FlightDTO> listFlightByIds(int idInicio, int idFinal){
         try{
-            List<Flight> flights = flightRepository.findFlightByIds(idInicio, idFinal);
-            return flights;
+            return flightRepository.findFlightByIds(idInicio, idFinal).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public Flight register(Flight flight){
+    public FlightDTO register(FlightDTO flightDTO){
         try {
-            return flightRepository.save(flight);
+            Flight flight = convertToEntity(flightDTO);
+            flight = flightRepository.save(flight);
+            return convertToDTO(flight);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public List<Flight> getAll(){
+    public List<FlightDTO> getAll(){
         try {
-            return flightRepository.findAll();
+            return flightRepository.findAll().stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public Flight get(int id){
+    public FlightDTO get(int id){
         try {
-            return flightRepository.findFlightById(id);
+            Flight flight = flightRepository.findFlightById(id);
+            return flight != null ? convertToDTO(flight) : null;
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public Flight update(Flight flight){
+    public FlightDTO update(FlightDTO flightDTO){
         try {
-            return flightRepository.save(flight);
+            Flight flight = convertToEntity(flightDTO);
+            flight = flightRepository.save(flight);
+            return convertToDTO(flight);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
@@ -149,5 +157,36 @@ public class FlightService{
     public String toString(Flight flight) {
         return "Vuelo " + flight.getOrigin() + " -> " + flight.getDestination() + " (" + flight.getDepartureTime() + " - " +
         flight.getArrivalTime() + ") - Capacidad: " + flight.getCapacity();
-    }    
+    }
+
+    private FlightDTO convertToDTO(Flight flight) {
+        return new FlightDTO(
+                flight.getId(),
+                flight.getOrigin(),
+                flight.getDestination(),
+                flight.getDepartureTime(),
+                flight.getArrivalTime(),
+                flight.getCapacity(),
+                flight.getFlightNumber(),
+                flight.getCurrentLoad(),
+                flight.getDuration(),
+                flight.getEstadoVuelo().getId()
+        );
+    }
+
+    private Flight convertToEntity(FlightDTO flightDTO) {
+        Flight flight = new Flight();
+        flight.setId(flightDTO.getId());
+        flight.setOrigin(flightDTO.getOrigin());
+        flight.setDestination(flightDTO.getDestination());
+        flight.setDepartureTime(flightDTO.getDepartureTime());
+        flight.setArrivalTime(flightDTO.getArrivalTime());
+        flight.setCapacity(flightDTO.getCapacity());
+        flight.setFlightNumber(flightDTO.getFlightNumber());
+        flight.setCurrentLoad(flightDTO.getCurrentLoad());
+        flight.setDuration(flightDTO.getDuration());
+        EstadoVuelo estadoVuelo = estadoVueloRepository.findEstadoVueloById(flightDTO.getEstadoVueloId());
+        flight.setEstadoVuelo(estadoVuelo);
+        return flight;
+    }
 }
