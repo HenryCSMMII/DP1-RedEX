@@ -1,15 +1,14 @@
 package com.edu.pucp.dp1.redex.services;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.PackageFlight;
 import com.edu.pucp.dp1.redex.repository.PackageFlightRepository;
+import com.edu.pucp.dp1.redex.dto.PackageFlightDTO;
 
 @Service
 public class PackageFlightService {
@@ -28,36 +27,40 @@ public class PackageFlightService {
         }
     }
 
-    public List<PackageFlight> getAll(){
+    public List<PackageFlightDTO> getAll(){
         try {
-            return packageFlightRepository.findAll();
+            List<PackageFlight> packageFlights = packageFlightRepository.findAll();
+            return packageFlights.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public PackageFlight get(int id){
+    public PackageFlightDTO get(int id){
         try {
-            return packageFlightRepository.findPackageFlightById(id);
+            PackageFlight packageFlight = packageFlightRepository.findPackageFlightById(id);
+            return convertToDTO(packageFlight);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public List<PackageFlight> getByPaqueteId(int paqueteId){
+    public List<PackageFlightDTO> getByPaqueteId(int paqueteId){
         try {
-            return packageFlightRepository.findByPaqueteId(paqueteId);
+            List<PackageFlight> packageFlights = packageFlightRepository.findByPaqueteId(paqueteId);
+            return packageFlights.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public List<PackageFlight> getByFlightId(int flightId){
+    public List<PackageFlightDTO> getByFlightId(int flightId){
         try {
-            return packageFlightRepository.findByFlightId(flightId);
+            List<PackageFlight> packageFlights = packageFlightRepository.findByFlightId(flightId);
+            return packageFlights.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
@@ -81,13 +84,22 @@ public class PackageFlightService {
         }
     }
 
-    public List<PackageFlight> listFlightByIds(int idInicio, int idFinal){
-        try{
-            List<PackageFlight> pack_flights = packageFlightRepository.findPackageFlightByIds(idInicio, idFinal);
-            return pack_flights;
-        }catch (Exception e) {
+    public List<PackageFlightDTO> listFlightByIds(int idInicio, int idFinal){
+        try {
+            List<PackageFlight> packageFlights = packageFlightRepository.findPackageFlightByIds(idInicio, idFinal);
+            return packageFlights.stream().map(this::convertToDTO).collect(Collectors.toList());
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
-    }    
+    } 
+
+    private PackageFlightDTO convertToDTO(PackageFlight packageFlight) {
+        return new PackageFlightDTO(
+                packageFlight.getId(),
+                packageFlight.getPaquete().getId(),
+                packageFlight.getFlight().getId(),
+                packageFlight.getEstadoTrazabilidad().getId()
+        );
+    }   
 }

@@ -2,7 +2,6 @@ package com.edu.pucp.dp1.redex.controller;
 
 import java.sql.SQLException;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,8 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.edu.pucp.dp1.redex.model.Flight;
+import com.edu.pucp.dp1.redex.dto.PackageFlightDTO;
 import com.edu.pucp.dp1.redex.model.PackageFlight;
 import com.edu.pucp.dp1.redex.services.PackageFlightService;
 
@@ -27,22 +25,22 @@ public class PackageFlightController {
     private PackageFlightService packageFlightService;
 
     @GetMapping(value = "/")
-    List<PackageFlight> getAll(){
+    List<PackageFlightDTO> getAll(){
         return packageFlightService.getAll();
     }
 
     @GetMapping(value = "/{id}")
-    PackageFlight get(@PathVariable int id){
+    PackageFlightDTO get(@PathVariable int id){
         return packageFlightService.get(id);
     }
 
     @GetMapping(value = "/package/{paqueteId}")
-    List<PackageFlight> getByPaqueteId(@PathVariable int paqueteId){
+    List<PackageFlightDTO> getByPaqueteId(@PathVariable int paqueteId){
         return packageFlightService.getByPaqueteId(paqueteId);
     }
 
     @GetMapping(value = "/flight/{flightId}")
-    List<PackageFlight> getByFlightId(@PathVariable int flightId){
+    List<PackageFlightDTO> getByFlightId(@PathVariable int flightId){
         return packageFlightService.getByFlightId(flightId);
     }
 
@@ -62,7 +60,7 @@ public class PackageFlightController {
     }
 
     @GetMapping(value = "/{idInicio}/{idFinal}")
-    List<PackageFlight> listarPackageFlightsByIds(@PathVariable int idInicio, @PathVariable int idFinal){
+    List<PackageFlightDTO> listarPackageFlightsByIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return packageFlightService.listFlightByIds(idInicio, idFinal);
     }    
 }
