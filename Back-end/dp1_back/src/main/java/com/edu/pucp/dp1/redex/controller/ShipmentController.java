@@ -21,7 +21,7 @@ import com.edu.pucp.dp1.redex.services.ShipmentService;
 @RequestMapping("/shipment")
 @CrossOrigin
 public class ShipmentController {
-    
+
     @Autowired
     private ShipmentService shipmentService;
 

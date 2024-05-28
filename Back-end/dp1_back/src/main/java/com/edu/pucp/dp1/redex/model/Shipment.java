@@ -4,20 +4,18 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,11 +32,13 @@ public class Shipment extends BaseEntity {
     @Column(name = "cantidad", nullable = false)
     private int cantidad;
 
-    @Column(name = "id_origen", nullable = false)
-    private int idOrigen;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "origen_id", nullable = false)
+    private Airport origen;
 
-    @Column(name = "id_destino", nullable = false)
-    private int idDestino;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "destino_id", nullable = false)
+    private Airport destino;
 
     @Column(name = "tipo", nullable = false)
     private int tipo;
@@ -62,8 +62,8 @@ public class Shipment extends BaseEntity {
         return "Shipment{" +
                 "id=" + getId() +
                 ", cantidad=" + cantidad +
-                ", idOrigen=" + idOrigen +
-                ", idDestino=" + idDestino +
+                ", origen=" + (origen != null ? origen.getCodigoIATA() : "null") +
+                ", destino=" + (destino != null ? destino.getCodigoIATA() : "null") +
                 ", tipo=" + tipo +
                 ", fechaInicio=" + fechaInicio +
                 ", fechaFin=" + fechaFin +

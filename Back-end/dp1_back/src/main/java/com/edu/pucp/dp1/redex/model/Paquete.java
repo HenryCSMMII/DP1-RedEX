@@ -31,11 +31,13 @@ import lombok.Setter;
 @Getter @Setter
 public class Paquete extends BaseEntity {
 
-    @Column(name="origin", nullable = false)
-    private String origin;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "origin_id", nullable = false)
+    private Airport origin;
 
-    @Column(name="destination", nullable = false)
-    private String destination;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "destination_id", nullable = false)
+    private Airport destination;
 
     @Column(name="departureTime", nullable = false)
     private LocalTime departureTime;
@@ -49,8 +51,9 @@ public class Paquete extends BaseEntity {
     @Column(name="quantity", nullable = false)
     private int quantity;
 
-    @Column(name="assignedFlightId", nullable = false)
-    private String assignedFlightId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "assignedFlightId", nullable = false)
+    private Flight assignedFlight;
 
     @Column(name="tiempoTotal", nullable = false)
     private double tiempoTotal;
@@ -68,7 +71,6 @@ public class Paquete extends BaseEntity {
     @JsonBackReference
     private Shipment shipment;
 
-
     //TABLA INTERMEDIA
     @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY)
     private List<PackageFlight> packageFlights;
@@ -78,13 +80,13 @@ public class Paquete extends BaseEntity {
     public String toString() {
         return "Paquete{" +
                 "id=" + getId() +
-                ", origin='" + origin + '\'' +
-                ", destination='" + destination + '\'' +
+                ", origin=" + (origin != null ? origin.getCodigoIATA() : "null") +
+                ", destination=" + (destination != null ? destination.getCodigoIATA() : "null") +
                 ", departureTime=" + departureTime +
                 ", shipmentDateTime=" + shipmentDateTime +
                 ", packageId='" + packageId + '\'' +
                 ", quantity=" + quantity +
-                ", assignedFlightId='" + assignedFlightId + '\'' +
+                ", assignedFlight=" + (assignedFlight != null ? assignedFlight.getId() : "null") +
                 ", tiempoTotal=" + tiempoTotal +
                 ", airport=" + (airport != null ? airport.getCodigoIATA() : "null") +
                 ", estadoPaquete=" + (estadoPaquete != null ? estadoPaquete.getId() : "null") +

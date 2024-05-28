@@ -301,7 +301,7 @@ public class Main {
         Map<Paquete, List<List<Flight>>> packageRoutes = new HashMap<>();
 
         for (Paquete pack : packages) {
-            List<List<Flight>> possibleRoutes = findRoutes(pack.getOrigin(), pack.getDestination(), airportToFlights, maxStops);
+            List<List<Flight>> possibleRoutes = findRoutes(pack.getOrigin().getCity().getNombre(), pack.getDestination().getCity().getNombre(), airportToFlights, maxStops);
 
             // Verificar si se encontraron rutas posibles
             if (!possibleRoutes.isEmpty()) {

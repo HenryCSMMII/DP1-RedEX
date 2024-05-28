@@ -4,9 +4,9 @@ INSERT INTO continent (name, activo, fecha_creacion, fecha_modificacion)
 VALUES 
 ('América del Sur', 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
 ('Europa', 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
-('Asia', 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'));*/
+('Asia', 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'));
 
-/*SET time_zone = '-05:00';
+SET time_zone = '-05:00';
 
 INSERT INTO country (name, shortname, continent_id, activo, fecha_creacion, fecha_modificacion)
 VALUES 
@@ -39,9 +39,9 @@ VALUES
 ('Malasia', 'MYS', 3, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
 ('Singapur', 'SGP', 3, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
 ('Indonesia', 'IDN', 3, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
-('Filipinas', 'PHL', 3, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'));*/
+('Filipinas', 'PHL', 3, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'));
 
-/*SET time_zone = '-05:00';
+SET time_zone = '-05:00';
 
 INSERT INTO city (nombre, abreviatura, zonaHoraria, id_pais, activo, fecha_creacion, fecha_modificacion)
 VALUES 
@@ -74,10 +74,10 @@ VALUES
 ('Kuala Lumpur', 'kual', +8, 27, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
 ('Singapur', 'sing', +8, 28, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
 ('Yakarta', 'jaka', +7, 29, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00')),
-('Manila', 'mani', +8, 30, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'));*/
+('Manila', 'mani', +8, 30, 1, CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'), CONVERT_TZ(NOW(), @@session.time_zone, '-05:00'));
 
 
-/*SET time_zone = '-05:00';
+SET time_zone = '-05:00';
 
 INSERT INTO airport (codigoiata, latitude, longitude, capacity, activo, fecha_creacion, fecha_modificacion, city_id)
 VALUES 
@@ -111,4 +111,5 @@ VALUES
 ('WSSS', 1.3521, 103.8198, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), 28),
 ('WIII', -6.2088, 106.8456, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'), 29),
 ('RPLL', 14.5995, 120.9842, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), 30);
+
 */

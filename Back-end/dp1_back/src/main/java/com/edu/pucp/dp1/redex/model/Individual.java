@@ -20,7 +20,7 @@ public class Individual<T> {
         List<Paquete> packages = new ArrayList<>(packageRoutes.keySet());
         Paquete pack = packages.get(rand.nextInt(packages.size()));
         List<List<Flight>> validRoutes = packageRoutes.get(pack).stream()
-                .filter(route -> isValidRoute(route, pack.getOrigin(), pack.getDestination()))
+                .filter(route -> isValidRoute(route, pack.getOrigin().getCity().getNombre(), pack.getDestination().getCity().getNombre()))
                 .collect(Collectors.toList());
 
         if (!validRoutes.isEmpty()) {
