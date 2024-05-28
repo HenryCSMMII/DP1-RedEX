@@ -23,4 +23,7 @@ public interface PaqueteRepository extends JpaRepository<Paquete, Integer>{
 
     public List<Paquete> findPackageByAirport(Airport aeropuerto);
     public List<Paquete> findPackageByEstadoPaquete(EstadoPaquete estado);
+
+    @Query("SELECT z FROM Paquete z WHERE z.id BETWEEN :idInicio and :idFinal")
+    public List<Paquete> findPaqueteByIds(int idInicio, int idFinal);
 }

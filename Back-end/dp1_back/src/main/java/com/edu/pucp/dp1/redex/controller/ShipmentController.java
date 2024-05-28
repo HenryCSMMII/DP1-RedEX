@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.services.ShipmentService;
 
@@ -49,4 +50,9 @@ public class ShipmentController {
     void delete(@PathVariable int id){
         shipmentService.delete(id);
     }
+
+    @GetMapping(value = "/{idInicio}/{idFinal}")
+    List<Shipment> listarShipmentsByIds(@PathVariable int idInicio, @PathVariable int idFinal){
+        return shipmentService.listShipmentsByIds(idInicio, idFinal);
+    }    
 }

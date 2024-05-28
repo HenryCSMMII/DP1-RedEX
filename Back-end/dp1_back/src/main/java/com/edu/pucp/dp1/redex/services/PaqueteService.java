@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.EstadoPaquete;
+import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.PaqueteRepository;
 import com.edu.pucp.dp1.redex.repository.AirportRepository;
 import com.edu.pucp.dp1.redex.repository.EstadoPaqueteRepository;
@@ -99,5 +100,15 @@ public class PaqueteService {
             return null;
         }
     }
+
+    public List<Paquete> listPaquetesByIds(int idInicio, int idFinal){
+        try{
+            List<Paquete> paquetes = paqueteRepository.findPaqueteByIds(idInicio, idFinal);
+            return paquetes;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }    
 
 }

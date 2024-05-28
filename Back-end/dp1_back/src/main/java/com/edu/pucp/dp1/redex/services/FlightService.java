@@ -74,7 +74,7 @@ public class FlightService{
             LOGGER.error(e.getMessage());
             return null;
         }
-    }    
+    }
 
     public Flight register(Flight flight){
         try {
