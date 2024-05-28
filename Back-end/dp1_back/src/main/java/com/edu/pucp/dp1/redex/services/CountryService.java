@@ -1,6 +1,6 @@
 package com.edu.pucp.dp1.redex.services;
 
-import com.edu.pucp.dp1.redex.model.Continent;
+import com.edu.pucp.dp1.redex.dto.CountryDTO;
 import com.edu.pucp.dp1.redex.model.Country;
 import com.edu.pucp.dp1.redex.repository.CountryRepository;
 
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CountryService {
@@ -28,18 +29,20 @@ public class CountryService {
         }
     }
 
-    public List<Country> getAll(){
+    public List<CountryDTO> getAll(){
         try {
-            return countryRepository.findAll();
+            List<Country> countries = countryRepository.findAll();
+            return countries.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
     }
 
-    public Country get(int id){
+    public CountryDTO get(int id){
         try {
-            return countryRepository.findCountryById(id);
+            Country country = countryRepository.findCountryById(id);
+            return convertToDTO(country);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
@@ -63,13 +66,17 @@ public class CountryService {
         }
     }
 
-    public List<Country> listCountryByIds(int idInicio, int idFinal){
-        try{
+    public List<CountryDTO> listCountryByIds(int idInicio, int idFinal){
+        try {
             List<Country> countries = countryRepository.findCountryByIds(idInicio, idFinal);
-            return countries;
-        }catch (Exception e) {
+            return countries.stream().map(this::convertToDTO).collect(Collectors.toList());
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
+    }
+
+    private CountryDTO convertToDTO(Country country) {
+        return new CountryDTO(country.getId(), country.getName(), country.getShortname(), country.getContinent().getId());
     }
 }
