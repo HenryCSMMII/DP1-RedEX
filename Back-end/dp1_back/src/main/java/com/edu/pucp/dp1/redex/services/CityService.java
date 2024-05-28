@@ -70,5 +70,5 @@ public class CityService {
             LOGGER.error(e.getMessage());
             return null;
         }
-    }    
+    }
 }

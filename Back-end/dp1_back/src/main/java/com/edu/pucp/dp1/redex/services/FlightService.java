@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.edu.pucp.dp1.redex.model.Continent;
 import com.edu.pucp.dp1.redex.model.EstadoVuelo;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.EstadoVueloRepository;
@@ -64,6 +65,16 @@ public class FlightService{
             return null;
         }
     }
+
+    public List<Flight> listFlightByIds(int idInicio, int idFinal){
+        try{
+            List<Flight> flights = flightRepository.findFlightByIds(idInicio, idFinal);
+            return flights;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }    
 
     public Flight register(Flight flight){
         try {

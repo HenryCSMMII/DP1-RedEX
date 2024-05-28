@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.edu.pucp.dp1.redex.model.Country;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.services.FlightService;
 
@@ -94,6 +95,11 @@ public class FlightController {
     @GetMapping(value = "/listarVuelosPorEstado/{idEstado}")
     List<Flight> listarVuelosPorEstado(@PathVariable int idEstado){
         return flightService.listarVuelosPorEstado(idEstado);
+    }
+
+    @GetMapping(value = "/{idInicio}/{idFinal}")
+    List<Flight> listarFlightsByIds(@PathVariable int idInicio, @PathVariable int idFinal){
+        return flightService.listFlightByIds(idInicio, idFinal);
     }
 
 }
