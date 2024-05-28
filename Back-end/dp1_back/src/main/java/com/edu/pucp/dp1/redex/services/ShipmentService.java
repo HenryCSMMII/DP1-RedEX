@@ -1,17 +1,19 @@
 package com.edu.pucp.dp1.redex.services;
 
-import java.util.List;
+import com.edu.pucp.dp1.redex.dto.ShipmentDTO;
+import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.Shipment;
+import com.edu.pucp.dp1.redex.repository.ShipmentRepository;
+import com.edu.pucp.dp1.redex.repository.AirportRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.edu.pucp.dp1.redex.model.Paquete;
-import com.edu.pucp.dp1.redex.model.Shipment;
-import com.edu.pucp.dp1.redex.model.Airport;
-import com.edu.pucp.dp1.redex.repository.ShipmentRepository;
-import com.edu.pucp.dp1.redex.repository.AirportRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ShipmentService {
@@ -27,33 +29,33 @@ public class ShipmentService {
     @Transactional
     public Shipment register(Shipment shipment){
         try {
-            // Obtener aeropuertos por ID
             Airport origen = airportRepository.findById(shipment.getOrigen().getId())
                                               .orElseThrow(() -> new RuntimeException("Origin airport not found"));
             Airport destino = airportRepository.findById(shipment.getDestino().getId())
                                                .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-            // Asignar aeropuertos obtenidos
             shipment.setOrigen(origen);
             shipment.setDestino(destino);
             return shipmentRepository.save(shipment);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            throw e;  // Propagar la excepción para que el controlador pueda manejarla
+            throw e;
         }
     }
 
-    public List<Shipment> getAll(){
+    public List<ShipmentDTO> getAll(){
         try {
-            return shipmentRepository.findAll();
+            List<Shipment> shipments = shipmentRepository.findAll();
+            return shipments.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public Shipment get(int id){
+    public ShipmentDTO get(int id){
         try {
-            return shipmentRepository.findById(id).orElse(null);
+            Shipment shipment = shipmentRepository.findById(id).orElse(null);
+            return convertToDTO(shipment);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
@@ -62,12 +64,10 @@ public class ShipmentService {
 
     public Shipment update(Shipment shipment){
         try {
-            // Obtener aeropuertos por ID
             Airport origen = airportRepository.findById(shipment.getOrigen().getId())
                                               .orElseThrow(() -> new RuntimeException("Origin airport not found"));
             Airport destino = airportRepository.findById(shipment.getDestino().getId())
                                                .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-            // Asignar aeropuertos obtenidos
             shipment.setOrigen(origen);
             shipment.setDestino(destino);
             return shipmentRepository.save(shipment);
@@ -85,13 +85,26 @@ public class ShipmentService {
         }
     }
 
-    public List<Shipment> listShipmentsByIds(int idInicio, int idFinal){
-        try{
-            List<Shipment> envios = shipmentRepository.findShipmentByIds(idInicio, idFinal);
-            return envios;
-        }catch (Exception e) {
+    public List<ShipmentDTO> listShipmentsByIds(int idInicio, int idFinal){
+        try {
+            List<Shipment> shipments = shipmentRepository.findShipmentByIds(idInicio, idFinal);
+            return shipments.stream().map(this::convertToDTO).collect(Collectors.toList());
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
-    }    
+    }
+
+    private ShipmentDTO convertToDTO(Shipment shipment) {
+        return new ShipmentDTO(
+            shipment.getId(),
+            shipment.getCantidad(),
+            shipment.getOrigen().getId(),
+            shipment.getDestino().getId(),
+            shipment.getTipo(),
+            shipment.getFechaInicio(),
+            shipment.getFechaFin(),
+            shipment.getTiempoActivo()
+        );
+    }
 }
