@@ -7,6 +7,7 @@ import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.EstadoPaquete;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 @Repository
 @Transactional
