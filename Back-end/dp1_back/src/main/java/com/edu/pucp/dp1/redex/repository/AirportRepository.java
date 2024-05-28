@@ -20,4 +20,7 @@ public interface AirportRepository extends JpaRepository<Airport, Integer> {
     public List<Airport> findAll();
     public Airport findAirportById(int id);
 
+    @Query("SELECT a FROM Airport a WHERE a.id BETWEEN :idInicio and :idFinal")
+    public List<Airport> findAirportByIds(int idInicio, int idFinal);
+
 }

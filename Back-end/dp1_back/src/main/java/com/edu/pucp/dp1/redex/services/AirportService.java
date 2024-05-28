@@ -64,5 +64,14 @@ public class AirportService {
         }
     }
 
+    public List<Airport> listAirportsByIds(int idInicio, int idFinal){
+        try{
+            List<Airport> aeropuertos = airportRepository.findAirportByIds(idInicio, idFinal);
+            return aeropuertos;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
 
 }

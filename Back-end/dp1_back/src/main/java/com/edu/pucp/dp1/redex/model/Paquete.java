@@ -68,6 +68,8 @@ public class Paquete extends BaseEntity {
     @JsonBackReference
     private Shipment shipment;
 
+
+    //TABLA INTERMEDIA
     @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY)
     private List<PackageFlight> packageFlights;
 

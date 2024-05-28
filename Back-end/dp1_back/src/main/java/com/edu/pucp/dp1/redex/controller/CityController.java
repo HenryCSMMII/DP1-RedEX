@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.City;
 import com.edu.pucp.dp1.redex.services.CityService;
 
@@ -48,5 +49,10 @@ public class CityController {
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable int id){
         cityService.delete(id);
+    }
+
+    @GetMapping(value = "/{idInicio}/{idFinal}")
+    List<City> listaCitiesPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
+        return cityService.listCityByIds(idInicio, idFinal);
     }    
 }

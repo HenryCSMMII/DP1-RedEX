@@ -61,4 +61,14 @@ public class CityService {
             LOGGER.error(e.getMessage());
         }
     }
+
+    public List<City> listCityByIds(int idInicio, int idFinal){
+        try{
+            List<City> cities = cityRepository.findCityByIds(idInicio, idFinal);
+            return cities;
+        }catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }    
 }
