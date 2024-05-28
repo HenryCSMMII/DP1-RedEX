@@ -1,6 +1,7 @@
 package com.edu.pucp.dp1.redex.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,11 @@ import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.EstadoPaquete;
-import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.repository.PaqueteRepository;
 import com.edu.pucp.dp1.redex.repository.AirportRepository;
 import com.edu.pucp.dp1.redex.repository.FlightRepository;
 import com.edu.pucp.dp1.redex.repository.EstadoPaqueteRepository;
+import com.edu.pucp.dp1.redex.dto.PaqueteDTO;
 
 @Service
 public class PaqueteService {
@@ -54,18 +55,20 @@ public class PaqueteService {
         }
     }
 
-    public List<Paquete> getAll(){
+    public List<PaqueteDTO> getAll(){
         try {
-            return paqueteRepository.findAll();
+            List<Paquete> paquetes = paqueteRepository.findAll();
+            return paquetes.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public Paquete get(int id){
+    public PaqueteDTO get(int id){
         try {
-            return paqueteRepository.findPackageById(id);
+            Paquete paquete = paqueteRepository.findPackageById(id);
+            return convertToDTO(paquete);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
@@ -100,36 +103,54 @@ public class PaqueteService {
         }
     }
 
-    public List<Paquete> listarPaquetesPorAeropuerto(int aeropuertoId){
+    public List<PaqueteDTO> listarPaquetesPorAeropuerto(int aeropuertoId){
         try {
             Airport airport = airportRepository.findById(aeropuertoId)
                                                .orElseThrow(() -> new RuntimeException("Airport not found"));
-            return paqueteRepository.findPackageByAirport(airport);
+            List<Paquete> paquetes = paqueteRepository.findPackageByAirport(airport);
+            return paquetes.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public List<Paquete> listarPaquetesPorEstado(int estadoId){
+    public List<PaqueteDTO> listarPaquetesPorEstado(int estadoId){
         try {
             EstadoPaquete estado = estadoPaqueteRepository.findById(estadoId)
                                                           .orElseThrow(() -> new RuntimeException("EstadoPaquete not found"));
-            return paqueteRepository.findPackageByEstadoPaquete(estado);
+            List<Paquete> paquetes = paqueteRepository.findPackageByEstadoPaquete(estado);
+            return paquetes.stream().map(this::convertToDTO).collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public List<Paquete> listPaquetesByIds(int idInicio, int idFinal){
+    public List<PaqueteDTO> listPaquetesByIds(int idInicio, int idFinal){
         try{
             List<Paquete> paquetes = paqueteRepository.findPaqueteByIds(idInicio, idFinal);
-            return paquetes;
+            return paquetes.stream().map(this::convertToDTO).collect(Collectors.toList());
         }catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
-    }    
+    }
 
+    private PaqueteDTO convertToDTO(Paquete paquete) {
+        return new PaqueteDTO(
+                paquete.getId(),
+                paquete.getOrigin().getId(),
+                paquete.getDestination().getId(),
+                paquete.getDepartureTime(),
+                paquete.getShipmentDateTime(),
+                paquete.getPackageId(),
+                paquete.getQuantity(),
+                paquete.getAssignedFlight().getId(),
+                paquete.getTiempoTotal(),
+                paquete.getAirport().getId(),
+                paquete.getEstadoPaquete().getId(),
+                paquete.getShipment().getId()
+        );
+    }
 }

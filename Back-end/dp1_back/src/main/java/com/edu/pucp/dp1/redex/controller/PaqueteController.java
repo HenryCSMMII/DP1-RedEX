@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.edu.pucp.dp1.redex.model.Flight;
+import com.edu.pucp.dp1.redex.dto.PaqueteDTO;
 import com.edu.pucp.dp1.redex.model.Paquete;
 import com.edu.pucp.dp1.redex.services.PaqueteService;
 
@@ -26,12 +25,12 @@ public class PaqueteController {
     private PaqueteService paqueteService;
 
     @GetMapping(value = "/")
-    List<Paquete> getAll(){
+    List<PaqueteDTO> getAll(){
         return paqueteService.getAll();
     }
 
     @GetMapping(value = "/{id}")
-    Paquete get(@PathVariable int id){
+    PaqueteDTO get(@PathVariable int id){
         return paqueteService.get(id);
     }
 
@@ -51,18 +50,17 @@ public class PaqueteController {
     }
 
     @GetMapping(value = "/listarPaquetesPorAeropuerto/{idAeropuerto}")
-    List<Paquete> listarPaquetesPorAeropuerto(@PathVariable int idAeropuerto){
+    List<PaqueteDTO> listarPaquetesPorAeropuerto(@PathVariable int idAeropuerto){
         return paqueteService.listarPaquetesPorAeropuerto(idAeropuerto);
     }
 
     @GetMapping(value = "/listarPaquetesPorEstado/{idEstado}")
-    List<Paquete> listarPaquetesPorEstado(@PathVariable int idEstado){
+    List<PaqueteDTO> listarPaquetesPorEstado(@PathVariable int idEstado){
         return paqueteService.listarPaquetesPorEstado(idEstado);
     }
 
     @GetMapping(value = "/{idInicio}/{idFinal}")
-    List<Paquete> listarPaquetesByIds(@PathVariable int idInicio, @PathVariable int idFinal){
+    List<PaqueteDTO> listarPaquetesByIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return paqueteService.listPaquetesByIds(idInicio, idFinal);
     }
-
 }
