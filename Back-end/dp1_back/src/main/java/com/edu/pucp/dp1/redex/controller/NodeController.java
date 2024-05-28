@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edu.pucp.dp1.redex.model.Node;
+import com.edu.pucp.dp1.redex.dto.NodeDTO;
 import com.edu.pucp.dp1.redex.services.NodeService;
 
 @RestController
@@ -26,23 +26,23 @@ public class NodeController {
     private NodeService nodeService;
 
     @GetMapping(value = "/")
-    public List<Node> getAll() {
+    public List<NodeDTO> getAll() {
         return nodeService.getAll();
     }
 
     @GetMapping(value = "/{id}")
-    public Node get(@PathVariable int id) {
+    public NodeDTO get(@PathVariable int id) {
         return nodeService.get(id);
     }
 
     @PostMapping(value = "/")
-    public Node register(@RequestBody Node node) throws SQLException {
-        return nodeService.register(node);
+    public NodeDTO register(@RequestBody NodeDTO nodeDTO) throws SQLException {
+        return nodeService.register(nodeDTO);
     }
 
     @PutMapping(value = "/")
-    public Node update(@RequestBody Node node) throws SQLException {
-        return nodeService.update(node);
+    public NodeDTO update(@RequestBody NodeDTO nodeDTO) throws SQLException {
+        return nodeService.update(nodeDTO);
     }
 
     @DeleteMapping(value = "/{id}")
