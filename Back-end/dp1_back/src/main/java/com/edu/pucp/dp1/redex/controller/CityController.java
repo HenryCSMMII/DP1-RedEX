@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.edu.pucp.dp1.redex.model.Airport;
-import com.edu.pucp.dp1.redex.model.City;
+import com.edu.pucp.dp1.redex.dto.CityDTO;
 import com.edu.pucp.dp1.redex.services.CityService;
 
 @RestController
@@ -27,23 +26,23 @@ public class CityController {
     private CityService cityService;
 
     @GetMapping(value = "/")
-    List<City> getAll(){
+    List<CityDTO> getAll(){
         return cityService.getAll();
     }
 
     @GetMapping(value = "/{id}")
-    City get(@PathVariable int id){
+    CityDTO get(@PathVariable int id){
         return cityService.get(id);
     }
 
     @PostMapping(value = "/")
-    City register(@RequestBody City city) throws SQLException{
-        return cityService.register(city);
+    CityDTO register(@RequestBody CityDTO cityDTO) throws SQLException{
+        return cityService.register(cityDTO);
     }
 
     @PutMapping(value = "/")
-    City update(@RequestBody City city) throws SQLException{
-        return cityService.update(city);
+    CityDTO update(@RequestBody CityDTO cityDTO) throws SQLException{
+        return cityService.update(cityDTO);
     }
     
     @DeleteMapping(value = "/{id}")
@@ -52,7 +51,7 @@ public class CityController {
     }
 
     @GetMapping(value = "/{idInicio}/{idFinal}")
-    List<City> listaCitiesPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
+    List<CityDTO> listaCitiesPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return cityService.listCityByIds(idInicio, idFinal);
     }
 }

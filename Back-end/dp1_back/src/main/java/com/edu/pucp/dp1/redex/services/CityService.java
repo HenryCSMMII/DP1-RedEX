@@ -1,5 +1,6 @@
 package com.edu.pucp.dp1.redex.services;
 
+import com.edu.pucp.dp1.redex.dto.CityDTO;
 import com.edu.pucp.dp1.redex.model.City;
 import com.edu.pucp.dp1.redex.repository.CityRepository;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CityService {
@@ -18,38 +20,45 @@ public class CityService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CityService.class);
 
-    public City register(City city){
+    public CityDTO register(CityDTO cityDTO){
         try {
-            return cityRepository.save(city);
+            City city = convertToEntity(cityDTO);
+            city = cityRepository.save(city);
+            return convertToDTO(city);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public List<City> getAll(){
+    public List<CityDTO> getAll(){
         try {
-            return cityRepository.findAll();
+            return cityRepository.findAll().stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public City get(int id){
+    public CityDTO get(int id){
         try {
-            return cityRepository.findCityById(id);
+            City city = cityRepository.findCityById(id);
+            return city != null ? convertToDTO(city) : null;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
 
-    public City update(City city){
+    public CityDTO update(CityDTO cityDTO){
         try {
-            return cityRepository.save(city);
+            City city = convertToEntity(cityDTO);
+            city = cityRepository.save(city);
+            return convertToDTO(city);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
@@ -58,17 +67,39 @@ public class CityService {
         try {
             cityRepository.deleteById(id);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
-    public List<City> listCityByIds(int idInicio, int idFinal){
-        try{
-            List<City> cities = cityRepository.findCityByIds(idInicio, idFinal);
-            return cities;
-        }catch (Exception e) {
-            LOGGER.error(e.getMessage());
+    public List<CityDTO> listCityByIds(int idInicio, int idFinal){
+        try {
+            return cityRepository.findCityByIds(idInicio, idFinal).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
+    }
+
+    private CityDTO convertToDTO(City city) {
+        return new CityDTO(
+                city.getId(),
+                city.getNombre(),
+                city.getAbreviatura(),
+                city.getZonahoraria(),
+                city.getCountry().getId()
+        );
+    }
+
+    private City convertToEntity(CityDTO cityDTO) {
+        City city = new City();
+        city.setId(cityDTO.getId());
+        city.setNombre(cityDTO.getNombre());
+        city.setAbreviatura(cityDTO.getAbreviatura());
+        city.setZonahoraria(cityDTO.getZonahoraria());
+        // Asumimos que el country ya ha sido cargado de la base de datos
+        // y se establece mediante algún mecanismo externo.
+        return city;
     }
 }
