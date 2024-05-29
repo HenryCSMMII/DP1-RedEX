@@ -27,14 +27,9 @@ public class ShipmentService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipmentService.class);
 
     @Transactional
-    public Shipment register(Shipment shipment){
+    public Shipment register(ShipmentDTO shipmentDTO){
         try {
-            Airport origen = airportRepository.findById(shipment.getOrigen().getId())
-                                              .orElseThrow(() -> new RuntimeException("Origin airport not found"));
-            Airport destino = airportRepository.findById(shipment.getDestino().getId())
-                                               .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-            shipment.setOrigen(origen);
-            shipment.setDestino(destino);
+            Shipment shipment = convertToEntity(shipmentDTO);
             return shipmentRepository.save(shipment);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -62,14 +57,10 @@ public class ShipmentService {
         }
     }
 
-    public Shipment update(Shipment shipment){
+    @Transactional
+    public Shipment update(ShipmentDTO shipmentDTO){
         try {
-            Airport origen = airportRepository.findById(shipment.getOrigen().getId())
-                                              .orElseThrow(() -> new RuntimeException("Origin airport not found"));
-            Airport destino = airportRepository.findById(shipment.getDestino().getId())
-                                               .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-            shipment.setOrigen(origen);
-            shipment.setDestino(destino);
+            Shipment shipment = convertToEntity(shipmentDTO);
             return shipmentRepository.save(shipment);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -106,5 +97,22 @@ public class ShipmentService {
             shipment.getFechaFin(),
             shipment.getTiempoActivo()
         );
+    }
+
+    private Shipment convertToEntity(ShipmentDTO shipmentDTO) {
+        Airport origen = airportRepository.findById(shipmentDTO.getOrigenId())
+                                          .orElseThrow(() -> new RuntimeException("Origin airport not found"));
+        Airport destino = airportRepository.findById(shipmentDTO.getDestinoId())
+                                           .orElseThrow(() -> new RuntimeException("Destination airport not found"));
+        Shipment shipment = new Shipment();
+        shipment.setId(shipmentDTO.getId());
+        shipment.setCantidad(shipmentDTO.getCantidad());
+        shipment.setOrigen(origen);
+        shipment.setDestino(destino);
+        shipment.setTipo(shipmentDTO.getTipo());
+        shipment.setFechaInicio(shipmentDTO.getFechaInicio());
+        shipment.setFechaFin(shipmentDTO.getFechaFin());
+        shipment.setTiempoActivo(shipmentDTO.getTiempoActivo());
+        return shipment;
     }
 }

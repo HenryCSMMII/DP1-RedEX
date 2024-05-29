@@ -35,13 +35,13 @@ public class PaqueteController {
     }
 
     @PostMapping(value = "/")
-    Paquete register(@RequestBody Paquete paquete) throws SQLException{
-        return paqueteService.register(paquete);
+    Paquete register(@RequestBody PaqueteDTO paqueteDTO) throws SQLException{
+        return paqueteService.register(paqueteDTO);
     }
 
     @PutMapping(value = "/")
-    Paquete update(@RequestBody Paquete paquete) throws SQLException{
-        return paqueteService.update(paquete);
+    Paquete update(@RequestBody PaqueteDTO paqueteDTO) throws SQLException{
+        return paqueteService.update(paqueteDTO);
     }
 
     @DeleteMapping(value = "/{id}")

@@ -29,13 +29,13 @@ public class ShipmentController {
     }
 
     @PostMapping(value = "/")
-    Shipment register(@RequestBody Shipment shipment) throws SQLException{
-        return shipmentService.register(shipment);
+    Shipment register(@RequestBody ShipmentDTO shipmentDTO) throws SQLException{
+        return shipmentService.register(shipmentDTO);
     }
 
     @PutMapping(value = "/")
-    Shipment update(@RequestBody Shipment shipment) throws SQLException{
-        return shipmentService.update(shipment);
+    Shipment update(@RequestBody ShipmentDTO shipmentDTO) throws SQLException{
+        return shipmentService.update(shipmentDTO);
     }
 
     @DeleteMapping(value = "/{id}")

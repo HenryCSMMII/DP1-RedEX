@@ -56,6 +56,10 @@ public class Shipment extends BaseEntity {
     @JsonManagedReference
     private List<Paquete> paquetes;
 
+    public Shipment(int id) {
+        this.setId(id);
+    }
+
     // ToString method for debugging purposes
     @Override
     public String toString() {

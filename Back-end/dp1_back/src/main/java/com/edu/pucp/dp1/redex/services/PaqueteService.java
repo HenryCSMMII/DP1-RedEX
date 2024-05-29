@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.edu.pucp.dp1.redex.model.Paquete;
+import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.EstadoPaquete;
@@ -35,19 +36,9 @@ public class PaqueteService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PaqueteService.class);
 
     @Transactional
-    public Paquete register(Paquete paquete){
+    public Paquete register(PaqueteDTO paqueteDTO){
         try {
-            // Obtener aeropuertos y vuelo por ID
-            Airport origin = airportRepository.findById(paquete.getOrigin().getId())
-                                              .orElseThrow(() -> new RuntimeException("Origin airport not found"));
-            Airport destination = airportRepository.findById(paquete.getDestination().getId())
-                                                   .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-            Flight assignedFlight = flightRepository.findById(paquete.getAssignedFlight().getId())
-                                                    .orElseThrow(() -> new RuntimeException("Assigned flight not found"));
-            // Asignar aeropuertos y vuelo obtenidos
-            paquete.setOrigin(origin);
-            paquete.setDestination(destination);
-            paquete.setAssignedFlight(assignedFlight);
+            Paquete paquete = convertToEntity(paqueteDTO);
             return paqueteRepository.save(paquete);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -75,19 +66,10 @@ public class PaqueteService {
         }
     }
 
-    public Paquete update(Paquete paquete){
+    @Transactional
+    public Paquete update(PaqueteDTO paqueteDTO){
         try {
-            // Obtener aeropuertos y vuelo por ID
-            Airport origin = airportRepository.findById(paquete.getOrigin().getId())
-                                              .orElseThrow(() -> new RuntimeException("Origin airport not found"));
-            Airport destination = airportRepository.findById(paquete.getDestination().getId())
-                                                   .orElseThrow(() -> new RuntimeException("Destination airport not found"));
-            Flight assignedFlight = flightRepository.findById(paquete.getAssignedFlight().getId())
-                                                    .orElseThrow(() -> new RuntimeException("Assigned flight not found"));
-            // Asignar aeropuertos y vuelo obtenidos
-            paquete.setOrigin(origin);
-            paquete.setDestination(destination);
-            paquete.setAssignedFlight(assignedFlight);
+            Paquete paquete = convertToEntity(paqueteDTO);
             return paqueteRepository.save(paquete);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -128,10 +110,10 @@ public class PaqueteService {
     }
 
     public List<PaqueteDTO> listPaquetesByIds(int idInicio, int idFinal){
-        try{
+        try {
             List<Paquete> paquetes = paqueteRepository.findPaqueteByIds(idInicio, idFinal);
             return paquetes.stream().map(this::convertToDTO).collect(Collectors.toList());
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return null;
         }
@@ -152,5 +134,32 @@ public class PaqueteService {
                 paquete.getEstadoPaquete().getId(),
                 paquete.getShipment().getId()
         );
+    }
+
+    private Paquete convertToEntity(PaqueteDTO paqueteDTO) {
+        Airport origin = airportRepository.findById(paqueteDTO.getOriginId())
+                                          .orElseThrow(() -> new RuntimeException("Origin airport not found"));
+        Airport destination = airportRepository.findById(paqueteDTO.getDestinationId())
+                                               .orElseThrow(() -> new RuntimeException("Destination airport not found"));
+        Flight assignedFlight = flightRepository.findById(paqueteDTO.getAssignedFlightId())
+                                                .orElseThrow(() -> new RuntimeException("Assigned flight not found"));
+        Airport airport = airportRepository.findById(paqueteDTO.getAirportId())
+                                           .orElseThrow(() -> new RuntimeException("Airport not found"));
+        EstadoPaquete estadoPaquete = estadoPaqueteRepository.findById(paqueteDTO.getEstadoPaqueteId())
+                                                              .orElseThrow(() -> new RuntimeException("EstadoPaquete not found"));
+        Paquete paquete = new Paquete();
+        paquete.setId(paqueteDTO.getId());
+        paquete.setOrigin(origin);
+        paquete.setDestination(destination);
+        paquete.setDepartureTime(paqueteDTO.getDepartureTime());
+        paquete.setShipmentDateTime(paqueteDTO.getShipmentDateTime());
+        paquete.setPackageId(paqueteDTO.getPackageId());
+        paquete.setQuantity(paqueteDTO.getQuantity());
+        paquete.setAssignedFlight(assignedFlight);
+        paquete.setTiempoTotal(paqueteDTO.getTiempoTotal());
+        paquete.setAirport(airport);
+        paquete.setEstadoPaquete(estadoPaquete);
+        paquete.setShipment(new Shipment(paqueteDTO.getShipmentId())); // Asume que hay un constructor que solo toma el id.
+        return paquete;
     }
 }
