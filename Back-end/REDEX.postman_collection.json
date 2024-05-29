@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "69523f1c-491f-4c0e-ae5e-833fa8140d91",
+		"_postman_id": "bd567979-1126-4340-ab68-2bff34d22c21",
 		"name": "REDEX",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "29931628"
+		"_exporter_id": "29931628",
+		"_collection_link": "https://dp15e1.postman.co/workspace/DP1_5E_RedEx~b70e1a5a-92e4-42c3-87fb-fb18d44e3776/collection/29943733-bd567979-1126-4340-ab68-2bff34d22c21?action=share&source=collection_link&creator=29931628"
 	},
 	"item": [
 		{
@@ -15,14 +16,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/aeropuerto/",
+							"raw": "http://localhost:8080/airport/1/10/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
-								"aeropuerto",
+								"airport",
+								"1",
+								"10",
 								""
 							]
 						}
@@ -40,6 +43,55 @@
 						"method": "GET",
 						"header": [],
 						"url": {
+							"raw": "localhost:8080/city/1/10",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"city",
+								"1",
+								"10"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listarCiudadId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/city/1/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"city",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrarCiudad",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"nombre\": \"Nueva ciudad\",\r\n        \"abreviatura\": \"NEW\",\r\n        \"zonahoraria\": -5,\r\n        \"country\": {\r\n            \"id\": 1\r\n        }\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
 							"raw": "localhost:8080/city/",
 							"host": [
 								"localhost"
@@ -47,6 +99,54 @@
 							"port": "8080",
 							"path": [
 								"city",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editarCiudad",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"id\": 31,\r\n        \"nombre\": \"New City\",\r\n        \"abreviatura\": \"NEW\",\r\n        \"zonahoraria\": -9,\r\n        \"country\": {\r\n            \"id\": 1\r\n        }\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/city/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"city",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eliminarCiudad",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/city/31/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"city",
+								"31",
 								""
 							]
 						}
@@ -88,6 +188,114 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "listarContinenteId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Oceania\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/continent/1/4",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"continent",
+								"1",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrarContinente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"America del Norte\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/continent/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"continent",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editarContinente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"id\" : \"4\",\r\n        \"name\": \"Norteamerica\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/continent/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"continent",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eliminarContinente",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/continent/4/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"continent",
+								"4",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -95,7 +303,7 @@
 			"name": "CountryController",
 			"item": [
 				{
-					"name": "listarCountry",
+					"name": "listarPais",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -124,6 +332,114 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "listarPaisId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "/*code, city, country, short_name, continent, latitude, longitude, timezone_offset, capacity)\r\nVALUES \r\n('SKBO', 'Bogotá', 'Colombia', 'bogo', 'América del Sur', 4.7110, -74.0721, -5, 430);\r\n\r\n{\r\n    \"code\": \"SKBO\",\r\n    \"city\": \"Bogotá\",\r\n    \"country\": \"Colombia\",\r\n    \"shortName\": \"bogo\",\r\n    \"continent\": \"América del Sur\",\r\n    \"latitude\": 4.7110,\r\n    \"longitude\": -74.0721,\r\n    \"timezoneOffset\": -5,\r\n    \"capacity\": 430,\r\n    \"activo\": 1\r\n}*/",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/country/1/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"country",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrarPais",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"name\": \"Nuevo país\",\r\n        \"shortname\": \"NEW\",\r\n        \"continent\": {\r\n            \"id\": 1\r\n        }\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/country/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"country",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editarPais",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n        \"id\": \"31\",\r\n        \"name\": \"New country\",\r\n        \"shortname\": \"NEW\",\r\n        \"continent\": {\r\n            \"id\": 1\r\n        }\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/country/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"country",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eliminarPais",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/country/31/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"country",
+								"31",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -144,6 +460,109 @@
 							"path": [
 								"estadoPaquete",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/estadoPaquete/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoPaquete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\": \"ENTREGADO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/estadoPaquete/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoPaquete",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"estado\": \"ENTREGADO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/estadoPaquete/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoPaquete",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"estado\": \"ENTREGADO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/estadoPaquete/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoPaquete",
+								"1"
 							]
 						}
 					},
@@ -191,6 +610,472 @@
 							"port": "8080",
 							"path": [
 								"estadoVuelo",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/estadoVuelo/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoVuelo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\": \"FINALIZADO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/estadoVuelo/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoVuelo",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"estado\": \"FINALIZADO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/estadoVuelo/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoVuelo",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"estado\": \"FINALIZADO\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/estadoVuelo/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"estadoVuelo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NodoController",
+			"item": [
+				{
+					"name": "listarNodo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/nodes/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"nodes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listarNodoId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/nodes/8/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"nodes",
+								"8",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrarNodo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"latitud\": 35.6895,\r\n    \"longitud\": 51.3890,\r\n    \"airport\": {\r\n        \"id\": 1\r\n    },\r\n    \"flight\": {\r\n        \"id\": 4\r\n    }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/nodes/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"nodes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editarNodo",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 8,\r\n    \"latitud\": 37,\r\n    \"longitud\": 55,\r\n    \"airport\": {\r\n        \"id\": 1\r\n    },\r\n    \"flight\": {\r\n        \"id\": 4\r\n    }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/nodes/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"nodes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eliminarNodo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/nodo/1/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"nodo",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ShipmentController",
+			"item": [
+				{
+					"name": "listarShipment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/shipment/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"shipment",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrarShipment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"cantidad\": 2,\r\n        \"origenId\": 1,\r\n        \"destinoId\": 3,\r\n        \"tipo\": 1,\r\n        \"fechaInicio\": \"2024-05-01\",\r\n        \"fechaFin\": \"2024-05-10\",\r\n        \"tiempoActivo\": 120.0\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/shipment/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"shipment",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FlightController",
+			"item": [
+				{
+					"name": "ListarVuelos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vuelo/1/10000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vuelo",
+								"1",
+								"10000"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ListarVuelos por Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/vuelo/102",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vuelo",
+								"102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrarVuelo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1639,\r\n    \"origin\": \"SEQM\",\r\n    \"destination\": \"SCEL\",\r\n    \"departureTime\": \"17:49\",\r\n    \"arrivalTime\": \"01:33\",\r\n    \"capacity\": 320,\r\n    \"flightNumber\": \"0\",\r\n    \"currentLoad\": 0,\r\n    \"duration\": 0,\r\n    \"estadoVueloId\": 1\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/vuelo/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vuelo",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editarVuelo",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1639,\r\n    \"origin\": \"SEQM\",\r\n    \"destination\": \"la jato de pedro\",\r\n    \"departureTime\": \"17:49\",\r\n    \"arrivalTime\": \"01:33\",\r\n    \"capacity\": 320,\r\n    \"flightNumber\": \"0\",\r\n    \"currentLoad\": 0,\r\n    \"duration\": 0,\r\n    \"estadoVueloId\": 1\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/vuelo/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vuelo",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ItinerarioVuelo",
+			"item": [
+				{
+					"name": "registrarItinerario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1ef1cb53-336c-4360-a2ea-414685ce30b7"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/itinerarioVuelos/list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"itinerarioVuelos",
+								"list"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Paquete",
+			"item": [
+				{
+					"name": "listarPaquetes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/package/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"package",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"originId\": 1,\r\n        \"destinationId\": 3,\r\n        \"departureTime\": \"08:00:00\",\r\n        \"shipmentDateTime\": \"2024-05-01\",\r\n        \"packageId\": \"PKG001\",\r\n        \"quantity\": 10,\r\n        \"assignedFlightId\": 1,\r\n        \"tiempoTotal\": 120.0,\r\n        \"airportId\": 1,\r\n        \"estadoPaqueteId\": 1,\r\n        \"shipmentId\": 2\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/package/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"package",
 								""
 							]
 						}
