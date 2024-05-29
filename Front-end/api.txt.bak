@@ -1,0 +1,220 @@
+Hemos almacenado la información de los siguientes APIS:
+http://localhost:8080/airport/
+[{"id":1,"codigoIATA":"SKBO","latitude":4.711,"longitude":-74.0721,"capacity":430,"cityId":1},{"id":3,"codigoIATA":"SVMI","latitude":10.4806,"longitude":-66.9036,"capacity":400,"cityId":3},{"id":5,"codigoIATA":"SPIM","latitude":-12.0464,"longitude":-77.0428,"capacity":440,"cityId":5},
+http://localhost:8080/city/
+[{"id":1,"nombre":"Bogotá","abreviatura":"bogo","zonahoraria":-5,"countryId":1},{"id":2,"nombre":"Quito","abreviatura":"quit","zonahoraria":-5,"countryId":2},{"id":3,"nombre":"Caracas","abreviatura":"cara","zonahoraria":-4,"countryId":3},
+http://localhost:8080/continent/
+[{"id":1,"name":"América del Sur"},{"id":2,"name":"Europa"},{"id":3,"name":"Asia"}]
+http://localhost:8080/country/
+[{"id":1,"name":"Colombia","shortname":"COL","continentId":1},{"id":2,"name":"Ecuador","shortname":"ECU","continentId":1},{"id":3,"name":"Venezuela","shortname":"VEN","continentId":1},{"id":4,"name":"Brasil","shortname":"BRA","continentId":1},{"id":5,"name":"Perú","shortname":"PER","continentId":1},
+http://localhost:8080/estadoPaquete/
+[{"id":1,"estado":"EN ESPERA"},{"id":2,"estado":"EN CAMINO"},{"id":3,"estado":"ENTREGADO"}]
+http://localhost:8080/estadoVuelo/
+[{"id":1,"estado":"PENDIENTE"},{"id":2,"estado":"EN RUTA"},{"id":3,"estado":"FINALIZADO"}]
+
+En la siguiente variable que fue creada y cargada en App.js para evitar cargarla 2 veces. 
+Entonces se asume que la información de dichas variables ya se tienen previamente y serán usadas para poder decifrar los IDs de las APIs que se te darán posteriormente y que tienen implicadas estas variables.
+const [data, setData] = useState({
+    airports: [],
+    cities: [],
+    continents: [],
+    countries: [],
+    estadoPaquete: [],
+    estadoVuelo: [],
+  });
+
+
+
+
+Codigo a modificar:
+import React from 'react';
+import Modal from 'react-modal';
+import styled from 'styled-components';
+
+const ModalContent = styled.div`
+  background: #fff;
+  padding: 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  border-radius: 10px;
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: 20px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 15px;
+`;
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const Select = styled.select`
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+`;
+
+const Button = styled.button`
+  background-color: ${(props) => (props.primary ? '#6ba292' : '#ccc')};
+  color: ${(props) => (props.primary ? '#fff' : '#000')};
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${(props) => (props.primary ? '#5a8a7d' : '#bbb')};
+  }
+`;
+
+const NuevoEnvioPopup = ({ isOpen, onRequestClose }) => {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onRequestClose}
+      style={{
+        overlay: {
+          backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        },
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          transform: 'translate(-50%, -50%)',
+          padding: 0,
+          border: 'none',
+          background: 'none',
+        },
+      }}
+    >
+      <ModalContent>
+        <Header>
+          <h2>Nuevo envío</h2>
+        </Header>
+        <FormGroup>
+          <Label>#Envio</Label>
+          <Input type="text" value="2222" readOnly />
+        </FormGroup>
+        <FormGroup>
+          <Label>Remitente</Label>
+          <Input type="text" placeholder="Nombre completo" />
+          <Input type="email" placeholder="Correo electrónico" />
+          <Input type="tel" placeholder="Número de teléfono" />
+          <Input type="text" placeholder="Ciudad de origen" />
+          <Input type="text" placeholder="País" />
+          <Select>
+            <option>Tipo de documento</option>
+            <option>DNI</option>
+            <option>Pasaporte</option>
+          </Select>
+          <Input type="text" placeholder="Número de documento" />
+        </FormGroup>
+        <FormGroup>
+          <Label>Destinatario</Label>
+          <Input type="text" placeholder="Nombre completo" />
+          <Input type="email" placeholder="Correo electrónico" />
+          <Input type="tel" placeholder="Número de teléfono" />
+          <Input type="text" placeholder="Ciudad destino" />
+          <Input type="text" placeholder="País" />
+          <Select>
+            <option>Tipo de documento</option>
+            <option>DNI</option>
+            <option>Pasaporte</option>
+          </Select>
+          <Input type="text" placeholder="Número de documento" />
+        </FormGroup>
+        <FormGroup>
+          <Label>Información adicional</Label>
+          <Select>
+            <option>Tipo de servicio</option>
+            <option>Estándar</option>
+            <option>Express</option>
+          </Select>
+          <Input type="number" placeholder="Cantidad de paquetes" />
+        </FormGroup>
+        <ButtonGroup>
+          <Button onClick={onRequestClose}>Cancelar</Button>
+          <Button primary>Crear envío</Button>
+        </ButtonGroup>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default NuevoEnvioPopup;
+
+Acción a modificar:
+Puedes por favor hacer que Ciudad de origen y Pais sean selectores segun la información disponible en 
+http://localhost:8080/city/
+[{"id":1,"nombre":"Bogotá","abreviatura":"bogo","zonahoraria":-5,"countryId":1},{"id":2,"nombre":"Quito","abreviatura":"quit","zonahoraria":-5,"countryId":2},{"id":3,"nombre":"Caracas","abreviatura":"cara","zonahoraria":-4,"countryId":3},
+http://localhost:8080/continent/
+[{"id":1,"name":"América del Sur"},{"id":2,"name":"Europa"},{"id":3,"name":"Asia"}]
+http://localhost:8080/country/
+que recuerda que estas APIs ya fueron precargadas anteriormente. Además, debe pasar que cuando se seleccione un pais, me muestre las ciudades de ese pais. Creo que entonces el orden de los selectores tambien debe ser cambiado.
+
+Devuelveme los codigos completos de cada documento que se tenga que modificar. Si es muy pequeña la modificación dime qué y donde se tiene que modificar.
+
+
+
+http://localhost:8080/vuelo/
+[{"id":1,"origin":"SKBO","destination":"SEQM","departureTime":"03:34:00","arrivalTime":"05:21:00","capacity":300,"flightNumber":"0","currentLoad":0,"duration":0,"estadoVueloId":1},{"id":2,"origin":"SEQM","destination":"SKBO","departureTime":"04:29:00","arrivalTime":"06:16:00","capacity":340,"flightNumber":"0","currentLoad":0,"duration":0,"estadoVueloId":1},
+http://localhost:8080/shipment/
+[{"id":6,"cantidad":5,"origenId":1,"destinoId":3,"tipo":1,"fechaInicio":"2024-05-01","fechaFin":"2024-05-10","tiempoActivo":120.0}]
+http://localhost:8080/package/
+{"id":1,"originId":1,"destinationId":3,"departureTime":"08:00:00","shipmentDateTime":"2024-05-01","packageId":"PKG001","quantity":10,"assignedFlightId":1,"tiempoTotal":120.0,"airportId":1,"estadoPaqueteId":1,"shipmentId":6},{"id":2,"originId":1,"destinationId":3,"departureTime":"08:00:00","shipmentDateTime":"2024-05-01","packageId":"PKG002","quantity":10,"assignedFlightId":1,"tiempoTotal":120.0,"airportId":1,"estadoPaqueteId":1,"shipmentId":6},
+
+http://localhost:8080/itinerarioVuelos/
+http://localhost:8080/estadoTrazabilidad/
+http://localhost:8080/packageFlight/
+
+
+
+AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4
+
+
+Anotaciones:
+
+
+
+HECHO:
+1. Todas estas variables de tipo constantes se cargan antes de ingresar a la web.
+const [data, setData] = useState({
+    airports: [],
+    cities: [],
+    continents: [],
+    countries: [],
+    estadoPaquete: [],
+    estadoVuelo: [],
+  });
+  
+2. Cualquier ID se deberá buscar dentro de las constantes para imprimir su verdadero valor.
+3. Listado de envios con sus respectivos valores.
+4. Filtros de envios.
+5. Resumenes de Envios.
+6. Impresión de vuelos.
+7. Filtros de vuelos.
+
+Falta:
+1. Tabla de clientes anclado a un envio.
