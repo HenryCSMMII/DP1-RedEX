@@ -113,3 +113,17 @@ VALUES
 ('RPLL', 14.5995, 120.9842, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), 30);
 
 */
+
+
+/*INSERT INTO shipment (cantidad, fecha_inicio, fecha_fin, tiempo_activo, tipo, destino_id, origen_id, activo, fecha_creacion, fecha_modificacion)
+VALUES 
+(5, '2024-05-01', '2024-05-10', 120, 1, 3, 1, 1, now(), now());*/
+
+/*INSERT INTO paquete (activo, fecha_creacion, fecha_modificacion, assigned_flight_id, departure_time, destination, origin, package_id, quantity, shipment_date_time, tiempo_total,
+id_aeropuerto, id_estado_paquete, shipment_id, destination_id, origin_id)
+VALUES 
+(1, NOW(), NOW(), 1, '08:00:00', ' ', ' ', 'PKG001', 10, '2024-05-01', 120, 1, 1, 1, 3, 1),
+(1, NOW(), NOW(), 1, '08:00:00', ' ', ' ', 'PKG002', 10, '2024-05-01', 120, 1, 1, 1, 3, 1),
+(1, NOW(), NOW(), 1, '08:00:00', ' ', ' ', 'PKG003', 10, '2024-05-01', 120, 1, 1, 1, 3, 1),
+(1, NOW(), NOW(), 1, '08:00:00', ' ', ' ', 'PKG004', 10, '2024-05-01', 120, 1, 1, 1, 3, 1),
+(1, NOW(), NOW(), 1, '08:00:00', ' ', ' ', 'PKG005', 10, '2024-05-01', 120, 1, 1, 1, 3, 1);*/
