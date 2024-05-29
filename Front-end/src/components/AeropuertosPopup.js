@@ -28,10 +28,6 @@ const Table = styled.table`
     background-color: #f2f2f2;
     text-align: left;
   }
-
-  tr {
-    cursor: pointer;
-  }
 `;
 
 const FiltersContainer = styled.div`
@@ -100,68 +96,6 @@ const Button = styled.button`
   }
 `;
 
-const DetailsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  margin-top: 20px;
-`;
-
-const DetailItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-`;
-
-const RecepcionesTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-
-  th {
-    background-color: #f2f2f2;
-    text-align: left;
-  }
-`;
-
-const PopupHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const PopupTitle = styled.h2`
-  margin: 0;
-`;
-
-const StatusDot = styled.div`
-  width: 10px;
-  height: 10px;
-  background-color: ${props => props.saturated ? 'red' : 'green'};
-  border-radius: 50%;
-`;
-
-const BackButton = styled.button`
-  background-color: #ccc;
-  color: black;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-
-  &:hover {
-    background-color: #bbb;
-  }
-`;
-
 const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -188,8 +122,6 @@ const PaginationButton = styled.button`
 `;
 
 const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [selectedAeropuerto, setSelectedAeropuerto] = useState(null);
   const [filteredAeropuertos, setFilteredAeropuertos] = useState([]);
   const [filters, setFilters] = useState({
     nombre: '',
@@ -198,16 +130,6 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
-  const handleRowClick = (aeropuerto) => {
-    setSelectedAeropuerto(aeropuerto);
-    setIsDetailsOpen(true);
-  };
-
-  const handleBackClick = () => {
-    setIsDetailsOpen(false);
-    setSelectedAeropuerto(null);
-  };
 
   useEffect(() => {
     if (data.airports.length > 0 && data.cities.length > 0 && data.countries.length > 0 && data.continents.length > 0) {
@@ -304,7 +226,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
       <ModalContent>
         {filteredAeropuertos.length === 0 ? (
           <p>Cargando...</p>
-        ) : !isDetailsOpen ? (
+        ) : (
           <>
             <HeaderContainer>
               <h2>Aeropuertos</h2>
@@ -343,7 +265,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
               </thead>
               <tbody>
                 {currentItems.map((aeropuerto) => (
-                  <tr key={aeropuerto.id} onClick={() => handleRowClick(aeropuerto)}>
+                  <tr key={aeropuerto.id}>
                     <td>{aeropuerto.codigoIATA}</td>
                     <td>{aeropuerto.country.name}</td>
                     <td>{aeropuerto.city.nombre}</td>
@@ -361,39 +283,6 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
               </PaginationButton>
             </PaginationContainer>
           </>
-        ) : (
-          <DetailsContainer>
-            <BackButton onClick={handleBackClick}>Atrás</BackButton>
-            <PopupHeader>
-              <PopupTitle>Aeropuerto {selectedAeropuerto.codigoIATA}</PopupTitle>
-              <StatusDot saturated={selectedAeropuerto.saturated} />
-            </PopupHeader>
-            <DetailItem>
-              <span>Almacen: {selectedAeropuerto.currentLoad}/{selectedAeropuerto.capacity}</span>
-              <span>Saturado: {selectedAeropuerto.saturated ? 'Sí' : 'No'}</span>
-            </DetailItem>
-            <h3>Últimas recepciones</h3>
-            <RecepcionesTable>
-              <thead>
-                <tr>
-                  <th>#Paquete</th>
-                  <th>#Envio</th>
-                  <th>Hora de llegada</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedAeropuerto.recepciones.map((recepcion, index) => (
-                  <tr key={index}>
-                    <td>{recepcion.idPaquete}</td>
-                    <td>{recepcion.idEnvio}</td>
-                    <td>{recepcion.horaLlegada}</td>
-                    <td>{recepcion.estado}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </RecepcionesTable>
-          </DetailsContainer>
         )}
       </ModalContent>
     </Modal>

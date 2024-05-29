@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
-import axios from 'axios';
 
 const ModalContent = styled.div`
   background: #fff;
   padding: 20px;
-  max-width: 1000px; /* Aumentar el ancho máximo */
+  max-width: 1000px;
   width: 90%;
   margin: 40px auto;
   border-radius: 10px;
@@ -188,17 +187,15 @@ const PaginationButton = styled.button`
   }
 `;
 
-const AeropuertosPopup = ({ isOpen, onRequestClose }) => {
+const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedAeropuerto, setSelectedAeropuerto] = useState(null);
-  const [aeropuertos, setAeropuertos] = useState([]);
   const [filteredAeropuertos, setFilteredAeropuertos] = useState([]);
   const [filters, setFilters] = useState({
     nombre: '',
     continente: '',
     capacidad: ''
   });
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -213,24 +210,10 @@ const AeropuertosPopup = ({ isOpen, onRequestClose }) => {
   };
 
   useEffect(() => {
-    const fetchAeropuertos = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('http://localhost:8080/airport/');
-        setAeropuertos(response.data);
-        setFilteredAeropuertos(response.data);
-      } catch (error) {
-        console.error('Error fetching aeropuertos:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAeropuertos();
-  }, []);
-
-  useEffect(() => {
-    filterAeropuertos();
-  }, [filters, aeropuertos]);
+    if (data.airports.length > 0 && data.cities.length > 0 && data.countries.length > 0 && data.continents.length > 0) {
+      filterAeropuertos();
+    }
+  }, [filters, data]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -241,13 +224,24 @@ const AeropuertosPopup = ({ isOpen, onRequestClose }) => {
   };
 
   const filterAeropuertos = () => {
-    let filtered = aeropuertos;
+    let filtered = data.airports.map(airport => {
+      const city = data.cities.find(city => city.id === airport.cityId);
+      const country = data.countries.find(country => country.id === city.countryId);
+      const continent = data.continents.find(continent => continent.id === country.continentId);
+
+      return {
+        ...airport,
+        city,
+        country,
+        continent
+      };
+    });
 
     if (filters.nombre) {
       filtered = filtered.filter(aeropuerto => aeropuerto.codigoIATA?.toLowerCase().includes(filters.nombre.toLowerCase()));
     }
     if (filters.continente) {
-      filtered = filtered.filter(aeropuerto => aeropuerto.city.country.continent.name?.toLowerCase().includes(filters.continente.toLowerCase()));
+      filtered = filtered.filter(aeropuerto => aeropuerto.continent.name?.toLowerCase().includes(filters.continente.toLowerCase()));
     }
     if (filters.capacidad) {
       filtered = filtered.filter(aeropuerto => {
@@ -308,7 +302,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose }) => {
       }}
     >
       <ModalContent>
-        {loading ? (
+        {filteredAeropuertos.length === 0 ? (
           <p>Cargando...</p>
         ) : !isDetailsOpen ? (
           <>
@@ -326,11 +320,9 @@ const AeropuertosPopup = ({ isOpen, onRequestClose }) => {
                 <FilterInput type="text" placeholder="Nombre del aeropuerto" name="nombre" value={filters.nombre} onChange={handleFilterChange} />
                 <Select name="continente" value={filters.continente} onChange={handleFilterChange}>
                   <option value="">Continente</option>
-                  <option value="América">América</option>
-                  <option value="Europa">Europa</option>
-                  <option value="Asia">Asia</option>
-                  <option value="África">África</option>
-                  <option value="Oceanía">Oceanía</option>
+                  {data.continents.map(continent => (
+                    <option key={continent.id} value={continent.name}>{continent.name}</option>
+                  ))}
                 </Select>
                 <Select name="capacidad" value={filters.capacidad} onChange={handleFilterChange}>
                   <option value="">Capacidad</option>
@@ -353,7 +345,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose }) => {
                 {currentItems.map((aeropuerto) => (
                   <tr key={aeropuerto.id} onClick={() => handleRowClick(aeropuerto)}>
                     <td>{aeropuerto.codigoIATA}</td>
-                    <td>{aeropuerto.city.country.name}</td>
+                    <td>{aeropuerto.country.name}</td>
                     <td>{aeropuerto.city.nombre}</td>
                     <td>{aeropuerto.currentLoad}/{aeropuerto.capacity}</td>
                   </tr>

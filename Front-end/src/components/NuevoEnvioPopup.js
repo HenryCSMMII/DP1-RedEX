@@ -31,6 +31,7 @@ const Input = styled.input`
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  margin-bottom: 10px;
 `;
 
 const Select = styled.select`
@@ -38,6 +39,7 @@ const Select = styled.select`
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  margin-bottom: 10px;
 `;
 
 const ButtonGroup = styled.div`
@@ -82,8 +84,8 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
     tipoDocumento: '',
     numeroDocumento: '',
   });
-  const [tipoServicio, setTipoServicio] = useState('');
   const [cantidadPaquetes, setCantidadPaquetes] = useState(1);
+  const [fechaEnvio, setFechaEnvio] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
     if (data && selectedCountryRemitente) {
@@ -107,38 +109,66 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
     return null;
   }
 
+  const handleInputChange = (e, setState, state) => {
+    const { name, value } = e.target;
+    setState({ ...state, [name]: value });
+  };
+
+  const handleNumberInputChange = (e, setState, state) => {
+    const { name, value } = e.target;
+    if (/^\d*$/.test(value)) {
+      setState({ ...state, [name]: value });
+    }
+  };
+
   const handleSubmit = async () => {
     try {
-      const shipmentResponse = await axios.post('http://localhost:8080/shipment/', {
+      const shipmentPayload = {
         cantidad: cantidadPaquetes,
         origenId: remitente.ciudad,
         destinoId: destinatario.ciudad,
-        tipo: tipoServicio,
-        fechaInicio: new Date().toISOString().split('T')[0],
-        fechaFin: new Date().toISOString().split('T')[0],
+        tipo: 1,
+        fechaInicio: fechaEnvio,
+        fechaFin: fechaEnvio,
         tiempoActivo: 0,
-      });
+      };
 
+      // Verificar el payload de envío
+      console.log("Shipment payload:", shipmentPayload);
+
+      const shipmentResponse = await axios.post('http://localhost:8080/shipment/', shipmentPayload);
       const newShipmentId = shipmentResponse.data.id;
 
-      await axios.post('http://localhost:8080/package/', {
-        originId: remitente.ciudad,
-        destinationId: destinatario.ciudad,
-        departureTime: '08:00:00',
-        shipmentDateTime: new Date().toISOString().split('T')[0],
-        packageId: `PKG${Math.floor(Math.random() * 100000)}`,
-        quantity: cantidadPaquetes,
-        assignedFlightId: 1,
-        tiempoTotal: 0,
-        airportId: remitente.ciudad,
-        estadoPaqueteId: 1,
-        shipmentId: newShipmentId,
-      });
+      // Crear múltiples paquetes según la cantidad de paquetes
+      for (let i = 0; i < cantidadPaquetes; i++) {
+        const packagePayload = {
+          originId: remitente.ciudad,
+          destinationId: destinatario.ciudad,
+          departureTime: '08:00:00',
+          shipmentDateTime: fechaEnvio,
+          packageId: `PKG${Math.floor(Math.random() * 100000)}`,
+          quantity: 1,
+          assignedFlightId: 1,
+          tiempoTotal: 0,
+          airportId: remitente.ciudad,
+          estadoPaqueteId: 1,
+          shipmentId: newShipmentId,
+        };
+
+        // Verificar el payload de paquete
+        console.log("Package payload:", packagePayload);
+
+        await axios.post('http://localhost:8080/package/', packagePayload);
+      }
 
       alert('Envio creado exitosamente');
       onRequestClose();
     } catch (error) {
       console.error('Error creating envio:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+      }
       alert('Error creando el envio');
     }
   };
@@ -170,73 +200,122 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           <h2>Nuevo envío</h2>
         </Header>
         <FormGroup>
-          <Label>#Envio</Label>
-          <Input type="text" value="2222" readOnly />
-        </FormGroup>
-        <FormGroup>
           <Label>Remitente</Label>
-          <Input type="text" placeholder="Nombre completo" onChange={(e) => setRemitente({ ...remitente, nombre: e.target.value })} />
-          <Input type="email" placeholder="Correo electrónico" onChange={(e) => setRemitente({ ...remitente, email: e.target.value })} />
-          <Input type="tel" placeholder="Número de teléfono" onChange={(e) => setRemitente({ ...remitente, telefono: e.target.value })} />
-          <Select onChange={(e) => setSelectedCountryRemitente(e.target.value)}>
+          <Input
+            type="text"
+            name="nombre"
+            placeholder="Nombre completo"
+            onChange={(e) => handleInputChange(e, setRemitente, remitente)}
+          />
+          <Input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            onChange={(e) => handleInputChange(e, setRemitente, remitente)}
+          />
+          <Input
+            type="tel"
+            name="telefono"
+            placeholder="Número de teléfono"
+            inputMode="numeric"
+            onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
+          />
+          <Select name="pais" onChange={(e) => setSelectedCountryRemitente(e.target.value)}>
             <option value="">Seleccione un país</option>
-            {data.countries.map(country => (
+            {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
                 {country.name}
               </option>
             ))}
           </Select>
-          <Select onChange={(e) => setRemitente({ ...remitente, ciudad: e.target.value })}>
+          <Select name="ciudad" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
             <option value="">Seleccione una ciudad</option>
-            {citiesRemitente.map(city => (
+            {citiesRemitente.map((city) => (
               <option key={city.id} value={city.id}>
                 {city.nombre}
               </option>
             ))}
           </Select>
-          <Select onChange={(e) => setRemitente({ ...remitente, tipoDocumento: e.target.value })}>
+          <Select name="tipoDocumento" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
             <option>Tipo de documento</option>
             <option value="DNI">DNI</option>
             <option value="Pasaporte">Pasaporte</option>
           </Select>
-          <Input type="text" placeholder="Número de documento" onChange={(e) => setRemitente({ ...remitente, numeroDocumento: e.target.value })} />
+          <Input
+            type="text"
+            name="numeroDocumento"
+            placeholder="Número de documento"
+            inputMode="numeric"
+            onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
+          />
         </FormGroup>
         <FormGroup>
           <Label>Destinatario</Label>
-          <Input type="text" placeholder="Nombre completo" onChange={(e) => setDestinatario({ ...destinatario, nombre: e.target.value })} />
-          <Input type="email" placeholder="Correo electrónico" onChange={(e) => setDestinatario({ ...destinatario, email: e.target.value })} />
-          <Input type="tel" placeholder="Número de teléfono" onChange={(e) => setDestinatario({ ...destinatario, telefono: e.target.value })} />
-          <Select onChange={(e) => setSelectedCountryDestinatario(e.target.value)}>
+          <Input
+            type="text"
+            name="nombre"
+            placeholder="Nombre completo"
+            onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
+          />
+          <Input
+            type="email"
+            name="email"
+            placeholder="Correo electrónico"
+            onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
+          />
+          <Input
+            type="tel"
+            name="telefono"
+            placeholder="Número de teléfono"
+            inputMode="numeric"
+            onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
+          />
+          <Select name="pais" onChange={(e) => setSelectedCountryDestinatario(e.target.value)}>
             <option value="">Seleccione un país</option>
-            {data.countries.map(country => (
+            {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
                 {country.name}
               </option>
             ))}
           </Select>
-          <Select onChange={(e) => setDestinatario({ ...destinatario, ciudad: e.target.value })}>
+          <Select name="ciudad" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
             <option value="">Seleccione una ciudad</option>
-            {citiesDestinatario.map(city => (
+            {citiesDestinatario.map((city) => (
               <option key={city.id} value={city.id}>
                 {city.nombre}
               </option>
             ))}
           </Select>
-          <Select onChange={(e) => setDestinatario({ ...destinatario, tipoDocumento: e.target.value })}>
+          <Select name="tipoDocumento" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
             <option>Tipo de documento</option>
             <option value="DNI">DNI</option>
             <option value="Pasaporte">Pasaporte</option>
           </Select>
-          <Input type="text" placeholder="Número de documento" onChange={(e) => setDestinatario({ ...destinatario, numeroDocumento: e.target.value })} />
+          <Input
+            type="text"
+            name="numeroDocumento"
+            placeholder="Número de documento"
+            inputMode="numeric"
+            onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
+          />
         </FormGroup>
         <FormGroup>
-          <Label>Información adicional</Label>
-          <Select onChange={(e) => setTipoServicio(e.target.value)}>
-            <option>Tipo de servicio</option>
-            <option value="1">Estándar</option>
-            <option value="2">Express</option>
-          </Select>
-          <Input type="number" placeholder="Cantidad de paquetes" value={cantidadPaquetes} onChange={(e) => setCantidadPaquetes(e.target.value)} />
+          <Label htmlFor="fechaEnvio">Fecha de envío</Label>
+          <Input
+            id="fechaEnvio"
+            type="date"
+            value={fechaEnvio}
+            onChange={(e) => setFechaEnvio(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label>Cantidad de paquetes</Label>
+          <Input
+            type="number"
+            placeholder="Cantidad de paquetes"
+            value={cantidadPaquetes}
+            onChange={(e) => setCantidadPaquetes(e.target.value)}
+          />
         </FormGroup>
         <ButtonGroup>
           <Button onClick={onRequestClose}>Cancelar</Button>
