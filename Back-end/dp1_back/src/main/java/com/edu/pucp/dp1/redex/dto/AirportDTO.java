@@ -15,5 +15,6 @@ public class AirportDTO {
     private Double latitude;
     private Double longitude;
     private int capacity;
+    private int currentCapacity;
     private int cityId; // Solo el ID de la ciudad
 }

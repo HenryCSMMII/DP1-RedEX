@@ -41,17 +41,21 @@ public class Airport extends BaseEntity {
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
+    @Column(name = "currentCapacity", nullable = false)
+    private int currentCapacity;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "city_id", nullable = false)
     @JsonManagedReference
     private City city;
 
-    public Airport(String codigoIATA, City city, Double latitude, Double longitude, int capacity) {
+    public Airport(String codigoIATA, City city, Double latitude, Double longitude, int capacity, int currentCapacity) {
         this.codigoIATA = codigoIATA;
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
         this.capacity = capacity;
+        this.currentCapacity = currentCapacity;
     }
     
     // ToString method for debugging purposes
@@ -64,6 +68,7 @@ public class Airport extends BaseEntity {
                 ", longitude=" + longitude +
                 ", timezoneOffset=" + (city != null ? city.getZonahoraria() : "null") +
                 ", capacity=" + capacity +
+                ", currentCapacity=" + currentCapacity +
                 '}';
     }
 }

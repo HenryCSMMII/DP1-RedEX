@@ -12,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,6 +90,29 @@ public class AirportService {
         }
     }
 
+    @Transactional
+    public void processFile(InputStream inputStream) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split(";");
+                if (fields.length >= 8) {
+                    String codigoIATA = fields[0];
+                    int capacity = Integer.parseInt(fields[4]);
+                    double latitude = Double.parseDouble(fields[6]);
+                    double longitude = Double.parseDouble(fields[7]);
+                    // Assuming city ID is provided for now, you need to map it correctly
+                    int cityId = 1; // Replace with actual logic to determine cityId
+                    AirportDTO airportDTO = new AirportDTO(0, codigoIATA, latitude, longitude, capacity, 0, cityId);
+                    register(airportDTO);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Error processing file", e);
+            throw e;
+        }
+    }
+
     private AirportDTO convertToDTO(Airport airport) {
         return new AirportDTO(
                 airport.getId(),
@@ -93,6 +120,7 @@ public class AirportService {
                 airport.getLatitude(),
                 airport.getLongitude(),
                 airport.getCapacity(),
+                airport.getCurrentCapacity(),
                 airport.getCity().getId() // Solo el ID de la ciudad
         );
     }
@@ -105,7 +133,8 @@ public class AirportService {
                 city,
                 airportDTO.getLatitude(),
                 airportDTO.getLongitude(),
-                airportDTO.getCapacity()
+                airportDTO.getCapacity(),
+                airportDTO.getCurrentCapacity()
         );
     }
 }

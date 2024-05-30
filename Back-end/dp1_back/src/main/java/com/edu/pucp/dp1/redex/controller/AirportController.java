@@ -1,5 +1,6 @@
 package com.edu.pucp.dp1.redex.controller;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -12,7 +13,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.edu.pucp.dp1.redex.dto.AirportDTO;
 import com.edu.pucp.dp1.redex.services.AirportService;
@@ -44,7 +47,7 @@ public class AirportController {
     AirportDTO update(@RequestBody AirportDTO airportDTO) throws SQLException{
         return airportService.update(airportDTO);
     }
-    
+
     @DeleteMapping(value = "/{id}")
     void delete(@PathVariable int id){
         airportService.delete(id);
@@ -53,5 +56,10 @@ public class AirportController {
     @GetMapping(value = "/{idInicio}/{idFinal}")
     List<AirportDTO> listaAirportsPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return airportService.listAirportsByIds(idInicio, idFinal);
+    }
+
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
+    public void uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        airportService.processFile(file.getInputStream());
     }
 }
