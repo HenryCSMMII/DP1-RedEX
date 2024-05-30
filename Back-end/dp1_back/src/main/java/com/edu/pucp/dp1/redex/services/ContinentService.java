@@ -1,6 +1,4 @@
 package com.edu.pucp.dp1.redex.services;
-
-import com.edu.pucp.dp1.redex.model.City;
 import com.edu.pucp.dp1.redex.model.Continent;
 import com.edu.pucp.dp1.redex.repository.ContinentRepository;
 
