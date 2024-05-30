@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -60,6 +60,7 @@ function App() {
     estadoVuelo: [],
   });
   const [loading, setLoading] = useState(true);
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +80,7 @@ function App() {
           estadoPaquete: estadoPaquete.data,
           estadoVuelo: estadoVuelo.data,
         });
+        console.log('Airports data fetched:', airports.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -89,9 +91,16 @@ function App() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    if (!loading && window.google && window.google.maps) {
+      console.log('Google Maps API loaded');
+    }
+  }, [loading]);
+
+  const handleMapLoad = () => {
+    setIsMapLoaded(true);
+    console.log('Map loaded');
+  };
 
   const handleOpenPopup = (popupName) => {
     setActivePopup(popupName);
@@ -109,6 +118,10 @@ function App() {
     setIsNuevoEnvioOpen(false);
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <AppContainer>
       <Sidebar 
@@ -121,12 +134,36 @@ function App() {
       <Content>
         <MainContent>
           <MapContainer>
-            <LoadScript googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4">
+            <LoadScript googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4" onLoad={handleMapLoad}>
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '100%' }}
                 center={{ lat: -3.745, lng: -38.523 }}
                 zoom={3}
-              />
+              >
+                {isMapLoaded && (
+                  <>
+                    <Marker
+                      position={{ lat: -3.745, lng: -38.523 }}
+                      title="Central Marker"
+                      icon={{
+                        url: "http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png",
+                        scaledSize: new window.google.maps.Size(20, 34)
+                      }}
+                    />
+                    {data.airports.map((airport) => (
+                      <Marker
+                        key={airport.id}
+                        position={{ lat: airport.latitude, lng: airport.longitude }}
+                        title={airport.codigoIATA}
+                        icon={{
+                          url: "http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png",
+                          scaledSize: new window.google.maps.Size(20, 34)
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+              </GoogleMap>
             </LoadScript>
           </MapContainer>
           {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} />}
