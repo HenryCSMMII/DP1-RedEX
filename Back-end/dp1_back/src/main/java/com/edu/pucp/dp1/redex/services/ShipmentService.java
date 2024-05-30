@@ -2,9 +2,11 @@ package com.edu.pucp.dp1.redex.services;
 
 import com.edu.pucp.dp1.redex.dto.ShipmentDTO;
 import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.Client;
 import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.repository.ShipmentRepository;
 import com.edu.pucp.dp1.redex.repository.AirportRepository;
+import com.edu.pucp.dp1.redex.repository.ClientRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,9 @@ public class ShipmentService {
 
     @Autowired
     private AirportRepository airportRepository;
+
+    @Autowired
+    private ClientRepository clientRepository;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShipmentService.class);
 
@@ -95,7 +100,9 @@ public class ShipmentService {
             shipment.getTipo(),
             shipment.getFechaInicio(),
             shipment.getFechaFin(),
-            shipment.getTiempoActivo()
+            shipment.getTiempoActivo(),
+            shipment.getClientSender().getId(),
+            shipment.getClientReceiver().getId()
         );
     }
 
@@ -104,6 +111,10 @@ public class ShipmentService {
                                           .orElseThrow(() -> new RuntimeException("Origin airport not found"));
         Airport destino = airportRepository.findById(shipmentDTO.getDestinoId())
                                            .orElseThrow(() -> new RuntimeException("Destination airport not found"));
+        Client clientSender = clientRepository.findById(shipmentDTO.getClientSenderId())
+                                              .orElseThrow(() -> new RuntimeException("Sender client not found"));
+        Client clientReceiver = clientRepository.findById(shipmentDTO.getClientReceiverId())
+                                                .orElseThrow(() -> new RuntimeException("Receiver client not found"));
         Shipment shipment = new Shipment();
         shipment.setId(shipmentDTO.getId());
         shipment.setCantidad(shipmentDTO.getCantidad());
@@ -113,6 +124,8 @@ public class ShipmentService {
         shipment.setFechaInicio(shipmentDTO.getFechaInicio());
         shipment.setFechaFin(shipmentDTO.getFechaFin());
         shipment.setTiempoActivo(shipmentDTO.getTiempoActivo());
+        shipment.setClientSender(clientSender);
+        shipment.setClientReceiver(clientReceiver);
         return shipment;
     }
 }

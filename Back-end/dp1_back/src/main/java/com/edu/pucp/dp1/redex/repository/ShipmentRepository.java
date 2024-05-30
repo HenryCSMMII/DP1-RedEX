@@ -1,4 +1,5 @@
 package com.edu.pucp.dp1.redex.repository;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.edu.pucp.dp1.redex.model.Shipment;

@@ -20,4 +20,6 @@ public class ShipmentDTO {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private double tiempoActivo;
+    private int clientSenderId;
+    private int clientReceiverId;
 }

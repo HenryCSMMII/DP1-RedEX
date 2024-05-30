@@ -1,4 +1,5 @@
 package com.edu.pucp.dp1.redex.model;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,6 +51,14 @@ public class Shipment extends BaseEntity {
     @Column(name = "tiempo_activo", nullable = false)
     private double tiempoActivo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_sender_id", nullable = false)
+    private Client clientSender;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_receiver_id", nullable = false)
+    private Client clientReceiver;
+
     @OneToMany(mappedBy = "shipment", fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Paquete> paquetes;
@@ -70,6 +79,8 @@ public class Shipment extends BaseEntity {
                 ", fechaInicio=" + fechaInicio +
                 ", fechaFin=" + fechaFin +
                 ", tiempoActivo=" + tiempoActivo +
+                ", clientSender=" + (clientSender != null ? clientSender.getFullName() : "null") +
+                ", clientReceiver=" + (clientReceiver != null ? clientReceiver.getFullName() : "null") +
                 '}';
     }
 }
