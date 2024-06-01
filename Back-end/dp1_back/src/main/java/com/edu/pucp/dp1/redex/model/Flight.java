@@ -62,10 +62,10 @@ public class Flight extends BaseEntity {
     @JoinColumn(name = "estado_vuelo_id", nullable = false)
     private EstadoVuelo estadoVuelo;
 
-    @OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
-    private List<PackageFlight> packageFlights;
+    /*@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
+    private List<PackageFlight> packageFlights;*/
 
-    // Constructor adicional
+    /* //Constructor adicional (solo necesario si se le aumenta más parametros)
     public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration, EstadoVuelo estadoVuelo) {
         this.origin = origin;
         this.destination = destination;
@@ -76,7 +76,7 @@ public class Flight extends BaseEntity {
         this.currentLoad = currentLoad;
         this.duration = duration;
         this.estadoVuelo = estadoVuelo;
-    }
+    }*/
 
     // ToString method for debugging purposes
     @Override

@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.repository;
+/*package com.edu.pucp.dp1.redex.repository;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,3 +20,4 @@ public interface PackageFlightRepository extends JpaRepository<PackageFlight, In
     @Query("SELECT f FROM PackageFlight f WHERE f.id BETWEEN :idInicio and :idFinal")
     public List<PackageFlight> findPackageFlightByIds(int idInicio, int idFinal);    
 }
+*/

@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.model;
+/*package com.edu.pucp.dp1.redex.model;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -46,3 +46,4 @@ public class PackageFlight extends BaseEntity {
                 '}';
     }
 }
+*/

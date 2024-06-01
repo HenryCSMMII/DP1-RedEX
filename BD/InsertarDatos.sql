@@ -111,8 +111,8 @@ VALUES
 ('WSSS', 1.3521, 103.8198, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), 28),
 ('WIII', -6.2088, 106.8456, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'), 29),
 ('RPLL', 14.5995, 120.9842, 400, 1, CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), CONVERT_TZ(NOW(), @@session.time_zone, '+08:00'), 30);
-
 */
+
 
 
 /*INSERT INTO shipment (cantidad, fecha_inicio, fecha_fin, tiempo_activo, tipo, destino_id, origen_id, activo, fecha_creacion, fecha_modificacion)
