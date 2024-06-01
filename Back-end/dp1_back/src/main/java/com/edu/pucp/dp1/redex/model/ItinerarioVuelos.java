@@ -1,5 +1,6 @@
 package com.edu.pucp.dp1.redex.model;
 
+import java.time.LocalTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,10 +36,10 @@ public class ItinerarioVuelos {
     private String destination;
 
     @Column(nullable = false)
-    private String departureTime;
+    private LocalTime departureTime;
 
     @Column(nullable = false)
-    private String arrivalTime;
+    private LocalTime arrivalTime;
 
     @Column(nullable = false)
     private int capacity;
