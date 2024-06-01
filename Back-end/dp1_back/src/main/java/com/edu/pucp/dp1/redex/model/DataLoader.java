@@ -5,41 +5,46 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.edu.pucp.dp1.redex.dto.AirportDTO;
+import com.edu.pucp.dp1.redex.dto.CityDTO;
+import com.edu.pucp.dp1.redex.dto.FlightDTO;
+import com.edu.pucp.dp1.redex.dto.PaqueteDTO;
+import com.edu.pucp.dp1.redex.services.AirportService;
+import com.edu.pucp.dp1.redex.services.CityService;
+
 public class DataLoader {
 
-    public static List<Flight> loadFlights(String filePath) throws IOException {
-        List<Flight> flights = new ArrayList<>();
+    public static List<FlightDTO> loadFlights(String filePath) throws IOException {
+        List<FlightDTO> flights = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.trim().split("-");
                 if (parts.length == 5) {
+                    try {
+                        String origin = parts[0].trim();
+                        String destination = parts[1].trim();
+                        String departureTime = parts[2].trim();
+                        String arrivalTime = parts[3].trim();
+                        int capacity = Integer.parseInt(parts[4].trim());
 
-                    String origin = parts[0];
-                    String destination = parts[1];
-                    String departureTime = parts[2]; // Assuming date-time format is split by a '-'
-                    String arrivalTime = parts[3] ;
-                    int capacity = Integer.parseInt(parts[4].trim()); // Ensure there are no trailing spaces
-                    String flightnumber = "prueba";
-                    int currentLoad = 0,duration = 0; 
-
-
-                    //flights.add(new Flight(origin, destination, departureTime, arrivalTime, capacity,flightnumber,currentLoad, duration));
+                        flights.add(new FlightDTO(origin, destination, departureTime, arrivalTime, capacity));
+                    } catch (NumberFormatException e) {
+                        System.err.println("Error parsing integer for flight capacity: " + e.getMessage());
+                    }
                 } else {
-                    System.err.println("Incorrect line format: " + line);
+                    System.err.println("Incorrect line format for flights: " + line);
                 }
             }
-        } catch (NumberFormatException e) {
-            System.err.println("Error parsing integer value: " + e.getMessage());
         }
-        for(Flight flight : flights){
-            System.out.println(flight.toString());
-        }
+        // for(FlightDTO flight : flights){
+        //     System.out.println(flight.toString());
+        // }
         return flights;
     }
     
-    public static List<Paquete> loadPackages(String filePath) throws IOException {
-        List<Paquete> packages = new ArrayList<>();
+    public static List<PaqueteDTO> loadPackages(String filePath) throws IOException {
+        List<PaqueteDTO> packages = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -55,8 +60,16 @@ public class DataLoader {
                     // Combinamos la ciudad de origen con el código de envío para formar un identificador único para este paquete
                     String packageId = origin + "-" + envioCode;
 
-                    //Package pack = new Package(origin, destination, departureTime, quantity, packageId);
-                    //packages.add(pack);
+                    CityService cityService = new CityService();
+                    CityDTO originCity = cityService.getByName(origin);
+                    CityDTO destinationCity = cityService.getByName(destination);
+                    AirportService airportService = new AirportService();
+                    AirportDTO originAirport = airportService.getByCityId(originCity.getId());
+                    AirportDTO destinationAirport = airportService.getByCityId(destinationCity.getId());
+                    int originId = originAirport.getId(), destinationId = destinationAirport.getId();
+
+                    PaqueteDTO pack = new PaqueteDTO(originId, destinationId, departureTime, quantity, packageId);
+                    packages.add(pack);
                 }
             }
 
@@ -64,8 +77,8 @@ public class DataLoader {
             return packages;
         }
     }
-    public static List<Airport> loadAirports(String filePath) throws IOException {
-        List<Airport> airports = new ArrayList<>();
+    public static List<AirportDTO> loadAirports(String filePath) throws IOException {
+        List<AirportDTO> airports = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -79,7 +92,10 @@ public class DataLoader {
                     int timezone = Integer.parseInt(parts[5].trim());
                     int capacity = Integer.parseInt(parts[6].trim());
 
-                    //airports.add(new Airport(code, name, city, country, continent, timezone, capacity));
+                    CityService cityService = new CityService();
+                    CityDTO cityDTO = cityService.getByName(city);
+
+                    airports.add(new AirportDTO(code, cityDTO.getId(), capacity));
                 } else {
                     System.err.println("Incorrect line format for airports: " + line);
                 }

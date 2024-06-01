@@ -3,6 +3,8 @@ package com.edu.pucp.dp1.redex.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,6 +52,7 @@ public class Flight extends BaseEntity {
     @Column(name = "capacity", nullable = false)
     private int capacity;
 
+    //ES NECESARIO??
     @Column(name = "flightNumber", nullable = false)
     private String flightNumber;
 

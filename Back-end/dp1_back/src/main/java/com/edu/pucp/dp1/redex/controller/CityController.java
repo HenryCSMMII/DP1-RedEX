@@ -54,4 +54,9 @@ public class CityController {
     List<CityDTO> listaCitiesPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
         return cityService.listCityByIds(idInicio, idFinal);
     }
+
+    // @GetMapping(value = "/{name}")
+    // CityDTO getCityByName(@PathVariable String name){
+    //     return cityService.getByName(name);
+    // }
 }

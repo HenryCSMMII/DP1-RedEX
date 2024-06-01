@@ -7,6 +7,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+import com.edu.pucp.dp1.redex.dto.AirportDTO;
+import com.edu.pucp.dp1.redex.dto.CityDTO;
+import com.edu.pucp.dp1.redex.dto.CountryDTO;
+import com.edu.pucp.dp1.redex.dto.FlightDTO;
+import com.edu.pucp.dp1.redex.dto.PaqueteDTO;
+import com.edu.pucp.dp1.redex.services.AirportService;
+import com.edu.pucp.dp1.redex.services.CityService;
+import com.edu.pucp.dp1.redex.services.ContinentService;
+import com.edu.pucp.dp1.redex.services.CountryService;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -29,14 +39,14 @@ public class Main {
         AlgoritmoGenetico ga = new AlgoritmoGenetico(populationSize, mutationRate, crossoverRate, elitismCount, tournamentSize);
 
         // Cargar datos
-        List<Flight> flights = null;
-        List<Paquete> packages = null;
-        List<Airport> airports = null;
-        Map<Flight, Integer> flightCapacitiesUsed = new HashMap<>(); // Mapa para rastrear la capacidad usada de cada vuelo
+        List<FlightDTO> flights = null;
+        List<PaqueteDTO> packages = null;
+        List<AirportDTO> airports = null;
+        Map<FlightDTO, Integer> flightCapacitiesUsed = new HashMap<>(); // Mapa para rastrear la capacidad usada de cada vuelo
 
         try {
             flights = DataLoader.loadFlights("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/planes_vuelo.v3.txt");
-            for (Flight flight : flights) {
+            for (FlightDTO flight : flights) {
                 flightCapacitiesUsed.put(flight, 0); // Inicializa la capacidad usada de cada vuelo como 0
             }
             packages = DataLoader.loadPackages("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/pack_enviado_SKBO.txt");
@@ -46,8 +56,8 @@ public class Main {
             e.printStackTrace();
             return; // Salir del programa si hay un error
         }
-        Map<String, List<Flight>> airportToFlights = buildAirportToFlightsMap(flights);
-        for (Flight flight : flights) {
+        Map<String, List<FlightDTO>> airportToFlights = buildAirportToFlightsMap(flights);
+        for (FlightDTO flight : flights) {
             flightCapacitiesUsed.put(flight, 0);
             //       System.out.println("Flight from " + flight.getOrigin() + " to " + flight.getDestination() + " initialized with capacity: " + flight.getCapacity() + " and current load set to 0.");
         }
@@ -57,19 +67,19 @@ public class Main {
         final int MAX_STOPS = 5; // Puedes ajustar este valor según sea necesario
 
         // Generar posibles rutas para cada paquete
-        Map<Paquete, List<List<Flight>>> packageRoutes = generatePossibleRoutesForPackages(packages, airportToFlights, MAX_STOPS);
+        Map<PaqueteDTO, List<List<FlightDTO>>> packageRoutes = generatePossibleRoutesForPackages(packages, airportToFlights, MAX_STOPS);
         //    printPackageRoutes(packageRoutes);
-        Map<String, List<Flight>> packageFlights = selectRoutesForPackages(packageRoutes, flightCapacitiesUsed);
+        Map<String, List<FlightDTO>> packageFlights = selectRoutesForPackages(packageRoutes, flightCapacitiesUsed);
 
         assignPackagesToFlights(packages, packageFlights, flightCapacitiesUsed);
         //    printAssignedRoutes(packageFlights,flightCapacitiesUsed);
 
-        Map<String, List<Paquete>> packagesByEnvioCode = new HashMap<>();
+        Map<String, List<PaqueteDTO>> packagesByEnvioCode = new HashMap<>();
 
         assignPackagesToFlights(packages, packageFlights, flightCapacitiesUsed);
 
 
-        for (Paquete p : packages) {
+        for (PaqueteDTO p : packages) {
             packagesByEnvioCode.computeIfAbsent(p.getPackageId(), k -> new ArrayList<>()).add(p);
             //  System.out.println("Agregando paquete " + p.getPackageId() + " al grupo de envío.");
         }
@@ -77,13 +87,24 @@ public class Main {
         Map<String, AirportData> airportToContinentTimezoneData = new HashMap<>();
 
         // Llenar el mapa con datos de aeropuertos
-        for (Airport airport : airports) {
+        for (AirportDTO airport : airports) {
             // Obtener datos del aeropuerto
-            String continent = airport.getCity().getCountry().getContinent().getName();
-            int timezoneOffset = airport.getCity().getZonahoraria();
+            int cityid = airport.getCityId();
+            CityService cityService = new CityService();
+            CityDTO citydto = cityService.get(cityid);
+            CountryService countryService = new CountryService();
+            CountryDTO countrydto = countryService.get(citydto.getCountryId());
+            ContinentService continentService = new ContinentService();
+            Continent continent = continentService.get(countrydto.getContinentId());
+
+            //CityDTO city = cityService.findById(cityid);
+            
+            String continentName = continent.getName();
+            
+            int timezoneOffset = citydto.getZonahoraria();
 
             // Almacenar los datos en el mapa
-            airportToContinentTimezoneData.put(airport.getCodigoIATA(), new AirportData(continent, timezoneOffset));
+            airportToContinentTimezoneData.put(airport.getCodigoIATA(), new AirportData(continentName, timezoneOffset));
             // System.out.println("Agregando aeropuerto " + airport.getCode() + ": continente=" + continent + ", uso horario=" + timezoneOffset);
         }
 
@@ -122,11 +143,11 @@ public class Main {
 
         // Reportar las mejores rutas para cada paquete
         System.out.println("\nMejores rutas para cada paquete:");
-        for (Paquete pkg : packages) {
-            List<Flight> bestRoute = packageFlights.get(pkg.getPackageId());
+        for (PaqueteDTO pkg : packages) {
+            List<FlightDTO> bestRoute = packageFlights.get(pkg.getPackageId());
             System.out.println("Mejor ruta para el paquete " + pkg.getPackageId() + ":");
             if (bestRoute != null && !bestRoute.isEmpty()) {
-                for (Flight flight : bestRoute) {
+                for (FlightDTO flight : bestRoute) {
                     System.out.println("   " + flight.getOrigin() + " -> " + flight.getDestination() +
                             " (Salida: " + flight.getDepartureTime() + " - Llegada: " + flight.getArrivalTime() + ")");
                 }
@@ -142,7 +163,7 @@ public class Main {
 
     }
 
-    private static void reportBestRouteForPackage(String packageId, List<Flight> route) {
+    private static void reportBestRouteForPackage(String packageId, List<FlightDTO> route) {
         System.out.println("Mejor ruta para el paquete " + packageId + ":");
 
         if (route == null) {
@@ -152,7 +173,7 @@ public class Main {
                 System.out.println("La ruta está vacía.");
             } else {
                 System.out.println("La ruta es:");
-                for (Flight flight : route) {
+                for (FlightDTO flight : route) {
                     System.out.println(flight.getOrigin() + " -> " + flight.getDestination() +
                             " (Salida: " + flight.getDepartureTime() + " - Llegada: " + flight.getArrivalTime() + ")");
                 }
@@ -172,19 +193,19 @@ public class Main {
     }
 
     private static void printIndividualRoute(Individual individual) {
-        List<Flight> chromosome = individual.getChromosome();  // Obtén la lista de vuelos (la ruta del individuo)
+        List<FlightDTO> chromosome = individual.getChromosome();  // Obtén la lista de vuelos (la ruta del individuo)
         if (chromosome.isEmpty()) {
             System.out.println("  No route available.");
         } else {
             System.out.println("  Route:");
-            for (Flight flight : chromosome) {
+            for (FlightDTO flight : chromosome) {
                 System.out.println("    " + flight.getOrigin() + " -> " + flight.getDestination() +
                         " (Departure: " + flight.getDepartureTime() + " - Arrival: " + flight.getArrivalTime() + ")");
             }
         }
     }
 
-    private static long calculateFlightDuration(Flight flight) {
+    private static long calculateFlightDuration(FlightDTO flight) {
         LocalTime departureTime = flight.getDepartureTime();
         LocalTime arrivalTime = flight.getArrivalTime();
         long duration = Duration.between(departureTime, arrivalTime).toMinutes();
@@ -194,21 +215,21 @@ public class Main {
         return duration;
     }
 
-    private static long calculateRouteDurationMinutes(List<Flight> flightRoute) {
+    private static long calculateRouteDurationMinutes(List<FlightDTO> flightRoute) {
         long totalDuration = 0;
-        for (Flight flight : flightRoute) {
+        for (FlightDTO flight : flightRoute) {
             totalDuration += calculateFlightDuration(flight);
         }
         return totalDuration;
     }
 
-    private static Map<String, List<Flight>> selectRoutesForPackages(Map<Paquete, List<List<Flight>>> packageRoutes, Map<Flight, Integer> flightCapacitiesUsed) {
-        Map<String, List<Flight>> selectedRoutes = new HashMap<>();
-        for (Map.Entry<Paquete, List<List<Flight>>> entry : packageRoutes.entrySet()) {
-            Paquete pack = entry.getKey();
-            List<List<Flight>> routes = entry.getValue();
+    private static Map<String, List<FlightDTO>> selectRoutesForPackages(Map<PaqueteDTO, List<List<FlightDTO>>> packageRoutes, Map<FlightDTO, Integer> flightCapacitiesUsed) {
+        Map<String, List<FlightDTO>> selectedRoutes = new HashMap<>();
+        for (Map.Entry<PaqueteDTO, List<List<FlightDTO>>> entry : packageRoutes.entrySet()) {
+            PaqueteDTO pack = entry.getKey();
+            List<List<FlightDTO>> routes = entry.getValue();
 
-            List<Flight> selectedRoute = selectOptimalRoute(routes, flightCapacitiesUsed, pack);
+            List<FlightDTO> selectedRoute = selectOptimalRoute(routes, flightCapacitiesUsed, pack);
             if (selectedRoute != null) {
                 selectedRoutes.put(pack.getPackageId(), selectedRoute);
             } else {
@@ -219,20 +240,25 @@ public class Main {
         return selectedRoutes;
     }
 
-    private static List<Flight> selectOptimalRoute(List<List<Flight>> routes, Map<Flight, Integer> flightCapacitiesUsed, Paquete pack) {
-        List<Flight> validRoute = null;
+    private static List<FlightDTO> selectOptimalRoute(List<List<FlightDTO>> routes, Map<FlightDTO, Integer> flightCapacitiesUsed, PaqueteDTO pack) {
+        List<FlightDTO> validRoute = null;
         int minimumCapacityIncrease = Integer.MAX_VALUE;
         boolean routeFound = false;
 
-        for (List<Flight> route : routes) {
-            if (route.isEmpty() || !route.get(route.size() - 1).getDestination().equals(pack.getDestination())) {
+        for (List<FlightDTO> route : routes) {
+            AirportService airportService = new AirportService();
+            AirportDTO destination = airportService.get(pack.getDestinationId());
+            CityService cityService = new CityService();
+            CityDTO city = cityService.get(destination.getCityId());
+            
+            if (route.isEmpty() || !route.get(route.size() - 1).getDestination().equals(city.getNombre())) {
                 continue; // Ignorar rutas que no terminan en el destino correcto
             }
 
             boolean hasEnoughCapacity = true;
             int totalCapacityNeeded = 0;
 
-            for (Flight flight : route) {
+            for (FlightDTO flight : route) {
                 int currentCapacity = flightCapacitiesUsed.getOrDefault(flight, 0);
                 int additionalCapacityNeeded = pack.getQuantity();
 
@@ -253,7 +279,7 @@ public class Main {
         }
 
         if (validRoute != null) {
-            for (Flight flight : validRoute) {
+            for (FlightDTO flight : validRoute) {
                 int currentCapacity = flightCapacitiesUsed.getOrDefault(flight, 0);
                 flightCapacitiesUsed.put(flight, currentCapacity + pack.getQuantity());
             }
@@ -262,22 +288,31 @@ public class Main {
         return validRoute;
     }
 
-    private static int calculateTotalDuration(List<Flight> route) {
-        return route.stream().mapToInt(Flight::getDuration).sum();
+    private static int calculateTotalDuration(List<FlightDTO> route) {
+        return route.stream().mapToInt(FlightDTO::getDuration).sum();
     }
 
-    private static void printPackageRoutes(Map<Paquete, List<List<Flight>>> packageRoutes) {
-        for (Map.Entry<Paquete, List<List<Flight>>> entry : packageRoutes.entrySet()) {
-            Paquete pack = entry.getKey();
-            List<List<Flight>> routes = entry.getValue();
-            System.out.println("Rutas para el paquete " + pack.getPackageId() + " desde " + pack.getOrigin() + " a " + pack.getDestination() + ":");
+    private static void printPackageRoutes(Map<PaqueteDTO, List<List<FlightDTO>>> packageRoutes) {
+        for (Map.Entry<PaqueteDTO, List<List<FlightDTO>>> entry : packageRoutes.entrySet()) {
+            PaqueteDTO pack = entry.getKey();
+            List<List<FlightDTO>> routes = entry.getValue();
+
+            AirportService airportService = new AirportService();
+            AirportDTO origin = airportService.get(pack.getOriginId());
+            CityService cityService = new CityService();
+            CityDTO cityOrigin = cityService.get(origin.getCityId());
+
+            AirportDTO destination = airportService.get(pack.getDestinationId());
+            CityDTO cityDestination = cityService.get(destination.getCityId());
+                        
+            System.out.println("Rutas para el paquete " + pack.getPackageId() + " desde " + cityOrigin.getNombre() + " a " + cityDestination.getNombre() + ":");
 
             if (routes.isEmpty()) {
                 System.out.println("  No hay rutas disponibles.");
             } else {
-                for (List<Flight> route : routes) {
+                for (List<FlightDTO> route : routes) {
                     System.out.print("  Ruta: ");
-                    for (Flight flight : route) {
+                    for (FlightDTO flight : route) {
                         long duration = calculateFlightDuration(flight);
                         System.out.print(flight.getOrigin() + " -> " + flight.getDestination() + " (" + flight.getDepartureTime() + " - " + flight.getArrivalTime() + ", " + "Duración: " + duration + " mins, Capacidad: " + flight.getCapacity() + "), ");
                     }
@@ -289,19 +324,28 @@ public class Main {
     }
 
 
-    private static Map<String, List<Flight>> buildAirportToFlightsMap(List<Flight> flights) {
-        Map<String, List<Flight>> airportToFlights = new HashMap<>();
-        for (Flight flight : flights) {
+    private static Map<String, List<FlightDTO>> buildAirportToFlightsMap(List<FlightDTO> flights) {
+        Map<String, List<FlightDTO>> airportToFlights = new HashMap<>();
+        for (FlightDTO flight : flights) {
             airportToFlights.computeIfAbsent(flight.getOrigin(), k -> new ArrayList<>()).add(flight);
         }
         return airportToFlights;
     }
 
-    private static Map<Paquete, List<List<Flight>>> generatePossibleRoutesForPackages(List<Paquete> packages, Map<String, List<Flight>> airportToFlights, int maxStops) {
-        Map<Paquete, List<List<Flight>>> packageRoutes = new HashMap<>();
+    private static Map<PaqueteDTO, List<List<FlightDTO>>> generatePossibleRoutesForPackages(List<PaqueteDTO> packages, Map<String, List<FlightDTO>> airportToFlights, int maxStops) {
+        Map<PaqueteDTO, List<List<FlightDTO>>> packageRoutes = new HashMap<>();
 
-        for (Paquete pack : packages) {
-            List<List<Flight>> possibleRoutes = findRoutes(pack.getOrigin().getCity().getNombre(), pack.getDestination().getCity().getNombre(), airportToFlights, maxStops);
+        for (PaqueteDTO pack : packages) {
+            AirportService airportService = new AirportService();
+            AirportDTO origin = airportService.get(pack.getOriginId());
+            CityService cityService = new CityService();
+            CityDTO cityOrigin = cityService.get(origin.getCityId());
+
+            AirportDTO destination = airportService.get(pack.getDestinationId());
+            CityDTO cityDestination = cityService.get(destination.getCityId());
+             
+
+            List<List<FlightDTO>> possibleRoutes = findRoutes(cityOrigin.getNombre(),cityDestination.getNombre(), airportToFlights, maxStops);
 
             // Verificar si se encontraron rutas posibles
             if (!possibleRoutes.isEmpty()) {
@@ -315,8 +359,8 @@ public class Main {
     }
 
 
-    private static List<List<Flight>> findRoutes(String origin, String destination, Map<String, List<Flight>> airportToFlights, int maxStops) {
-        List<List<Flight>> routes = new ArrayList<>();
+    private static List<List<FlightDTO>> findRoutes(String origin, String destination, Map<String, List<FlightDTO>> airportToFlights, int maxStops) {
+        List<List<FlightDTO>> routes = new ArrayList<>();
         Set<String> visitedAirports = new HashSet<>();  // Conjunto para mantener registro de aeropuertos visitados
         exploreRoutes(origin, destination, airportToFlights, new ArrayList<>(), routes, visitedAirports);
 
@@ -329,7 +373,7 @@ public class Main {
     }
 
 
-    private static void exploreRoutes(String current, String destination, Map<String, List<Flight>> airportToFlights, List<Flight> currentRoute, List<List<Flight>> routes, Set<String> visitedAirports) {
+    private static void exploreRoutes(String current, String destination, Map<String, List<FlightDTO>> airportToFlights, List<FlightDTO> currentRoute, List<List<FlightDTO>> routes, Set<String> visitedAirports) {
         if (current.equals(destination)) {
             if (!currentRoute.isEmpty() && currentRoute.get(currentRoute.size() - 1).getDestination().equals(destination)) {
                 routes.add(new ArrayList<>(currentRoute));  // Asegura que la última parada sea el destino
@@ -343,7 +387,7 @@ public class Main {
 
         visitedAirports.add(current);
 
-        for (Flight flight : airportToFlights.get(current)) {
+        for (FlightDTO flight : airportToFlights.get(current)) {
             if (!visitedAirports.contains(flight.getDestination()) && !flight.getDestination().equals(current)) {
                 currentRoute.add(flight);
                 exploreRoutes(flight.getDestination(), destination, airportToFlights, currentRoute, routes, visitedAirports);
@@ -353,14 +397,14 @@ public class Main {
 
         visitedAirports.remove(current);
     }
-    private static void assignPackagesToFlights(List<Paquete> packages, Map<String, List<Flight>> packageFlights, Map<Flight, Integer> flightCapacitiesUsed) {
-        for (Paquete pkg : packages) {
-            List<Flight> assignedFlights = packageFlights.get(pkg.getPackageId());
+    private static void assignPackagesToFlights(List<PaqueteDTO> packages, Map<String, List<FlightDTO>> packageFlights, Map<FlightDTO, Integer> flightCapacitiesUsed) {
+        for (PaqueteDTO pkg : packages) {
+            List<FlightDTO> assignedFlights = packageFlights.get(pkg.getPackageId());
             if (assignedFlights != null && !assignedFlights.isEmpty()) {
                 // Obtener la capacidad del paquete (se mantiene constante para cada vuelo)
                 int packageCapacity = pkg.getQuantity();
 
-                for (Flight flight : assignedFlights) {
+                for (FlightDTO flight : assignedFlights) {
                     // Verificar si hay capacidad disponible en este vuelo
                     int currentCapacity = flightCapacitiesUsed.getOrDefault(flight, 0);
                     int remainingCapacity = flight.getCapacity() - currentCapacity;

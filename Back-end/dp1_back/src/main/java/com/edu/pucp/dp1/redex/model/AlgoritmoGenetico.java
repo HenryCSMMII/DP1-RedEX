@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.edu.pucp.dp1.redex.dto.FlightDTO;
+import com.edu.pucp.dp1.redex.dto.PaqueteDTO;
+
 public class AlgoritmoGenetico {
 
     private double MUTATION_RATE=0.05;
@@ -34,7 +37,7 @@ public class AlgoritmoGenetico {
     }
 
 
-    public Population initPopulation(int populationSize, Map<Paquete, List<List<Flight>>> packageRoutes) {
+    public Population initPopulation(int populationSize, Map<PaqueteDTO, List<List<FlightDTO>>> packageRoutes) {
         Population population = new Population(populationSize);
         for (int i = 0; i < populationSize; i++) {
             Individual individual = new Individual();
@@ -44,7 +47,7 @@ public class AlgoritmoGenetico {
         return population;
     }
 
-    public void evalPopulation(Population population, List<Flight> flights, List<Paquete> packages, Map<String, List<Flight>> packageFlights, Map<String, List<Flight>> airportToFlights, Map<String, AirportData> airportToContinentTimezoneData) {
+    public void evalPopulation(Population population, List<FlightDTO> flights, List<PaqueteDTO> packages, Map<String, List<FlightDTO>> packageFlightsDTO, Map<String, List<FlightDTO>> airportToFlightsDTO, Map<String, AirportData> airportToContinentTimezoneData) {
         double bestFitness = Double.NEGATIVE_INFINITY;
         Individual bestIndividual = null;
 
@@ -81,13 +84,13 @@ public class AlgoritmoGenetico {
         }
     }
 
-    private void printBestRoute(Individual bestIndividual, List<Paquete> packages, Map<String, List<Flight>> packageFlights) {
-        List<Flight> route = bestIndividual.getChromosome();
+    private void printBestRoute(Individual bestIndividual, List<PaqueteDTO> packages, Map<String, List<FlightDTO>> packageFlights) {
+        List<FlightDTO> route = bestIndividual.getChromosome();
         if (route.isEmpty()) {
             System.out.println("No available route for the individual.");
         } else {
             System.out.println("Best route for the individual:");
-            for (Flight flight : route) {
+            for (FlightDTO flight : route) {
                 System.out.println("   " + flight.getOrigin() + " -> " + flight.getDestination() +
                         " (Departure: " + flight.getDepartureTime() +
                         " - Arrival: " + flight.getArrivalTime() + ")");
@@ -118,11 +121,11 @@ public class AlgoritmoGenetico {
     }
 
 
-    private long calculateTotalTravelTime(List<Flight> route, Map<String, AirportData> airportToContinentTimezoneData) {
+    private long calculateTotalTravelTime(List<FlightDTO> route, Map<String, AirportData> airportToContinentTimezoneData) {
         long totalMinutes = 0;
         LocalDateTime previousArrival = null;
 
-        for (Flight flight : route) {
+        for (FlightDTO flight : route) {
             AirportData originData = airportToContinentTimezoneData.get(flight.getOrigin());
             AirportData destinationData = airportToContinentTimezoneData.get(flight.getDestination());
 
@@ -150,7 +153,7 @@ public class AlgoritmoGenetico {
         return totalMinutes;
     }
 
-    private boolean isIntercontinental(List<Flight> route, Map<String, AirportData> airportToContinentTimezoneData) {
+    private boolean isIntercontinental(List<FlightDTO> route, Map<String, AirportData> airportToContinentTimezoneData) {
         if (route.isEmpty()) return false;
 
         String startContinent = airportToContinentTimezoneData.get(route.get(0).getOrigin()).getContinent();
@@ -159,18 +162,18 @@ public class AlgoritmoGenetico {
         return !startContinent.equals(endContinent);
     }
 
-    public void reportFinalBestIndividual(List<Flight> flights, Map<Flight, Integer> flightCapacitiesUsed) {
+    public void reportFinalBestIndividual(List<FlightDTO> flights, Map<FlightDTO, Integer> flightCapacitiesUsed) {
         System.out.println("Detalles de las rutas del mejor individuo:");
         if (bestIndividualEver != null) {
             System.out.println("Mejor individuo con puntaje de ajuste: " + bestFitnessEver);
 
-            List<Flight> route = bestIndividualEver.getChromosome();
+            List<FlightDTO> route = bestIndividualEver.getChromosome();
             if (!route.isEmpty()) {
                 long totalDuration = calculateTotalRouteDuration(route);
                 System.out.printf("Duración total de la ruta: %d mins%n", totalDuration);
 
                 int routeIndex = 0;
-                for (Flight flight : route) {
+                for (FlightDTO flight : route) {
                     long duration = calculateFlightDuration(flight);
                     int usedCapacity = flightCapacitiesUsed.getOrDefault(flight, 0);
                     System.out.printf("Ruta %d: Desde %s hasta %s (%s - %s), Duración: %d mins, Capacidad utilizada: %d/%d%n",
@@ -186,25 +189,25 @@ public class AlgoritmoGenetico {
         }
     }
 
-    private int getTotalCapacity(List<Flight> route) {
+    private int getTotalCapacity(List<FlightDTO> route) {
         int totalCapacity = 0;
-        for (Flight flight : route) {
+        for (FlightDTO flight : route) {
             totalCapacity += flight.getCapacity();
         }
         return totalCapacity;
     }
 
-    private long calculateTotalRouteDuration(List<Flight> route) {
+    private long calculateTotalRouteDuration(List<FlightDTO> route) {
         long totalDuration = 0;
-        for (Flight flight : route) {
+        for (FlightDTO flight : route) {
             totalDuration += calculateFlightDuration(flight);
         }
         return totalDuration;
     }
 
-    private int calculateTotalRemainingCapacity(List<Flight> route, Map<Flight, Integer> flightCapacitiesUsed) {
+    private int calculateTotalRemainingCapacity(List<FlightDTO> route, Map<FlightDTO, Integer> flightCapacitiesUsed) {
         int totalRemainingCapacity = 0;
-        for (Flight flight : route) {
+        for (FlightDTO flight : route) {
             int usedCapacity = flightCapacitiesUsed.getOrDefault(flight, 0);
             totalRemainingCapacity += (flight.getCapacity() - usedCapacity);
         }
@@ -213,7 +216,7 @@ public class AlgoritmoGenetico {
 
 
 
-    private static long calculateFlightDuration(Flight flight) {
+    private static long calculateFlightDuration(FlightDTO flight) {
         LocalTime departureTime = flight.getDepartureTime();
         LocalTime arrivalTime = flight.getArrivalTime();
         long duration = Duration.between(departureTime, arrivalTime).toMinutes();
@@ -266,29 +269,29 @@ public class AlgoritmoGenetico {
     }
 
 
-    public Population mutatePopulation(Population originalPopulation, Map<String, List<Flight>> airportToFlights) {
+    public Population mutatePopulation(Population originalPopulation, Map<String, List<FlightDTO>> airportToFlights) {
         Population newPopulation = new Population(originalPopulation.size());
         Random rand = new Random();
 
         for (int i = 0; i < originalPopulation.size(); i++) {
             Individual originalIndividual = originalPopulation.getIndividual(i);
             Individual mutatedIndividual = originalIndividual.clone();
-            List<Flight> route = mutatedIndividual.getChromosome();
+            List<FlightDTO> route = mutatedIndividual.getChromosome();
 
             if (Math.random() < mutationRate && !route.isEmpty()) {
                 int flightIndex = rand.nextInt(route.size());
-                Flight currentFlight = route.get(flightIndex);
-                List<Flight> possibleFlights = airportToFlights.get(currentFlight.getOrigin());
+                FlightDTO currentFlight = route.get(flightIndex);
+                List<FlightDTO> possibleFlights = airportToFlights.get(currentFlight.getOrigin());
 
                 if (possibleFlights != null && !possibleFlights.isEmpty()) {
-                    Flight newFlight = possibleFlights.get(rand.nextInt(possibleFlights.size()));
+                    FlightDTO newFlight = possibleFlights.get(rand.nextInt(possibleFlights.size()));
                     route.set(flightIndex, newFlight);  // Reemplaza el vuelo en el índice seleccionado
 
                     // Asegurar que el vuelo nuevo conecte correctamente con el siguiente vuelo
                     if (flightIndex < route.size() - 1) {
-                        Flight nextFlight = route.get(flightIndex + 1);
+                        FlightDTO nextFlight = route.get(flightIndex + 1);
                         if (!newFlight.getDestination().equals(nextFlight.getOrigin())) {
-                            Flight connectingFlight = findConnectingFlight(newFlight.getDestination(), nextFlight.getOrigin(), possibleFlights);
+                            FlightDTO connectingFlight = findConnectingFlight(newFlight.getDestination(), nextFlight.getOrigin(), possibleFlights);
                             if (connectingFlight != null) {
                                 route.set(flightIndex + 1, connectingFlight); // Establecer el vuelo de conexión
                             }
@@ -301,7 +304,7 @@ public class AlgoritmoGenetico {
         return newPopulation;
     }
 
-    private boolean isValidFlightReplacement(Flight newFlight, List<Flight> currentRoute, int flightIndex, String finalDestination) {
+    private boolean isValidFlightReplacement(FlightDTO newFlight, List<FlightDTO> currentRoute, int flightIndex, String finalDestination) {
         // Verificar si el nuevo vuelo conecta correctamente con el vuelo anterior y siguiente, y si es el último vuelo en la ruta
         if (flightIndex > 0 && !newFlight.getOrigin().equals(currentRoute.get(flightIndex - 1).getDestination())) {
             return false;
@@ -317,7 +320,7 @@ public class AlgoritmoGenetico {
 
 
 
-    private Flight findConnectingFlight(String currentDestination, String nextOrigin, List<Flight> availableFlights) {
+    private FlightDTO findConnectingFlight(String currentDestination, String nextOrigin, List<FlightDTO> availableFlights) {
         return availableFlights.stream()
                 .filter(flight -> flight.getOrigin().equals(currentDestination) && flight.getDestination().equals(nextOrigin))
                 .findFirst()

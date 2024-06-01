@@ -90,6 +90,16 @@ public class AirportService {
         }
     }
 
+    public AirportDTO getByCityId(int cityId){
+        try {
+            Airport airport = airportRepository.findAirportByCityId(cityId);
+            return convertToDTO(airport);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     @Transactional
     public void processFile(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {

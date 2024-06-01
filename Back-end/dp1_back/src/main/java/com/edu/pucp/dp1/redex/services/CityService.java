@@ -82,6 +82,16 @@ public class CityService {
         }
     }
 
+    public CityDTO getByName(String name){
+        try {
+            City city = cityRepository.findCityByName(name);
+            return city != null ? convertToDTO(city) : null;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     private CityDTO convertToDTO(City city) {
         return new CityDTO(
                 city.getId(),

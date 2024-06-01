@@ -70,8 +70,8 @@ public class Paquete extends BaseEntity {
     private Shipment shipment;
 
     //TABLA INTERMEDIA
-    @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY)
-    private List<PackageFlight> packageFlights;
+    // @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY)
+    // private List<PackageFlight> packageFlights;
 
     // ToString method for debugging purposes
     @Override

@@ -129,7 +129,7 @@ public class FlightService{
         }
     }
 
-    public void calculateDuration(Flight flight) {
+    public void calculateDuration(FlightDTO flight) {
         int duration;
         if (flight.getArrivalTime().isBefore(flight.getDepartureTime())) {
             // El vuelo pasa de medianoche

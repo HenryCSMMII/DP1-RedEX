@@ -17,4 +17,10 @@ public class AirportDTO {
     private int capacity;
     private int currentCapacity;
     private int cityId; // Solo el ID de la ciudad
+
+    public AirportDTO(String codigoIATA,int cityId, int capacity){
+        this.codigoIATA = codigoIATA;
+        this.cityId = cityId;
+        this.capacity = capacity;
+    }
 }
