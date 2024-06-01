@@ -33,4 +33,9 @@ public class PaqueteDTO {
         this.quantity = quantity;
         this.packageId = packageId;
     }
+
+    public String toString() {
+        return String.format("Paquete de %d a %d, saliendo a las %s con %d unidades.",
+                originId, destinationId, departureTime, quantity);
+    }
 }

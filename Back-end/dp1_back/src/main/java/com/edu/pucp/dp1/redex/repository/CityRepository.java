@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.Query;
 @Transactional
 public interface CityRepository extends JpaRepository<City, Integer> {
     public City findCityById(int id);
-    public City findCityByName(String name);
 
     @Query("SELECT c FROM City c WHERE c.id BETWEEN :idInicio and :idFinal")
     public List<City> findCityByIds(int idInicio, int idFinal);

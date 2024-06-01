@@ -50,7 +50,7 @@ public class Main {
                 flightCapacitiesUsed.put(flight, 0); // Inicializa la capacidad usada de cada vuelo como 0
             }
             packages = DataLoader.loadPackages("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/pack_enviado_SKBO.txt");
-            airports = DataLoader.loadAirports("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
+            //airports = DataLoader.loadAirports("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
         } catch (IOException e) {
             System.out.println("Error al leer los archivos: " + e.getMessage());
             e.printStackTrace();

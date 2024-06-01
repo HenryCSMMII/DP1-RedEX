@@ -38,6 +38,11 @@ public class AirportController {
         return airportService.get(id);
     }
 
+    @GetMapping(value = "/code/{code}")
+    AirportDTO getByCode(@PathVariable String code){
+        return airportService.getByCode(code);
+    }
+
     @PostMapping(value = "/")
     AirportDTO register(@RequestBody AirportDTO airportDTO) throws SQLException{
         return airportService.register(airportDTO);

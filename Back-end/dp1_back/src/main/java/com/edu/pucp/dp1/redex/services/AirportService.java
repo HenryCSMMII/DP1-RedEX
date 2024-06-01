@@ -42,6 +42,16 @@ public class AirportService {
         }
     }
 
+    public AirportDTO getByCode(String code){
+        try {
+            Airport airport = airportRepository.findAirportByCodigoIATA(code);
+            return convertToDTO(airport);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
     public List<AirportDTO> getAll(){
         try {
             return airportRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
@@ -90,15 +100,15 @@ public class AirportService {
         }
     }
 
-    public AirportDTO getByCityId(int cityId){
-        try {
-            Airport airport = airportRepository.findAirportByCityId(cityId);
-            return convertToDTO(airport);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return null;
-        }
-    }
+    // public AirportDTO getByCityId(int cityId){
+    //     try {
+    //         Airport airport = airportRepository.findAirportByCityId(cityId);
+    //         return convertToDTO(airport);
+    //     } catch (Exception e) {
+    //         LOGGER.error(e.getMessage(), e);
+    //         return null;
+    //     }
+    // }
 
     @Transactional
     public void processFile(InputStream inputStream) throws IOException {

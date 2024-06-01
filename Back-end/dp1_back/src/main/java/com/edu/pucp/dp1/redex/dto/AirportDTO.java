@@ -23,4 +23,9 @@ public class AirportDTO {
         this.cityId = cityId;
         this.capacity = capacity;
     }
+
+    public String toString() {
+        return String.format("Aeropuerto %s, ciudad %d, capacidad %d.",
+                codigoIATA, cityId, capacity);
+    }
 }

@@ -50,5 +50,10 @@ public class FlightDTO {
             System.err.println("Error al parsear la hora: " + timeStr);
             return null;
         }
-    }    
+    }
+
+    public String toString() {
+        return String.format("Vuelo de %s a %s, saliendo a las %s y llegando a las %s, con capacidad para %d pasajeros.",
+                origin, destination, departureTime, arrivalTime, capacity);
+    }
 }

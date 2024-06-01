@@ -28,13 +28,16 @@ public class DataLoader {
                         String arrivalTime = parts[3].trim();
                         int capacity = Integer.parseInt(parts[4].trim());
 
-                        flights.add(new FlightDTO(origin, destination, departureTime, arrivalTime, capacity));
+                        flights.add(new FlightDTO(origin, destination, departureTime, arrivalTime, capacity));                        
                     } catch (NumberFormatException e) {
                         System.err.println("Error parsing integer for flight capacity: " + e.getMessage());
                     }
                 } else {
                     System.err.println("Incorrect line format for flights: " + line);
                 }
+                // for(FlightDTO flight : flights){
+                //     System.out.println(flight.toString());
+                // }
             }
         }
         // for(FlightDTO flight : flights){
@@ -52,7 +55,9 @@ public class DataLoader {
                 if (parts.length == 5) {
                     String origin = parts[0]; // EBCI es el origen
                     String envioCode = parts[1]; // 000000002 es parte del identificador de envío
-                    String departureTime = parts[2]; // 20240103-01:48 es la fecha y hora de salida
+
+                    String departureTime = parts[2]+" "+parts[3]; // 20240103-01:48 es la fecha y hora de salida
+                    
                     String[] destQuantity = parts[4].split(":");
                     String destination = destQuantity[0]; // RPLL es el destino
                     int quantity = Integer.parseInt(destQuantity[1]); // 02 es la cantidad de paquetes
@@ -60,19 +65,25 @@ public class DataLoader {
                     // Combinamos la ciudad de origen con el código de envío para formar un identificador único para este paquete
                     String packageId = origin + "-" + envioCode;
 
-                    CityService cityService = new CityService();
-                    CityDTO originCity = cityService.getByName(origin);
-                    CityDTO destinationCity = cityService.getByName(destination);
                     AirportService airportService = new AirportService();
-                    AirportDTO originAirport = airportService.getByCityId(originCity.getId());
-                    AirportDTO destinationAirport = airportService.getByCityId(destinationCity.getId());
+                    AirportDTO originAirport = airportService.getByCode(origin), destinationAirport = airportService.getByCode(destination);
                     int originId = originAirport.getId(), destinationId = destinationAirport.getId();
+                    
+
+                    //OJO CON ESTA FUNCIÓN
+                    // AirportService airportService = new AirportService();
+                    // AirportDTO originAirport = airportService.getByCityId(originCity.getId());
+                    // AirportDTO destinationAirport = airportService.getByCityId(destinationCity.getId());
+                    // int originId = originAirport.getId(), destinationId = destinationAirport.getId();
 
                     PaqueteDTO pack = new PaqueteDTO(originId, destinationId, departureTime, quantity, packageId);
                     packages.add(pack);
                 }
             }
 
+            // for(PaqueteDTO pack : packages){
+            //     System.out.println(pack.toString());
+            // }
             reader.close();
             return packages;
         }
