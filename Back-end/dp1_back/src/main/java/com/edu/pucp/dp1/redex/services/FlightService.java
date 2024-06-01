@@ -1,4 +1,6 @@
 package com.edu.pucp.dp1.redex.services;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -43,11 +45,13 @@ public class FlightService{
         LocalTime departureTime = LocalTime.parse(parts[2], DateTimeFormatter.ofPattern("HH:mm"));
         LocalTime arrivalTime = LocalTime.parse(parts[3], DateTimeFormatter.ofPattern("HH:mm"));
         int capacity = Integer.parseInt(parts[4]);
+        LocalDate departureDate = LocalDate.parse(parts[5]);
+        LocalDate arrivalDate = LocalDate.parse(parts[6]);
         EstadoVuelo estadoVuelo = new EstadoVuelo();
         estadoVuelo.setId(1);
         estadoVuelo.setEstado("PENDIENTE");
 
-        Flight flight = new Flight(origin, destination, departureTime, arrivalTime, capacity, "0", 0, 0, estadoVuelo);
+        Flight flight = new Flight(origin, destination, departureTime, arrivalTime, capacity, "0", 0, 0, estadoVuelo, arrivalDate, departureDate);
         return convertToDTO(flight);
     }
 
@@ -138,19 +142,6 @@ public class FlightService{
         flight.setDuration(duration);
     }
 
-    private static LocalTime parseTime(String timeStr, Flight flight) {
-        if (timeStr == null || timeStr.isEmpty()) {
-            System.err.println("Hora nula o vacía proporcionada, no se puede parsear.");
-            return null;
-        }
-        try {
-            return LocalTime.parse(timeStr, flight.TIME_FORMATTER);
-        } catch (DateTimeParseException e) {
-            System.err.println("Error al parsear la hora: " + timeStr);
-            return null;
-        }
-    }
-
     public String toString(Flight flight) {
         return "Vuelo " + flight.getOrigin() + " -> " + flight.getDestination() + " (" + flight.getDepartureTime() + " - " +
         flight.getArrivalTime() + ") - Capacidad: " + flight.getCapacity();
@@ -167,7 +158,9 @@ public class FlightService{
                 flight.getFlightNumber(),
                 flight.getCurrentLoad(),
                 flight.getDuration(),
-                flight.getEstadoVuelo().getId()
+                flight.getEstadoVuelo().getId(),
+                flight.getArrivalDate(),
+                flight.getDepartureDate()
         );
     }
 
@@ -182,6 +175,8 @@ public class FlightService{
         flight.setFlightNumber(flightDTO.getFlightNumber());
         flight.setCurrentLoad(flightDTO.getCurrentLoad());
         flight.setDuration(flightDTO.getDuration());
+        flight.setArrivalDate(flightDTO.getArrivalDate());
+        flight.setDepartureDate(flightDTO.getDepartureDate());
         EstadoVuelo estadoVuelo = estadoVueloRepository.findEstadoVueloById(flightDTO.getEstadoVueloId());
         flight.setEstadoVuelo(estadoVuelo);
         return flight;

@@ -1,5 +1,6 @@
 package com.edu.pucp.dp1.redex.dto;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
@@ -21,4 +22,6 @@ public class FlightDTO {
     private int currentLoad;
     private int duration;
     private int estadoVueloId;
+    private LocalDate arrivalDate;
+    private LocalDate departureDate;
 }

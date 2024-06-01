@@ -1,4 +1,5 @@
 package com.edu.pucp.dp1.redex.model;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -58,15 +59,18 @@ public class Flight extends BaseEntity {
     @Column(name = "duration", nullable = false)
     private int duration;
 
+    @Column(name = "arrivalDate", nullable = false)
+    private LocalDate arrivalDate;
+
+    @Column(name = "departureDate", nullable = false)
+    private LocalDate departureDate;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "estado_vuelo_id", nullable = false)
     private EstadoVuelo estadoVuelo;
 
-    /*@OneToMany(mappedBy = "flight", fetch = FetchType.LAZY)
-    private List<PackageFlight> packageFlights;*/
-
-    /* //Constructor adicional (solo necesario si se le aumenta más parametros)
-    public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration, EstadoVuelo estadoVuelo) {
+    // Constructor adicional
+    public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration, EstadoVuelo estadoVuelo, LocalDate arrivalDate, LocalDate departureDate) {
         this.origin = origin;
         this.destination = destination;
         this.departureTime = departureTime;
@@ -76,7 +80,9 @@ public class Flight extends BaseEntity {
         this.currentLoad = currentLoad;
         this.duration = duration;
         this.estadoVuelo = estadoVuelo;
-    }*/
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
+    }
 
     // ToString method for debugging purposes
     @Override
@@ -92,6 +98,8 @@ public class Flight extends BaseEntity {
                 ", currentLoad=" + currentLoad +
                 ", duration=" + duration +
                 ", estadoVuelo=" + (estadoVuelo != null ? estadoVuelo.getEstado() : "null") +
+                ", arrivalDate=" + arrivalDate +
+                ", departureDate=" + departureDate +
                 '}';
     }
 }
