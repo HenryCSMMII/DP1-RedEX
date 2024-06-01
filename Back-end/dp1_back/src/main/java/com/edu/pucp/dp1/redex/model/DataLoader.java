@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.edu.pucp.dp1.redex.dto.AirportDTO;
 import com.edu.pucp.dp1.redex.dto.CityDTO;
 import com.edu.pucp.dp1.redex.dto.FlightDTO;
@@ -13,6 +15,9 @@ import com.edu.pucp.dp1.redex.services.AirportService;
 import com.edu.pucp.dp1.redex.services.CityService;
 
 public class DataLoader {
+
+    @Autowired
+    private AirportService airportService;
 
     public static List<FlightDTO> loadFlights(String filePath) throws IOException {
         List<FlightDTO> flights = new ArrayList<>();
@@ -80,6 +85,7 @@ public class DataLoader {
     }
     public static List<AirportDTO> loadAirports(String filePath) throws IOException {
         List<AirportDTO> airports = new ArrayList<>();
+        airports = airportService.getAll();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
