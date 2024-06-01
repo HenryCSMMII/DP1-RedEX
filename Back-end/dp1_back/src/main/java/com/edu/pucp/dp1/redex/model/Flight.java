@@ -54,7 +54,7 @@ public class Flight extends BaseEntity {
     private String flightNumber;
 
     @Column(name = "currentLoad", nullable = false)
-    private int currentLoad;
+    private int[] currentLoad;
 
     @Column(name = "duration", nullable = false)
     private int duration;
@@ -69,7 +69,7 @@ public class Flight extends BaseEntity {
     @JoinColumn(name = "estado_vuelo_id", nullable = false)
     private EstadoVuelo estadoVuelo;
 
-    // Constructor adicional
+    /* Constructor adicional
     public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration, EstadoVuelo estadoVuelo, LocalDate arrivalDate, LocalDate departureDate) {
         this.origin = origin;
         this.destination = destination;
@@ -82,7 +82,7 @@ public class Flight extends BaseEntity {
         this.estadoVuelo = estadoVuelo;
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
-    }
+    }*/
 
     // ToString method for debugging purposes
     @Override

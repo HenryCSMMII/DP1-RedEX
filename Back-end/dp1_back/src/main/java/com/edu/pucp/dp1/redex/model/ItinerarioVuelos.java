@@ -1,6 +1,8 @@
 package com.edu.pucp.dp1.redex.model;
 
 import java.time.LocalTime;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -43,4 +45,10 @@ public class ItinerarioVuelos {
 
     @Column(nullable = false)
     private int capacity;
+
+    private long estimated_time;
+
+    private Boolean active;
+	
+	private List<Flight> flights;
 }
