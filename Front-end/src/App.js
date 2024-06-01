@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -11,6 +11,9 @@ import ReportesPopup from './components/ReportesPopup';
 import SimulacionSidebar from './components/SimulacionSidebar';
 import axios from 'axios';
 import Modal from 'react-modal';
+
+// Import the custom marker image
+import redDot from './images/red-dot.png';
 
 const AppContainer = styled.div`
   display: flex;
@@ -46,6 +49,8 @@ const MapContainer = styled.div`
   z-index: 0;
 `;
 
+const libraries = ['places', 'marker'];
+
 Modal.setAppElement('#root');
 
 function App() {
@@ -61,6 +66,7 @@ function App() {
   });
   const [loading, setLoading] = useState(true);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const mapRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,7 +103,8 @@ function App() {
     }
   }, [loading]);
 
-  const handleMapLoad = () => {
+  const handleMapLoad = async (map) => {
+    mapRef.current = map;
     setIsMapLoaded(true);
     console.log('Map loaded');
   };
@@ -134,33 +141,38 @@ function App() {
       <Content>
         <MainContent>
           <MapContainer>
-            <LoadScript googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4" onLoad={handleMapLoad}>
+            <LoadScript
+              googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4" // Reemplaza con tu clave de API
+              libraries={libraries}
+              onLoad={handleMapLoad}
+            >
               <GoogleMap
                 mapContainerStyle={{ width: '100%', height: '100%' }}
                 center={{ lat: -3.745, lng: -38.523 }}
                 zoom={3}
+                onLoad={handleMapLoad}
+                mapId="56d2948ec3b0b447" // Reemplaza con tu Map ID
               >
-                {isMapLoaded && (
+                {isMapLoaded && mapRef.current && (
                   <>
-                    <Marker
+                    <MarkerComponent
+                      map={mapRef.current}
                       position={{ lat: -3.745, lng: -38.523 }}
                       title="Central Marker"
-                      icon={{
-                        url: "http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png",
-                        scaledSize: new window.google.maps.Size(20, 34)
-                      }}
+                      icon={redDot}
                     />
-                    {data.airports.map((airport) => (
-                      <Marker
-                        key={airport.id}
-                        position={{ lat: airport.latitude, lng: airport.longitude }}
-                        title={airport.codigoIATA}
-                        icon={{
-                          url: "http://maps.gstatic.com/mapfiles/ridefinder-images/mm_20_red.png",
-                          scaledSize: new window.google.maps.Size(20, 34)
-                        }}
-                      />
-                    ))}
+                    {data.airports.map((airport) => {
+                      console.log(`Rendering marker for airport: ${airport.codigoIATA}, Lat: ${airport.latitude}, Lng: ${airport.longitude}`);
+                      return (
+                        <MarkerComponent
+                          key={airport.id}
+                          map={mapRef.current}
+                          position={{ lat: airport.latitude, lng: airport.longitude }}
+                          title={airport.codigoIATA}
+                          icon={redDot}
+                        />
+                      );
+                    })}
                   </>
                 )}
               </GoogleMap>
@@ -178,5 +190,25 @@ function App() {
     </AppContainer>
   );
 }
+
+const MarkerComponent = ({ map, position, title, icon }) => {
+  useEffect(() => {
+    const addMarker = async () => {
+      const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
+      new AdvancedMarkerElement({
+        map,
+        position,
+        title,
+        icon: {
+          url: icon,
+          scaledSize: new window.google.maps.Size(32, 32)
+        }
+      });
+    };
+    addMarker();
+  }, [map, position, title, icon]);
+
+  return null;
+};
 
 export default App;
