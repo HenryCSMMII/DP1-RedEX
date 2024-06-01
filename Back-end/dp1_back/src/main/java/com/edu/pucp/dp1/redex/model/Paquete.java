@@ -8,7 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.OneToMany;
+//import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -69,9 +69,9 @@ public class Paquete extends BaseEntity {
     @JsonBackReference
     private Shipment shipment;
 
-    //TABLA INTERMEDIA
+    /*TABLA INTERMEDIA
     @OneToMany(mappedBy = "paquete", fetch = FetchType.LAZY)
-    private List<PackageFlight> packageFlights;
+    private List<PackageFlight> packageFlights;*/
 
     // ToString method for debugging purposes
     @Override
