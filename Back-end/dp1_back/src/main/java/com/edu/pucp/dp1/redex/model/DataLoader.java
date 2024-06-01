@@ -40,6 +40,7 @@ public class DataLoader {
         // for(FlightDTO flight : flights){
         //     System.out.println(flight.toString());
         // }
+        System.out.println("funciona");
         return flights;
     }
     
@@ -85,10 +86,16 @@ public class DataLoader {
                 String[] parts = line.split(",");
                 if (parts.length == 7) {
                     String code = parts[0].trim();
+                    System.out.println("code:"+code);
                     String name = parts[1].trim();
+                    System.out.println(name);
                     String city = parts[2].trim();
+                    System.out.println(city);
                     String country = parts[3].trim();
+                    System.out.println(country);
                     String continent = parts[4].trim();
+                    System.out.println(continent);
+                    System.out.println("'"+parts[5].trim()+"'");
                     int timezone = Integer.parseInt(parts[5].trim());
                     int capacity = Integer.parseInt(parts[6].trim());
 

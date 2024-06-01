@@ -45,18 +45,19 @@ public class Main {
         Map<FlightDTO, Integer> flightCapacitiesUsed = new HashMap<>(); // Mapa para rastrear la capacidad usada de cada vuelo
 
         try {
-            flights = DataLoader.loadFlights("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/planes_vuelo.v3.txt");
+            airports = DataLoader.loadAirports("Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
+            //packages = DataLoader.loadPackages("Back-end/dp1_back/src/main/resources/input/pack_enviado_SKBO.txt");
+            /*flights = DataLoader.loadFlights("Back-end/dp1_back/src/main/resources/input/planes_vuelo.v3.txt");
             for (FlightDTO flight : flights) {
                 flightCapacitiesUsed.put(flight, 0); // Inicializa la capacidad usada de cada vuelo como 0
-            }
-            packages = DataLoader.loadPackages("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/pack_enviado_SKBO.txt");
-            airports = DataLoader.loadAirports("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
+            }*/
         } catch (IOException e) {
             System.out.println("Error al leer los archivos: " + e.getMessage());
             e.printStackTrace();
             return; // Salir del programa si hay un error
         }
-        Map<String, List<FlightDTO>> airportToFlights = buildAirportToFlightsMap(flights);
+
+        /*Map<String, List<FlightDTO>> airportToFlights = buildAirportToFlightsMap(flights);
         for (FlightDTO flight : flights) {
             flightCapacitiesUsed.put(flight, 0);
             //       System.out.println("Flight from " + flight.getOrigin() + " to " + flight.getDestination() + " initialized with capacity: " + flight.getCapacity() + " and current load set to 0.");
@@ -160,7 +161,7 @@ public class Main {
 
 
 
-
+        */
     }
 
     private static void reportBestRouteForPackage(String packageId, List<FlightDTO> route) {
