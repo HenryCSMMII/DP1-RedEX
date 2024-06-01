@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -11,9 +11,7 @@ import ReportesPopup from './components/ReportesPopup';
 import SimulacionSidebar from './components/SimulacionSidebar';
 import axios from 'axios';
 import Modal from 'react-modal';
-
-// Import the custom marker image
-import redDot from './images/red-dot.png';
+import redDot from './images/red-dot.png'; // Asegúrate de que esta ruta sea correcta
 
 const AppContainer = styled.div`
   display: flex;
@@ -30,6 +28,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 `;
 
 const MainContent = styled.div`
@@ -97,13 +96,7 @@ function App() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (!loading && window.google && window.google.maps) {
-      console.log('Google Maps API loaded');
-    }
-  }, [loading]);
-
-  const handleMapLoad = async (map) => {
+  const handleMapLoad = (map) => {
     mapRef.current = map;
     setIsMapLoaded(true);
     console.log('Map loaded');
@@ -142,7 +135,7 @@ function App() {
         <MainContent>
           <MapContainer>
             <LoadScript
-              googleMapsApiKey="AIzaSyD87S6pv73cvHVaw4wPsckU_7pLhlFlmN4" // Reemplaza con tu clave de API
+              googleMapsApiKey="AIzaSyBf1-gcqUmtphkPx7qe7jB-pn8sItv_xpc" // Reemplaza con tu clave de API
               libraries={libraries}
               onLoad={handleMapLoad}
             >
@@ -151,28 +144,21 @@ function App() {
                 center={{ lat: -3.745, lng: -38.523 }}
                 zoom={3}
                 onLoad={handleMapLoad}
-                mapId="56d2948ec3b0b447" // Reemplaza con tu Map ID
+                mapId="56d2948ec3b0b447" // Reemplaza con tu Map ID sin espacios adicionales
               >
-                {isMapLoaded && mapRef.current && (
+                {isMapLoaded && data.airports.length > 0 && (
                   <>
-                    <MarkerComponent
-                      map={mapRef.current}
-                      position={{ lat: -3.745, lng: -38.523 }}
-                      title="Central Marker"
-                      icon={redDot}
-                    />
-                    {data.airports.map((airport) => {
-                      console.log(`Rendering marker for airport: ${airport.codigoIATA}, Lat: ${airport.latitude}, Lng: ${airport.longitude}`);
-                      return (
-                        <MarkerComponent
-                          key={airport.id}
-                          map={mapRef.current}
-                          position={{ lat: airport.latitude, lng: airport.longitude }}
-                          title={airport.codigoIATA}
-                          icon={redDot}
-                        />
-                      );
-                    })}
+                    {data.airports.map((airport) => (
+                      <Marker
+                        key={airport.id}
+                        position={{ lat: airport.latitude, lng: airport.longitude }}
+                        title={airport.codigoIATA}
+                        icon={{
+                          url: redDot,
+                          scaledSize: new window.google.maps.Size(32, 32),
+                        }}
+                      />
+                    ))}
                   </>
                 )}
               </GoogleMap>
@@ -190,25 +176,5 @@ function App() {
     </AppContainer>
   );
 }
-
-const MarkerComponent = ({ map, position, title, icon }) => {
-  useEffect(() => {
-    const addMarker = async () => {
-      const { AdvancedMarkerElement } = await window.google.maps.importLibrary("marker");
-      new AdvancedMarkerElement({
-        map,
-        position,
-        title,
-        icon: {
-          url: icon,
-          scaledSize: new window.google.maps.Size(32, 32)
-        }
-      });
-    };
-    addMarker();
-  }, [map, position, title, icon]);
-
-  return null;
-};
 
 export default App;
