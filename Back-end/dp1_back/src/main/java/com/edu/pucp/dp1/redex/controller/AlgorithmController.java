@@ -33,7 +33,7 @@ public class AlgorithmController {
     public List<FlightDTO> optimizeFlights(@RequestBody List<FlightDTO> flights) {
         return algorithmService.optimizeFlights(flights);
     }*/
-@RequestMapping(value="read/", method = RequestMethod.GET)
+	@RequestMapping(value="read/", method = RequestMethod.GET)
 	public String read() throws IOException{
 		FileReader.read_list_airports();
 		return null;
