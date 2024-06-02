@@ -72,6 +72,7 @@ public class Shipment extends BaseEntity {
     @JsonManagedReference
     private List<Paquete> paquetes;
 
+
     public Shipment(int id) {
         this.setId(id);
     }
