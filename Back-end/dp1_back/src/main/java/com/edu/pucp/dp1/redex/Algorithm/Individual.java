@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.Algorithm;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -11,6 +11,8 @@ import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.ItinerarioVuelos;
 import com.edu.pucp.dp1.redex.model.Shipment;
+import com.edu.pucp.dp1.redex.utils.MathFunctions;
+import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
 
 import java.util.ArrayList;
 import java.util.Arrays;

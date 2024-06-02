@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.utils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,8 +13,7 @@ public class TimeZoneAirport {
 
 	public static long calc_difference(Airport airport_1, Airport airport_2) {
 		LocalDateTime dateOfInterest = LocalDateTime.now();
-    	//long difference = ChronoUnit.MINUTES.between(dateOfInterest.atZone(ZoneId.of(airport_1.getTime_zone())),dateOfInterest.atZone(ZoneId.of(airport_2.getTime_zone())));
-    	long difference = ChronoUnit.MINUTES.between(dateOfInterest.atOffset(ZoneOffset.ofHours(airport_1.getCity().getZonahoraria())).toZonedDateTime(), dateOfInterest.atOffset(ZoneOffset.ofHours(airport_2.getCity().getZonahoraria())).toZonedDateTime());
+    	long difference = ChronoUnit.MINUTES.between(dateOfInterest.atZone(ZoneId.of(airport_1.getTime_zone())),dateOfInterest.atZone(ZoneId.of(airport_2.getTime_zone())));
     	return difference;
 	}
 	

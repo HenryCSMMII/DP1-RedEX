@@ -1,4 +1,4 @@
-package com.edu.pucp.dp1.redex.model.Algorithm;
+package com.edu.pucp.dp1.redex.Algorithm;
 
 import java.util.ArrayList;
 import java.util.List;
