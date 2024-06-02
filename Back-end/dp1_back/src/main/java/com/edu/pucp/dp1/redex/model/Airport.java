@@ -1,4 +1,6 @@
 package com.edu.pucp.dp1.redex.model;
+import java.util.ArrayList;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,10 +21,12 @@ import lombok.Setter;
 @Table(name = "airport")
 @SQLDelete(sql = "UPDATE airport SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 public class Airport extends BaseEntity {
+
+    private int id;
+	private static int increment = 0;
 
     @Column(name = "codigoIATA", nullable = false)
     private String codigoIATA;
@@ -44,6 +48,7 @@ public class Airport extends BaseEntity {
     @JsonManagedReference
     private City city;
 
+    
     public Airport(String codigoIATA, City city, Double latitude, Double longitude, int capacity, int currentCapacity) {
         this.codigoIATA = codigoIATA;
         this.city = city;
@@ -53,6 +58,22 @@ public class Airport extends BaseEntity {
         this.currentCapacity = currentCapacity;
     }
     
+    public Airport() {
+		this.id=increment+1; 
+		this.increment +=1;
+	}
+
+    public Airport(Airport airport) {
+		this.id = airport.getId();
+		this.codigoIATA = airport.getCodigoIATA();
+		this.latitude = airport.getLatitude();
+		this.longitude = airport.getLongitude();
+		this.capacity = airport.getCapacity();
+		this.currentCapacity = airport.getCurrentCapacity();
+		
+		if(airport.getCity()!=null) this.city = new City(airport.getCity());
+	}
+
     // ToString method for debugging purposes
     @Override
     public String toString() {

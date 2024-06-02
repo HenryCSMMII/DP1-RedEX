@@ -33,6 +33,12 @@ public class Country extends BaseEntity {
     @JoinColumn(name = "continent_id", nullable = false)
     private Continent continent;
 
+    public Country(Country country){
+        this.name = country.getName();
+        this.shortname = country.getShortname();
+        if(country.getContinent()!=null) this.continent = new Continent(country.getContinent());
+    }
+
     // ToString method for debugging purposes
     @Override
     public String toString() {
@@ -43,3 +49,4 @@ public class Country extends BaseEntity {
                 '}';
     }
 }
+

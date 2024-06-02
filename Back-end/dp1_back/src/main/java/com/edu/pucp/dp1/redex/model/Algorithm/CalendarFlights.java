@@ -14,7 +14,7 @@ public class CalendarFlights {
 
     public static void generate_calendar() {
 		
-		BD.list_pool_fligths = new ArrayList[2][366];
+		BD.flights = new ArrayList[2][366];
 		int year=52;
 		int day=0;
 		
@@ -29,10 +29,10 @@ public class CalendarFlights {
 	        	
 				list_flight_temp = new ArrayList<Flight>();
 				
-				for(int n=0;n<BD.list_pool_fligths_temp.size();n++) {
+				for(int n=0;n<BD.flightsTemp.size();n++) {
 					Date date_temp = new Date(0);
 					
-					Flight flight = new Flight(BD.list_pool_fligths_temp.get(n));
+					Flight flight = new Flight(BD.flightsTemp.get(n));
 					
 					c.setTime(date_temp);
 					//if(i==0) c.set(2022, 0, 0);
@@ -56,7 +56,7 @@ public class CalendarFlights {
 		        	list_flight_temp.add(flight);
 					//LocalDate localDate = new LocalDate(year, 0 ,0).set
 				}
-				BD.list_pool_fligths[i][k] = list_flight_temp;
+				BD.flights[i][k] = list_flight_temp;
 				day+=1;
 				//c.add(Calendar.DATE, 1);
 			}

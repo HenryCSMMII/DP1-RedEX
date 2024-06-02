@@ -29,7 +29,7 @@ import lombok.Setter;
 public class ItinerarioVuelos {
 
     private int id;
-
+    
     private long estimated_time;
 
     private Boolean active;

@@ -35,6 +35,14 @@ public class Client extends BaseEntity {
     @Column(name = "cellphone", nullable = false)
     private String cellphone;
 
+    public Client(Client client){
+        this.fullName = client.getFullName();
+        this.docType = client.getDocType();
+        this.docNumber = client.getDocNumber();
+        this.email = client.getEmail();
+        this.cellphone = client.getCellphone();
+    }
+
     // ToString method for debugging purposes
     @Override
     public String toString() {

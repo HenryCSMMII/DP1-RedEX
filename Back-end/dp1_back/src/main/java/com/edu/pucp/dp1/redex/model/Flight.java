@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.edu.pucp.dp1.redex.model.Algorithm.Parameters;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -25,7 +27,6 @@ import lombok.Setter;
 @Table(name = "flight")
 @SQLDelete(sql = "UPDATE flight SET activo = 0 WHERE id = ?")
 @Where(clause = "activo = 1")
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 public class Flight extends BaseEntity {
@@ -35,12 +36,17 @@ public class Flight extends BaseEntity {
     public static final LocalDate BASE_DATE = LocalDate.of(2024, 1, 1);  // Fecha base arbitraria
 
     // Atributos de instancia
+    private int id;
 
-    @Column(name = "origin", nullable = false)
-    private String origin;
+    private static int increment = 0;
 
-    @Column(name = "destination", nullable = false)
-    private String destination;
+    
+
+    //@Column(name = "origin", nullable = false)
+    private Airport origin;
+
+    //@Column(name = "destination", nullable = false)
+    private Airport destination;
 
     @Column(name = "departureTime", nullable = false)
     private LocalTime departureTime;
@@ -69,6 +75,42 @@ public class Flight extends BaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "estado_vuelo_id", nullable = false)
     private EstadoVuelo estadoVuelo;
+
+    private long estimated_time;
+    
+	private long difference_system;//diferencia de peru con aeropuerto de salida
+
+    public Flight() {
+		this.currentLoad = new int[Parameters.POPULATION_NUM_INDIVIDUALS*2];
+		this.id = increment + 1; 
+		Flight.increment += 1;
+		
+		for(int i=0;i<currentLoad.length;i++) {
+			currentLoad[i] = 0;
+		}
+	}
+
+    public Flight(Flight flight) {
+		this.id = flight.getId();
+		//this.code = flight.getCode();
+		this.capacity = flight.getCapacity();
+        this.departureDate = flight.getDepartureDate();
+        this.departureTime = flight.getDepartureTime();
+        this.arrivalDate = flight.getArrivalDate();
+        this.arrivalTime = flight.getArrivalTime();
+        if(flight.getOrigin()!=null) this.origin = new Airport(flight.getOrigin());
+		if(flight.getDestination()!=null)this.destination = new Airport(flight.getDestination());
+
+
+		if(flight.getCurrentLoad()!=null) {
+			this.currentLoad = new int[Parameters.POPULATION_NUM_INDIVIDUALS*2];
+			for(int i=0;i<flight.getCurrentLoad().length;i++) {
+				this.currentLoad[i] = flight.getCurrentLoad()[i];
+			}
+		}
+		this.estimated_time = flight.getEstimated_time();
+		this.difference_system = flight.getDifference_system();
+	}
 
     public void addSecondsToArrivalTime(long secToAdd) {
         arrivalTime = arrivalTime.plusSeconds(secToAdd);

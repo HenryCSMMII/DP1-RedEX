@@ -27,6 +27,10 @@ public class Continent extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    public Continent(Continent continent){
+        this.name = continent.getName();
+    }
+
     // ToString method for debugging purposes
     @Override
     public String toString() {

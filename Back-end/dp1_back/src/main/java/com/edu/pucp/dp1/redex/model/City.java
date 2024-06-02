@@ -46,6 +46,14 @@ public class City extends BaseEntity {
     @JsonBackReference
     private Airport airport;
 
+    public City(City city){
+        this.nombre = city.getNombre();
+        this.abreviatura = city.getAbreviatura();
+        this.zonahoraria = city.getZonahoraria();
+        if(city.getCountry()!=null) this.country = new Country(city.getCountry());
+    }
+
+
     // ToString method for debugging purposes
     @Override
     public String toString() {
