@@ -54,7 +54,7 @@ public class Individual {
 		return list_shipments;
 	}
 
-	public void setList_shipments(List<Shipment> list_shipments) {
+	public void setListShipments(List<Shipment> list_shipments) {
 		this.list_shipments = list_shipments;
 	}
 
@@ -497,7 +497,7 @@ public class Individual {
 		this.list_flight_schedule.set(index_allele, population.getIndividuals()[index_individual].getList_flight_schedule().get(index_allele));
 	}
 	
-	public void calculate_flights_capacity(int index) { //Indice del individuo
+	public void calcFlightCap(int index) { //Indice del individuo
 		
 		this.all_estimated_time = 0;
 			
