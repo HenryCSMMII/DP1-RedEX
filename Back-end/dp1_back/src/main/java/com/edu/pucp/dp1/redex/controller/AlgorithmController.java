@@ -36,7 +36,6 @@ public class AlgorithmController {
 @RequestMapping(value="read/", method = RequestMethod.GET)
 	public String read() throws IOException{
 		FileReader.read_list_airports();
-		System.out.println("ra uwu");
 		return null;
 	}
 	
@@ -44,20 +43,18 @@ public class AlgorithmController {
 	public List<Airport> run2() throws IOException{
 		FileReader.read_list_airports();
 		FileReader.read_list_flights();
-		return BD.list_aiport;
+		return BD.airports;
 	}
 	
 	@RequestMapping(value="read2/", method = RequestMethod.GET)
 	public String read2() throws IOException{
 		FileReader.read_list_flights();
-		System.out.println("wenas si que si");
 		return null;
 	}
 	
 	@RequestMapping(value="read3/", method = RequestMethod.GET)
 	public String read3() throws IOException{
 		FileReader.read_list_shipment();
-		System.out.println("wenas si que si jaa");
 		return null;
 	}
 	
@@ -73,7 +70,7 @@ public class AlgorithmController {
 		int iterGen=0;
 		Population population = new Population(10); //cant de individuos
 		
-		population.initialize(BD.list_shipment);
+		population.initialize(BD.shipmentsTemp);
 		population.evaluate();
 		
 		while(iterGen != 10) { //cant de individuos
@@ -159,11 +156,11 @@ public class AlgorithmController {
 	
 			for(int k=0;k<2;k++) {
 				for(int l=0;l<=365;l++) {
-					for(int m=0;m<BD.list_pool_fligths[k][l].size();m++) {
-						for(int n=0;n<BD.list_pool_fligths[k][l].get(m).getCurrentLoad().length;n++) {
+					for(int m=0;m<BD.flights[k][l].size();m++) {
+						for(int n=0;n<BD.flights[k][l].get(m).getCurrentLoad().length;n++) {
 							if(n==10) break; //cant de individuos
-							BD.list_pool_fligths[k][l].get(m).getCurrentLoad()[n]= 
-                                BD.list_pool_fligths[k][l].get(m).getCurrentLoad()[listIndex[n]];
+							BD.flights[k][l].get(m).getCurrentLoad()[n]= 
+                                BD.flights[k][l].get(m).getCurrentLoad()[listIndex[n]];
 						}
 					}
 				}
@@ -189,11 +186,11 @@ public class AlgorithmController {
 			return null;
 		}
 		
-		System.out.println("Total de envios sin solucion "+ BD.list_shipments_without_solution.size());
-		for (int i = 0; i < BD.list_shipments_without_solution.size(); i++) {
-			if(BD.list_shipments_without_solution.get(i).getCantidad() >= 25) {
-				System.out.println("SALIDA: " + BD.list_shipments_without_solution.get(i).getOrigen().getCodigoIATA());
-				System.out.println("LLEGADA: " + BD.list_shipments_without_solution.get(i).getDestino().getCodigoIATA());
+		System.out.println("Total de envios sin solucion "+ BD.shipments.size());
+		for (int i = 0; i < BD.shipments.size(); i++) {
+			if(BD.shipments.get(i).getCantidad() >= 25) {
+				System.out.println("SALIDA: " + BD.shipments.get(i).getOrigen().getCodigoIATA());
+				System.out.println("LLEGADA: " + BD.shipments.get(i).getDestino().getCodigoIATA());
 			}
 		}
 		
@@ -224,13 +221,13 @@ public class AlgorithmController {
 			for (int i = 0; i < typeSim; i++) {
 				// FIN DE AÑO -> verificar casos
 				if(dd + i >= 365) {
-					BD.list_pool_fligths[yy][dd - 1].addAll(BD.list_pool_fligths[yy + 1][i]);
+					BD.flights[yy][dd - 1].addAll(BD.flights[yy + 1][i]);
 				}
 				else{
-					BD.list_pool_fligths[yy][dd - 1].addAll(BD.list_pool_fligths[yy][dd + i]);
+					BD.flights[yy][dd - 1].addAll(BD.flights[yy][dd + i]);
 				}
 			}
 		}
-		return BD.list_pool_fligths[yy][dd - 1];
+		return BD.flights[yy][dd - 1];
 	}
 }

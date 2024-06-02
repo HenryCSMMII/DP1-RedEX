@@ -196,7 +196,7 @@ public class Individual {
 			if(contador == 20) {
 				//System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
 				System.out.println(list_shipments.get(i).getFechaInicio());
-				BD.list_shipments_without_solution.add(list_shipments.get(i));
+				BD.shipments.add(list_shipments.get(i));
 				
 			}
 			contador=0;
@@ -269,9 +269,9 @@ public class Individual {
 		
 		int one_hour = 1*60*60*1000;
 
-		List<Flight> list_mini_pool_flights_day3 = BD.list_pool_fligths[index_year_3][index_day_3]; //ultimo dia - 3 dias martes
-		List<Flight> list_mini_pool_flights_day2 = BD.list_pool_fligths[index_year_2][index_day_2]; //penultimo dia-2 dias lunes
-		List<Flight> list_mini_pool_flights_day1 = BD.list_pool_fligths[index_year][index_day]; //primer dia - 1 dia domingo
+		List<Flight> list_mini_pool_flights_day3 = BD.flights[index_year_3][index_day_3]; //ultimo dia - 3 dias martes
+		List<Flight> list_mini_pool_flights_day2 = BD.flights[index_year_2][index_day_2]; //penultimo dia-2 dias lunes
+		List<Flight> list_mini_pool_flights_day1 = BD.flights[index_year][index_day]; //primer dia - 1 dia domingo
 		
 		List<Flight> list_mini_pool_flights_last_day = null;
 		if(max_days==3) {

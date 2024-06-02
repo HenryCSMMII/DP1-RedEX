@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BD {
-    public static List<Airport> list_aiport;
-	public static List<Flight> list_pool_fligths_temp;
-	public static List<Shipment> list_shipment;
-	public static List<Flight>[][] list_pool_fligths;
-	public static List<Shipment> list_shipments_without_solution;
+    public static List<Airport> airports;
+	public static List<Flight> flightsTemp;
+	public static List<Shipment> shipmentsTemp;
+	public static List<Flight>[][] flights;
+	public static List<Shipment> shipments;
 }
