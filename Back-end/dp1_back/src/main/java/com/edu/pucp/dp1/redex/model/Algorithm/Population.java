@@ -97,8 +97,8 @@ public class Population {
 		Individual[] pool = new Individual[tournSize];
 		
 		for (int i = 0; i < tournSize; i++) {
-			int random_index = random.nextInt(popSize);
-			pool[i] = population.getIndividuals()[random_index];
+			int randIndex = random.nextInt(popSize);
+			pool[i] = population.getIndividuals()[randIndex];
 		}
 		
 		double sum_fitness = 0;
@@ -115,8 +115,8 @@ public class Population {
 		}
 		
 		for (int i = 0; i < tournSize; i++) {
-			int random_index = random.nextInt(popSize);
-			pool[i] = population.getIndividuals()[random_index];
+			int randIndex = random.nextInt(popSize);
+			pool[i] = population.getIndividuals()[randIndex];
 		}
 		maxFit = -1;
 		
