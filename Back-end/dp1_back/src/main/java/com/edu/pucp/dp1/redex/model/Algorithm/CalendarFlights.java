@@ -46,16 +46,11 @@ public class CalendarFlights {
 		        	date_temp = c.getTime();
 		        	
 		        	//flight.setDeparture_date_time(new Date(flight.getDeparture_date_time().getTime() + date_temp.getTime()));
+                    flight.addSecondsToDepartureTime(date_temp.getTime()/1000);
+                    
+                    //flight.setArrival_date_time(new Date(flight.getArrival_date_time().getTime() + date_temp.getTime()));
+                    flight.addSecondsToArrivalTime(date_temp.getTime()/1000);
 
-                    LocalTime suma = flight.getDepartureTime().plusSeconds(date_temp.getTime()/1000);
-                    if (suma.compareTo(LocalTime.MAX) >= 0) {
-                        suma = suma.minusHours(24);
-                        flight.getDepartureDate().plusDays(1);
-                    }
-                    flight.setDepartureTime(new LocalTime(suma));
-                    
-                    
-		        	flight.setArrival_date_time(new Date(flight.getArrival_date_time().getTime() + date_temp.getTime()));
 		        	//arrival_time = c.getTime();
 					
 		        	list_flight_temp.add(flight);

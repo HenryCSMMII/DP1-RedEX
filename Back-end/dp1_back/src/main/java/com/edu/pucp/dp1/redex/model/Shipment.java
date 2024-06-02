@@ -77,6 +77,22 @@ public class Shipment extends BaseEntity {
         this.setId(id);
     }
 
+    public Shipment(Shipment original) {
+        this.cantidad = original.getCantidad();
+        
+        this.tipo = original.getTipo();
+        this.fechaInicio = original.getFechaInicio();
+        this.horaInicio = original.getHoraInicio();
+        this.fechaFin = original.getFechaFin();
+        this.horaFin = original.getHoraFin();
+        this.tiempoActivo = original.getTiempoActivo();
+        if(original.getOrigen() != null){ this.origen = new Airport(original.getOrigen());}
+        if(original.getDestino() != null){this.destino = new Airport(original.getDestino());}
+        if(original.getClientReceiver() != null){this.clientReceiver = new Client(original.getClientReceiver());}
+        if(original.getClientSender() != null){this.clientSender = new Client(original.getClientSender());}
+    }
+
+
     // ToString method for debugging purposes
     @Override
     public String toString() {

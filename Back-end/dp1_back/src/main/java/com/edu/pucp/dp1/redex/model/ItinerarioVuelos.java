@@ -1,6 +1,7 @@
 package com.edu.pucp.dp1.redex.model;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -27,28 +28,18 @@ import lombok.Setter;
 @Getter @Setter
 public class ItinerarioVuelos {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(nullable = false)
-    private String origin;
-
-    @Column(nullable = false)
-    private String destination;
-
-    @Column(nullable = false)
-    private LocalTime departureTime;
-
-    @Column(nullable = false)
-    private LocalTime arrivalTime;
-
-    @Column(nullable = false)
-    private int capacity;
 
     private long estimated_time;
 
     private Boolean active;
 	
 	private List<Flight> flights;
+
+    public ItinerarioVuelos(ItinerarioVuelos itinerarioVuelos) {
+		if(itinerarioVuelos.getFlights()!=null) this.flights = new ArrayList<Flight>(itinerarioVuelos.getFlights());
+		this.estimated_time = itinerarioVuelos.getEstimated_time();
+		this.active = itinerarioVuelos.active;
+	}
+
 }

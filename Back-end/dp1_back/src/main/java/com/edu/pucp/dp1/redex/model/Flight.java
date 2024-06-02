@@ -3,6 +3,7 @@ package com.edu.pucp.dp1.redex.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,6 +69,26 @@ public class Flight extends BaseEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "estado_vuelo_id", nullable = false)
     private EstadoVuelo estadoVuelo;
+
+    public void addSecondsToArrivalTime(long secToAdd) {
+        arrivalTime = arrivalTime.plusSeconds(secToAdd);
+
+        if (arrivalTime.toSecondOfDay() >= 86400) {
+            int nDays = arrivalTime.toSecondOfDay() / 86400;
+            arrivalTime = arrivalTime.minusHours(24 * nDays);
+            arrivalDate = arrivalDate.plusDays(nDays);
+        }
+    }
+
+    public void addSecondsToDepartureTime(long secToAdd) {
+        departureTime = departureTime.plusSeconds(secToAdd);
+
+        if (departureTime.toSecondOfDay() >= 86400) {
+            int nDays = departureTime.toSecondOfDay() / 86400;
+            departureTime = departureTime.minusHours(24 * nDays);
+            departureDate = departureDate.plusDays(nDays);
+        }
+    }
 
     /* Constructor adicional
     public Flight(String origin, String destination, LocalTime departureTime, LocalTime arrivalTime, int capacity, String flightNumber, int currentLoad, int duration, EstadoVuelo estadoVuelo, LocalDate arrivalDate, LocalDate departureDate) {
