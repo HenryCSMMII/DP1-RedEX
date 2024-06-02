@@ -146,7 +146,7 @@ public class Flight extends BaseEntity {
         this.arrivalDate = arrivalDate; 
         this.departureDate = departureDate;
     }*/
-
+//
     // ToString method for debugging purposes
     @Override
     public String toString() {

@@ -2,14 +2,15 @@ package com.edu.pucp.dp1.redex.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.edu.pucp.dp1.redex.Algorithm.BD;
+import com.edu.pucp.dp1.redex.Algorithm.Individual;
+import com.edu.pucp.dp1.redex.Algorithm.Population;
 import com.edu.pucp.dp1.redex.dto.FlightDTO;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
-import com.edu.pucp.dp1.redex.model.Algorithm.BD;
-import com.edu.pucp.dp1.redex.model.Algorithm.CalendarFlights;
-import com.edu.pucp.dp1.redex.model.Algorithm.Individual;
-import com.edu.pucp.dp1.redex.model.Algorithm.Population;
 import com.edu.pucp.dp1.redex.services.AlgorithmService;
+import com.edu.pucp.dp1.redex.utils.CalendarFlightPool;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -60,12 +61,12 @@ public class AlgorithmController {
 	
 	@CrossOrigin
 	@RequestMapping(value="run/", method = RequestMethod.GET)
-	public List<Flight> genetic_algorithm(long dateSim, int typeSim){
+	public List<Flight> genetic_algorithm(long date_simulation, int type_simulation){
 		
 		//FileReader.read_list_airports();
 		//FileReader.read_list_flights();
-		FileReader.read_list_shipment_with_date(dateSim, typeSim);
-		CalendarFlights.generate_calendar();
+		BD.read_list_shipment();
+		CalendarFlightPool.generate_calendar();
 		
 		int iterGen=0;
 		Population population = new Population(10); //cant de individuos

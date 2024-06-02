@@ -1,90 +1,121 @@
 package com.edu.pucp.dp1.redex.model;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Entity
-@Table(name = "airport")
-@SQLDelete(sql = "UPDATE airport SET activo = 0 WHERE id = ?")
-@Where(clause = "activo = 1")
-@AllArgsConstructor
-@Getter @Setter
-public class Airport extends BaseEntity {
+public class Airport {
 
     private int id;
 	private static int increment = 0;
-
-    @Column(name = "codigoIATA", nullable = false)
+    //private String name;
     private String codigoIATA;
-
-    @Column(name = "latitude", nullable = false)
-    private Double latitude;
-
-    @Column(name = "longitude", nullable = false)
-    private Double longitude;
-
-    @Column(name = "capacity", nullable = false)
-    private int capacity;
-
-    @Column(name = "currentCapacity", nullable = false)
+	private String latitude;
+	private String longitude;
+	private int max_capacity;
     private int currentCapacity;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", nullable = false)
-    @JsonManagedReference
-    private City city;
-
-    
-    public Airport(String codigoIATA, City city, Double latitude, Double longitude, int capacity, int currentCapacity) {
-        this.codigoIATA = codigoIATA;
-        this.city = city;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.capacity = capacity;
-        this.currentCapacity = currentCapacity;
-    }
+	private String time_zone;
+	private Country country;
     
     public Airport() {
 		this.id=increment+1; 
 		this.increment +=1;
 	}
-
-    public Airport(Airport airport) {
+	
+	public Airport(int id, /*String name,*/ String codigoIATA, String latitude, String longitude, int max_capacity,
+			int currentCapacity, String time_zone, Country country) {
+		super();
+		this.id = id;
+		//this.name = name;
+		this.codigoIATA = codigoIATA;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.max_capacity = max_capacity;
+		this.currentCapacity = currentCapacity;
+		this.time_zone = time_zone;
+		this.country = country;
+	}
+	
+	public Airport(Airport airport) {
 		this.id = airport.getId();
-		this.codigoIATA = airport.getCodigoIATA();
+		//this.name = airport.getName();
+		this.codigoIATA = airport.getCode();
 		this.latitude = airport.getLatitude();
 		this.longitude = airport.getLongitude();
-		this.capacity = airport.getCapacity();
+		this.max_capacity = airport.getMax_capacity();
 		this.currentCapacity = airport.getCurrentCapacity();
 		
-		if(airport.getCity()!=null) this.city = new City(airport.getCity());
+		/*if(airport.getStorage() != null) {
+			for(int i=0;i<airport.getStorage().size();i++) {
+				this.storage.add(i, new StorageCapacity(airport.getStorage().get(i)));
+			}
+		}*/
+		this.time_zone = airport.getTime_zone();
+		if(airport.getCountry()!=null) this.country = new Country(airport.getCountry());
+	}
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	// public String getName() {
+	// 	return name;
+	// }
+	// public void setName(String name) {
+	// 	this.name = name;
+	// }
+	
+	public String getCode() {
+		return codigoIATA;
+	}
+	public void setCode(String code) {
+		this.codigoIATA = code;
+	}
+	
+	public String getLatitude() {
+		return latitude;
+	}
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+	
+	public String getLongitude() {
+		return longitude;
+	}
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+	
+	public int getMax_capacity() {
+		return max_capacity;
 	}
 
-    // ToString method for debugging purposes
-    @Override
-    public String toString() {
-        return "Airport{" +
-                "codigoIATA='" + codigoIATA + '\'' +
-                ", city=" + (city != null ? city.getNombre() : "null") +
-                ", latitude=" + latitude +
-                ", longitude=" + longitude +
-                ", timezoneOffset=" + (city != null ? city.getZonahoraria() : "null") +
-                ", capacity=" + capacity +
-                ", currentCapacity=" + currentCapacity +
-                '}';
-    }
+	public void setMax_capacity(int max_capacity) {
+		this.max_capacity = max_capacity;
+	}
+	
+	public int getCurrentCapacity() {
+		return currentCapacity;
+	}
+	public void setCurrentCapacity(int currentCapacity) {
+		this.currentCapacity = currentCapacity;
+	}
+    
+	public String getTime_zone() {
+		return time_zone;
+	}
+	
+	public void setTime_zone(String time_zone) {
+		this.time_zone = time_zone;
+	}
+	
+	public Country getCountry() {
+		return country;
+	}
+	
+	public void setCountry(Country country) {
+		this.country = country;
+	}    
 }

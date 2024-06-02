@@ -1,41 +1,49 @@
 package com.edu.pucp.dp1.redex.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+public class Continent {
+	
+	private int id;
+	private String name;
+	private String abbrev;
+	
+	public Continent() {
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Entity
-@Table(name = "continent")
-@SQLDelete(sql = "UPDATE continent SET activo = 0 WHERE id = ?")
-@Where(clause = "activo = 1")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
-public class Continent extends BaseEntity {
-
-    @Column(name = "name", nullable = false)
-    private String name;
-
-    public Continent(Continent continent){
-        this.name = continent.getName();
-    }
-
-    // ToString method for debugging purposes
-    @Override
-    public String toString() {
-        return "Continent{" +
-                "name='" + name + '\'' +
-                '}';
-    }
+	}
+	
+	public Continent(int id, String name, String abbrev) {
+		super();
+		this.name = name;
+		this.abbrev = abbrev;
+	}
+	
+	public Continent(Continent continent) {
+		this.id = continent.getId();
+		this.name = continent.getName();
+		this.abbrev = continent.getAbbrev();
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getAbbrev() {
+		return abbrev;
+	}
+	
+	public void setAbbrev(String abbrev) {
+		this.abbrev = abbrev;
+	}
+	
 }
