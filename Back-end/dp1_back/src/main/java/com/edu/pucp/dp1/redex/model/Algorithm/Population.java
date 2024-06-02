@@ -150,9 +150,9 @@ public class Population {
 
 		for(int i=0;i<2;i++) {
 			for(int j=0;j<=365;j++) {
-				for(int k=0; k < BD.list_pool_fligths[i][j].size(); k++) {
-					for(int l=0; l < BD.list_pool_fligths[i][j].get(k).getCurrentLoad().length; l++) {
-						BD.list_pool_fligths[i][j].get(k).getCurrentLoad()[l] = 0;
+				for(int k=0; k < BD.flights[i][j].size(); k++) {
+					for(int l=0; l < BD.flights[i][j].get(k).getCurrentLoad().length; l++) {
+						BD.flights[i][j].get(k).getCurrentLoad()[l] = 0;
 					}
 				}
 			}
