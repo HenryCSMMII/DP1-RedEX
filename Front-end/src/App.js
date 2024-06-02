@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api'; // Nota: Usa MarkerF para soporte de futuros cambios
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -11,7 +11,7 @@ import ReportesPopup from './components/ReportesPopup';
 import SimulacionSidebar from './components/SimulacionSidebar';
 import axios from 'axios';
 import Modal from 'react-modal';
-import redDot from './images/red-dot.png'; // Asegúrate de que esta ruta sea correcta
+import redDot from './images/red-dot.png';
 
 const AppContainer = styled.div`
   display: flex;
@@ -149,7 +149,7 @@ function App() {
                 {isMapLoaded && data.airports.length > 0 && (
                   <>
                     {data.airports.map((airport) => (
-                      <Marker
+                      <MarkerF
                         key={airport.id}
                         position={{ lat: airport.latitude, lng: airport.longitude }}
                         title={airport.codigoIATA}

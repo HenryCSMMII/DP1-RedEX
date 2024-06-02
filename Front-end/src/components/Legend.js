@@ -52,10 +52,10 @@ const LegendItem = styled.div`
   }
 `;
 
-const colorBox = (color) => styled.div`
+const ColorBox = styled.div`
   width: 20px;
   height: 20px;
-  background-color: ${color};
+  background-color: ${(props) => props.color};
   border-radius: 3px;
 `;
 
@@ -66,15 +66,15 @@ const Legend = () => {
         <LegendTitle>Leyenda</LegendTitle>
         <LegendItemsContainer>
           <LegendItem>
-            <Box color="#00FF00" />
+            <ColorBox color="#00FF00" />
             <span>No saturado</span>
           </LegendItem>
           <LegendItem>
-            <Box color="#FFA500" />
+            <ColorBox color="#FFA500" />
             <span>Semi-saturado</span>
           </LegendItem>
           <LegendItem>
-            <Box color="#FF0000" />
+            <ColorBox color="#FF0000" />
             <span>Saturado</span>
           </LegendItem>
           <LegendItem>
@@ -87,11 +87,6 @@ const Legend = () => {
       </LegendContainer>
     </LegendWrapper>
   );
-};
-
-const Box = ({ color }) => {
-  const ColorBox = colorBox(color);
-  return <ColorBox />;
 };
 
 export default Legend;
