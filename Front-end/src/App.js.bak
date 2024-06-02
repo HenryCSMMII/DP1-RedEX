@@ -11,9 +11,7 @@ import ReportesPopup from './components/ReportesPopup';
 import SimulacionSidebar from './components/SimulacionSidebar';
 import axios from 'axios';
 import Modal from 'react-modal';
-
-// Import the custom marker image
-import redDot from './images/red-dot.png';
+import redDot from './images/red-dot.png'; // Asegúrate de que esta ruta sea correcta
 
 const AppContainer = styled.div`
   display: flex;
@@ -30,6 +28,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  position: relative;
 `;
 
 const MainContent = styled.div`
@@ -49,7 +48,7 @@ const MapContainer = styled.div`
   z-index: 0;
 `;
 
-const libraries = ['places'];
+const libraries = ['places', 'marker'];
 
 Modal.setAppElement('#root');
 
@@ -147,30 +146,19 @@ function App() {
                 onLoad={handleMapLoad}
                 mapId="56d2948ec3b0b447" // Reemplaza con tu Map ID sin espacios adicionales
               >
-                {isMapLoaded && (
+                {isMapLoaded && data.airports.length > 0 && (
                   <>
-                    <Marker
-                      position={{ lat: -3.745, lng: -38.523 }}
-                      title="Central Marker"
-                      icon={{
-                        url: redDot,
-                        scaledSize: new window.google.maps.Size(32, 32)
-                      }}
-                    />
-                    {data.airports.map((airport) => {
-                      console.log(`Rendering marker for airport: ${airport.codigoIATA}, Lat: ${airport.latitude}, Lng: ${airport.longitude}`);
-                      return (
-                        <Marker
-                          key={airport.id}
-                          position={{ lat: airport.latitude, lng: airport.longitude }}
-                          title={airport.codigoIATA}
-                          icon={{
-                            url: redDot,
-                            scaledSize: new window.google.maps.Size(32, 32)
-                          }}
-                        />
-                      );
-                    })}
+                    {data.airports.map((airport) => (
+                      <Marker
+                        key={airport.id}
+                        position={{ lat: airport.latitude, lng: airport.longitude }}
+                        title={airport.codigoIATA}
+                        icon={{
+                          url: redDot,
+                          scaledSize: new window.google.maps.Size(32, 32),
+                        }}
+                      />
+                    ))}
                   </>
                 )}
               </GoogleMap>
