@@ -29,11 +29,13 @@ import lombok.Setter;
 public class ItinerarioVuelos {
 
     private int id;
-    
+	private String origin;
+    private String destination;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
+    private int capacity;
     private long estimated_time;
-
     private Boolean active;
-	
 	private List<Flight> flights;
 
     public ItinerarioVuelos(ItinerarioVuelos itinerarioVuelos) {
