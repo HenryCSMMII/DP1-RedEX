@@ -1,5 +1,7 @@
 package com.edu.pucp.dp1.redex.model.Algorithm;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
@@ -191,7 +194,8 @@ public class Individual {
 			};
 			
 			if(contador == 20) {
-				System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
+				//System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
+				System.out.println(list_shipments.get(i).getFechaInicio());
 				GeneralData.list_shipments_without_solution.add(list_shipments.get(i));
 				
 			}
@@ -218,7 +222,7 @@ public class Individual {
 			System.out.println(departure_airport.getCode());
 			System.out.println(arrival_airport.getCode());
 			*/
-			estimated_time +=  flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDeparture_date_time().getTime() - shipment.getRegisterDateTime().getTime();
+			estimated_time +=  (flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDepartureTime().toNanoOfDay() - shipment.getHoraInicio().toNanoOfDay())/1000000 ;
 			if(estimated_time > max_time) {
 				return 0;
 			}
@@ -240,7 +244,8 @@ public class Individual {
 		//calendar.set();
 		int index_day;
 		int index_year;
-		c.setTime(shipment.getRegisterDateTime());
+		//c.setTime(shipment.getRegisterDateTime());
+		c.setTime(Date.from(shipment.getHoraInicio().atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant()));
 		index_day = c.get(Calendar.DAY_OF_YEAR)-1;
 		index_year= c.get(Calendar.YEAR)-2022;
 	
@@ -283,13 +288,13 @@ public class Individual {
 						
 				if(flight_schedule.getFlights().size() > 0) { //Si ya hay una escala previa, se valida el tiempo de desembarque
 						if(arrival_airport.getCodigoIATA().equals(selected_flight_of_pool_last_day.getArrival_airport().getCode())){
-								//diferencia entre las escalas
-								long difference = flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDeparture_date_time().getTime() - 
-										selected_flight_of_pool_last_day.getArrival_date_time().getTime();
+								//diferencia entre las escalas (milisegundos)
+								long difference = (flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDepartureTime().toNanoOfDay() - 
+										selected_flight_of_pool_last_day.getArrivalTime().toNanoOfDay())/1000000;
 								difference /= (60*60*1000); // diferencia en horas
 								
 								if(difference >= 1 ) { //Validamos que sea mayor a 1 hora la escala
-									if(shipment.getRegisterDateTime().getTime() <= selected_flight_of_pool_last_day.getDeparture_date_time().getTime()) {
+									if(shipment.getHoraInicio().toSecondOfDay() <= selected_flight_of_pool_last_day.getDepartureTime().toSecondOfDay()) {
 										list_of_selected_flights.add(selected_flight_of_pool_last_day);
 										if(departure_airport.getCodigoIATA().equals(selected_flight_of_pool_last_day.getDeparture_airport().getCode())) {
 											list_of_selected_flights_without_stopovers.add(selected_flight_of_pool_last_day);
@@ -299,12 +304,12 @@ public class Individual {
 								
 								if(max_days>=2){
 									
-									long difference_2 = flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDeparture_date_time().getTime() - 
-											list_mini_pool_flights_day1.get(i).getArrival_date_time().getTime();
+									long difference_2 = (flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDepartureTime().toNanoOfDay() - 
+											list_mini_pool_flights_day1.get(i).getArrivalTime().toNanoOfDay())/1000000;
 									difference_2/= (60*60*1000);
 									
 									if(difference_2>=1) {
-										if(shipment.getRegisterDateTime().getTime() <= list_mini_pool_flights_day1.get(i).getDeparture_date_time().getTime()) {
+										if(shipment.getHoraInicio().toSecondOfDay() <= list_mini_pool_flights_day1.get(i).getDepartureTime().toSecondOfDay()) {
 											list_of_selected_flights.add(list_mini_pool_flights_day1.get(i));
 											if(departure_airport.getCodigoIATA().equals(list_mini_pool_flights_day1.get(i).getDeparture_airport().getCode())) {
 												list_of_selected_flights_without_stopovers.add(list_mini_pool_flights_day1.get(i));
@@ -313,12 +318,12 @@ public class Individual {
 									}
 								}
 								if(max_days>=3) {
-									long difference_3 = flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDeparture_date_time().getTime() - 
-											list_mini_pool_flights_day2.get(i).getArrival_date_time().getTime();
+									long difference_3 = (flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDepartureTime().toNanoOfDay() - 
+											list_mini_pool_flights_day2.get(i).getArrivalTime().toNanoOfDay())/1000000;
 									difference_3/= (60*60*1000);
 									
 									if(difference_3>=1) {
-										if(shipment.getRegisterDateTime().getTime() <= list_mini_pool_flights_day2.get(i).getDeparture_date_time().getTime()) {	
+										if(shipment.getHoraInicio().toSecondOfDay() <= list_mini_pool_flights_day2.get(i).getDepartureTime().toSecondOfDay()) {	
 											list_of_selected_flights.add(list_mini_pool_flights_day2.get(i));
 											if(departure_airport.getCodigoIATA().equals(list_mini_pool_flights_day2.get(i).getDeparture_airport().getCode())) {
 												list_of_selected_flights_without_stopovers.add(list_mini_pool_flights_day2.get(i));
@@ -331,8 +336,8 @@ public class Individual {
 				else { //Si no hay escalas solo se valida la igualdad
 						if(arrival_airport.getCodigoIATA().equals(selected_flight_of_pool_last_day.getArrival_airport().getCodigoIATA())){//llega del aeropuerto que queremos?SI
 							//list_of_selected_flights.add(selected_flight_of_pool_last_day);
-							if(shipment.getRegisterDateTime().getTime() + max_additional_days >= list_mini_pool_flights_day1.get(i).getArrival_date_time().getTime() + one_hour) {
-								if(shipment.getRegisterDateTime().getTime() <= list_mini_pool_flights_day1.get(i).getDeparture_date_time().getTime()) {
+							if(shipment.getHoraInicio().toNanoOfDay()/1000000 + max_additional_days >= list_mini_pool_flights_day1.get(i).getArrivalTime().toNanoOfDay()/1000000 + one_hour) {
+								if(shipment.getHoraInicio().toSecondOfDay() <= list_mini_pool_flights_day1.get(i).getDepartureTime().toSecondOfDay()) {
 									list_of_selected_flights.add(list_mini_pool_flights_day1.get(i));
 									if(departure_airport.getCodigoIATA().equals(list_mini_pool_flights_day1.get(i).getDeparture_airport().getCodigoIATA())) {//vuelod DIRECTOS
 										list_of_selected_flights_without_stopovers.add(list_mini_pool_flights_day1.get(i));//primer dia dia
@@ -341,8 +346,8 @@ public class Individual {
 							}
 							
 							if(max_days>=2) {									
-								if(shipment.getRegisterDateTime().getTime() + max_additional_days >= list_mini_pool_flights_day2.get(i).getArrival_date_time().getTime() + one_hour){
-									if(shipment.getRegisterDateTime().getTime() <= list_mini_pool_flights_day2.get(i).getDeparture_date_time().getTime()) {
+								if(shipment.getHoraInicio().toNanoOfDay()/1000000 + max_additional_days >= list_mini_pool_flights_day2.get(i).getArrivalTime().toNanoOfDay()/1000000 + one_hour){
+									if(shipment.getHoraInicio().toSecondOfDay() <= list_mini_pool_flights_day2.get(i).getDepartureTime().toSecondOfDay()) {
 										list_of_selected_flights.add(list_mini_pool_flights_day2.get(i));
 										if(departure_airport.getCodigoIATA().equals(list_mini_pool_flights_day2.get(i).getDeparture_airport().getCodigoIATA())) {//vuelod DIRECTOS
 											list_of_selected_flights_without_stopovers.add(list_mini_pool_flights_day2.get(i));//penultimo dia
@@ -351,8 +356,8 @@ public class Individual {
 								}
 							}
 							if(max_days==3) {
-								if(shipment.getRegisterDateTime().getTime() + max_additional_days >= selected_flight_of_pool_last_day.getArrival_date_time().getTime() + one_hour) {
-									if(shipment.getRegisterDateTime().getTime() <= selected_flight_of_pool_last_day.getDeparture_date_time().getTime()) {
+								if(shipment.getHoraInicio().toNanoOfDay()/1000000 + max_additional_days >= selected_flight_of_pool_last_day.getArrivalTime().toNanoOfDay()/1000000 + one_hour) {
+									if(shipment.getHoraInicio().toSecondOfDay() <= selected_flight_of_pool_last_day.getDepartureTime().toSecondOfDay()) {
 										list_of_selected_flights.add(selected_flight_of_pool_last_day);
 										if(departure_airport.getCodigoIATA().equals(selected_flight_of_pool_last_day.getDeparture_airport().getCodigoIATA())) {//vuelod DIRECTOS
 											list_of_selected_flights_without_stopovers.add(selected_flight_of_pool_last_day);//ultimo dia
@@ -392,7 +397,7 @@ public class Individual {
 		//Calculamos el tiempo de espera entre escalas
 		
 		
-		long additional_time = flight.getArrival_date_time().getTime() - flight.getDeparture_date_time().getTime(); //En ms
+		long additional_time = (flight.getArrivalTime().toNanoOfDay() - flight.getDepartureTime().toNanoOfDay())/1000000; //En ms
 		
 		estimated_time+=additional_time +
 				TimeZoneAirport.calc_difference(flight.getDeparture_airport(), flight.getArrival_airport())*60*1000 //En ms

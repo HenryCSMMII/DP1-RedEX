@@ -80,7 +80,7 @@ public class Flight extends BaseEntity {
         this.currentLoad = currentLoad;
         this.duration = duration;
         this.estadoVuelo = estadoVuelo;
-        this.arrivalDate = arrivalDate;
+        this.arrivalDate = arrivalDate; 
         this.departureDate = departureDate;
     }*/
 

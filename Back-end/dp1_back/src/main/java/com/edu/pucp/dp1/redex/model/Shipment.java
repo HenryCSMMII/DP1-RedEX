@@ -16,6 +16,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -45,8 +50,12 @@ public class Shipment extends BaseEntity {
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;
 
+    private LocalTime horaInicio;
+
     @Column(name = "fecha_fin", nullable = false)
     private LocalDate fechaFin;
+
+    private LocalTime horaFin;
 
     @Column(name = "tiempo_activo", nullable = false)
     private double tiempoActivo;
@@ -83,4 +92,39 @@ public class Shipment extends BaseEntity {
                 ", clientReceiver=" + (clientReceiver != null ? clientReceiver.getFullName() : "null") +
                 '}';
     }
+
+    public long calc_max_additional_days() {
+    	
+    	long max_time = 0;
+    	
+    	if(this.origen.getCity().getCountry().getContinent().getName().equals(this.destino.getCity().getCountry().getContinent().getName())){ //Es el mismo continente
+    		max_time=24*60*60*1000;
+    	}
+    	else {
+    		max_time=48*60*60*1000;
+    	}
+    	
+    	return max_time; 
+    }
+
+    public long calc_max_possible_time() {
+    	
+    	long max_time = 0;
+    	
+    	if(this.origen.getCity().getCountry().getContinent().getName().equals(this.destino.getCity().getCountry().getContinent().getName())){ //Es el mismo continente
+    		max_time=24*60*60*1000;
+    	}
+    	else {
+    		max_time=48*60*60*1000;
+    	}
+    	
+    	LocalDateTime dateOfInterest = LocalDateTime.now();
+    	//long difference = ChronoUnit.MINUTES.between(dateOfInterest.atZone(ZoneId.of(this.destino.getTime_zone())),dateOfInterest.atZone(ZoneId.of(this.origen().getTime_zone())));
+        long difference = ChronoUnit.MINUTES.between(dateOfInterest.atOffset(ZoneOffset.ofHours(this.destino.getCity().getZonahoraria())).toZonedDateTime(), dateOfInterest.atOffset(ZoneOffset.ofHours(this.origen.getCity().getZonahoraria())).toZonedDateTime());
+
+    	max_time -= difference*60*1000;
+    	
+    	return max_time; 
+    }
+
 }
