@@ -266,8 +266,8 @@ public class FileReader {
         if(type_simulation == 1) {
         	limit_date_data = date_simulation + BD.ONE_DAY_MS + BD.ONE_DAY_MS;
         }
-		else if(type_simulation == 5){
-			limit_date_data = date_simulation + BD.FIVE_DAYS_MS + BD.ONE_DAY_MS;
+		else if(type_simulation == 7){
+			limit_date_data = date_simulation + BD.SEVEN_DAYS_MS + BD.ONE_DAY_MS;
 		}
         
         /*************************** READ ALL PACK FILES ****************************/

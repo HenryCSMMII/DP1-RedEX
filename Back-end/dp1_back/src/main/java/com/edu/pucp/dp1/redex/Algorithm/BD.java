@@ -40,7 +40,7 @@ public class BD {
 	public static final long EXECUTION_TIME = 900000;
 	
 	public static final long ONE_DAY_MS = 86400000;
-	public static final long FIVE_DAYS_MS = 432000000;
+	public static final long SEVEN_DAYS_MS = 604800000;
 
 	/*public static void read_list_shipment(){
 		shipmentsTemp = new ArrayList<Shipment>();
