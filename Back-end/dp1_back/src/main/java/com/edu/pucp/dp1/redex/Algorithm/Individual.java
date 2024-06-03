@@ -140,48 +140,48 @@ public class Individual {
 	
 		BD.shipments = new ArrayList<Shipment>();
 		int contador = 0;
-		 for(int i=0;i<list_shipments.size();i++) {
+		for(int i=0;i<list_shipments.size();i++) {
 			
-		 	FlightSchedule flight_schedule = new FlightSchedule();
-		 	flight_schedule.setFlights(new ArrayList<Flight>());
-		 	flight_schedule.setActive(true);
-		 	flight_schedule.setEstimated_time(0);
-			System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-		 	long max_time = list_shipments.get(i).calc_max_possible_time();
-		 	long max_additional_days = list_shipments.get(i).calc_max_additional_days();
+			FlightSchedule flight_schedule = new FlightSchedule();
+			flight_schedule.setFlights(new ArrayList<Flight>());
+			flight_schedule.setActive(true);
+			flight_schedule.setEstimated_time(0);
 			
-			
-		// 	System.out.println("===================================");
-		// 	System.out.println("ENVIO");
-		// 	System.out.println("==================================");
-		// 	System.out.println(list_shipments.get(i).getDepartureAirport().getCode() +" - " +list_shipments.get(i).getArrivalAirport().getCode());
+			long max_time = list_shipments.get(i).calc_max_possible_time();
+			long max_additional_days = list_shipments.get(i).calc_max_additional_days();
 			
 			
-		// 	while(generateReverseSolution(list_shipments.get(i).getDepartureAirport(),
-		// 			list_shipments.get(i).getArrivalAirport(), flight_schedule, 0, max_time,0, list_shipments.get(i), max_additional_days)!=1 && contador!=20) {
-		// 		flight_schedule = null;
-		// 		flight_schedule = new FlightSchedule();
+			/*System.out.println("===================================");
+			System.out.println("ENVIO");
+			System.out.println("==================================");
+			System.out.println(list_shipments.get(i).getDepartureAirport().getCode() +" - " +list_shipments.get(i).getArrivalAirport().getCode());*/
+			
+			
+			while(generateReverseSolution(list_shipments.get(i).getDepartureAirport(),
+					list_shipments.get(i).getArrivalAirport(), flight_schedule, 0, max_time,0, list_shipments.get(i), max_additional_days)!=1 && contador!=20) {
+				flight_schedule = null;
+				flight_schedule = new FlightSchedule();
 				
 				
-		// 		System.out.println("===================================");
-		// 		System.out.println("TOY BUSCANDO OTRA SOLUCION");
-		// 		System.out.println("==================================");
+				/*System.out.println("===================================");
+				System.out.println("TOY BUSCANDO OTRA SOLUCION");
+				System.out.println("==================================");*/
 				
-		// 		contador +=1;
-		// 	};
+				contador +=1;
+			};
 			
-		// 	if(contador == 20) {
-		// 		System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
-		// 		BD.shipments.add(list_shipments.get(i));
+			if(contador == 20) {
+				System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
+				BD.shipments.add(list_shipments.get(i));
 				
-		// 	}
-		// 	contador=0;
+			}
+			contador=0;
 			
-		// 	Collections.reverse(flight_schedule.getFlights());
+			Collections.reverse(flight_schedule.getFlights());
 			
-		// 	this.list_flight_schedule.add(flight_schedule);
-		// 	//System.out.println("VA UN VUELO MÁS");
-		 }
+			this.list_flight_schedule.add(flight_schedule);
+			//System.out.println("VA UN VUELO MÁS");
+		}
 		
 	}
 	
