@@ -58,7 +58,7 @@ public class Population {
 		System.out.println("sum_fitness = " + sum_fitness);
 		
 		cum_fitness = 0;
-		pick_fitness = random.nextDouble(0, sum_fitness);
+		pick_fitness = random.nextDouble()*sum_fitness;
 		
 		for (int i = 0; i < population.getIndividuals().length; i++) {
 			cum_fitness += population.getIndividuals()[i].getFitness(i);
@@ -71,7 +71,7 @@ public class Population {
 		
 		// Selection second parent
 		sum_fitness = sum_fitness - population.getIndividuals()[indexP1].getFitness(indexP1);
-		pick_fitness = random.nextDouble(0, sum_fitness);
+		pick_fitness = random.nextDouble()*sum_fitness;
 		cum_fitness = 0;
 		
 		for (int i = 0; i < population.getIndividuals().length; i++) {
