@@ -63,10 +63,10 @@ public class FileReader {
                 country.setContinent(continent);
 		        
 		        
-		        //airport.setTime_zone(split[6]);
+		        airport.setTime_zone(split[7]);
 		        airport.setCountry(country);
-		        //airport.setLatitude(split[7]);
-		        //airport.setLongitude(split[8]);
+		        airport.setLatitude(split[8]);
+		        airport.setLongitude(split[9]);
 		        airport.setStorage(new ArrayList<StorageCapacity>());
 		        //System.out.println("hola");
 		        BD.airports.add(airport);
@@ -273,7 +273,7 @@ public class FileReader {
         /*************************** READ ALL PACK FILES ****************************/
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
-	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("D:\\archivos\\pack\\"))) {
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("Back-end/dp1_back/src/main/resources/input/pack/"))) {
 	        for (Path path : stream) {
 	            if (!Files.isDirectory(path)) {
 	                fileSet.add(path.getFileName()
@@ -288,7 +288,7 @@ public class FileReader {
 
 		try {
 			for (int j = 0; j < pack_files.size(); j++) {
-				File file = new File("D:\\archivos\\pack\\" + pack_files.get(j));
+				File file = new File("Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
 				Scanner scannerObj = new Scanner(file);
 				
 				while(scannerObj.hasNextLine()) {

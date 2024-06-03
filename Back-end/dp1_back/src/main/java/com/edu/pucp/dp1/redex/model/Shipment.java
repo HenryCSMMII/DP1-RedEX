@@ -170,13 +170,20 @@ public class Shipment {
     	}
     	else {
     		max_time=48*60*60*1000;
+            System.out.println("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
     	}
     	
     	LocalDateTime dateOfInterest = LocalDateTime.now();
+        System.out.println("ARRIVAL: " + this.arrivalAirport.getTime_zone());
+        System.out.println(this.arrivalAirport.getName() + " " + this.arrivalAirport.getCode());
+        System.out.println("DEPARTURE: " + this.getDepartureAirport().getTime_zone());
+        System.out.println(this.getDepartureAirport().getName() + " " + this.getDepartureAirport().getCode());
+        
     	long difference = ChronoUnit.MINUTES.between(dateOfInterest.atZone(ZoneId.of(this.arrivalAirport.getTime_zone())),dateOfInterest.atZone(ZoneId.of(this.getDepartureAirport().getTime_zone())));
 
-    	max_time -= difference*60*1000;
+    	// max_time -= difference*60*1000;
     	
+        
     	return max_time; 
     }
     

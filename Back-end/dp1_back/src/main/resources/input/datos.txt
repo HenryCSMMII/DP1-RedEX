@@ -1,40 +1,40 @@
-01,SKBO,Bogota,Colombia,bogo,AS,America/Bogota
-02,SEQM,Quito,Ecuador,quit,AS,America/Guayaquil
-03,SVMI,Caracas,Venezuela,cara,AS,America/Caracas
-04,SBBR,Brasilia,Brasil,bras,AS,America/Sao_Paulo
-05,SPIM,Lima,Perú,lima,AS,America/Lima
-06,SLLP,La Paz,Bolivia,lapa,AS,America/La_Paz
-07,SCEL,Santiago de Chile,Chile,sant,AS,America/Santiago
-08,SABE,Buenos Aires,Argentina,buen,AS,America/Buenos_Aires
-09,SGAS,Asunción,Paraguay,asun,AS,America/Asuncion
-10,SUAA,Motenvideo,Uruguay,mont,AS,America/Montevideo
-11,LATI,Tirana,Albania,tira,E,Europe/Tirane
-12,EDDI,Berlin,Alemania,berl,E,Europe/Berlin
-13,LOWW,Viena,Austria,vien,E,Europe/Vienna
-14,EBCI,Bruselas,Belgica,brus,E,Europe/Brussels
-15,UMMS,Minsk,Bielorrusia,mins,E,Europe/Minsk
-16,LBSF,Sofia,Bulgaria,sofi,E,Europe/Sofia
-17,LKPR,Praga,Checa,prag,E,Europe/Prague
-18,LDZA,Zagreb,Croacia,zagr,E,Europe/Zagreb
-19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhagen
-20,LZIB,Bratislava,Eslovaquia,brat,E,Europe/Bratislava
-21,LJLJ,Liubliana,Eslovenia,liub,E,Europe/Ljubljana
-22,LEMD,Madrid,España,madr,E,Europe/Madrid
-23,EETN,Tallin,Estonia,tall,E,Europe/Tallinn
-24,EFHK,Helsinki,Finlandia,hels,E,Europe/Helsinki
-25,LFPG,Paris,Francia,pari,E,Europe/Paris
-26,LGAV,Atenas,Grecia,aten,E,Europe/Athens
-27,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam
-28,LHBP,Budapest,Hungría,buda,E,Europe/Budapest
-29,EIDW,Dublin,Irlanda (Eire),dubl,E,Europe/Dublin
-30,BIKF,Reykjavik,Islandia,reyk,E,Atlantic/Reykjavik
-31,LIRA,Roma,Italia,roma,E,Europe/Rome
-32,EVRA,Riga,Letonia,riga,E,Europe/Riga
-33,ELLX,Luxemburgo,Luxemburgo,luxe,E,Europe/Luxembourg
-34,LMML,LaValletta,Malta,lava,E,Europe/Malta
-35,ENGM,Oslo,Noruega,oslo,E,Europe/Oslo
-36,EPMO,Varsovia,Polonia,vars,E,Europe/Warsaw
-37,LPPT,Lisboa,Portugal,lisb,E,Europe/Lisbon
-38,EGLL,Londres,Reino Unido,lond,E,Europe/London
-39,ESKN,Estocolmo,Suecia,esto,E,Europe/Stockholm
-40,LSZB,Berna,Suiza,bern,E,Europe/Zurich
+01,SKBO,Bogota,Colombia,bogo,AS,America/Bogota,-5,4.7016,-74.1469
+02,SEQM,Quito,Ecuador,quit,AS,America/Guayaquil,-5,-0.1866,-78.4678
+03,SVMI,Caracas,Venezuela,cara,AS,America/Caracas,-4,10.6031,-66.9906
+04,SBBR,Brasilia,Brasil,bras,AS,America/Sao_Paulo,-3,-15.8694,-47.9208
+05,SPIM,Lima,Perú,lima,AS,America/Lima,-5,-12.0219,-77.1143
+06,SLLP,La Paz,Bolivia,lapa,AS,America/La_Paz,-4,-16.5133,-68.1923
+07,SCEL,Santiago de Chile,Chile,sant,AS,America/Santiago,-4,-33.3920,-70.7858
+08,SABE,Buenos Aires,Argentina,buen,AS,America/Buenos_Aires,-3,-34.5586,-58.4155
+09,SGAS,Asunción,Paraguay,asun,AS,America/Asuncion,-4,-25.2399,-57.5200
+10,SUAA,Montevideo,Uruguay,mont,AS,America/Montevideo,-3,-34.8381,-56.0308
+11,LATI,Tirana,Albania,tira,E,Europe/Tirane,1,41.4145,19.7206
+12,EDDI,Berlin,Alemania,berl,E,Europe/Berlin,1,52.3667,13.5033
+13,LOWW,Viena,Austria,vien,E,Europe/Vienna,1,48.1103,16.5697
+14,EBCI,Bruselas,Belgica,brus,E,Europe/Brussels,1,50.9014,4.4844
+15,UMMS,Minsk,Bielorrusia,mins,E,Europe/Minsk,3,53.8825,28.0311
+16,LBSF,Sofia,Bulgaria,sofi,E,Europe/Sofia,2,42.6952,23.4062
+17,LKPR,Praga,Checa,prag,E,Europe/Prague,1,50.1008,14.2632
+18,LDZA,Zagreb,Croacia,zagr,E,Europe/Zagreb,1,45.7429,16.0689
+19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhagen,1,55.6181,12.6560
+20,LZIB,Bratislava,Eslovaquia,brat,E,Europe/Bratislava,1,48.1702,17.2127
+21,LJLJ,Liubliana,Eslovenia,liub,E,Europe/Ljubljana,1,46.2236,14.4577
+22,LEMD,Madrid,España,madr,E,Europe/Madrid,1,40.4722,-3.5611
+23,EETN,Tallin,Estonia,tall,E,Europe/Tallinn,2,59.4133,24.8328
+24,EFHK,Helsinki,Finlandia,hels,E,Europe/Helsinki,2,60.3172,24.9633
+25,LFPG,Paris,Francia,pari,E,Europe/Paris,1,49.0097,2.5479
+26,LGAV,Atenas,Grecia,aten,E,Europe/Athens,2,37.9364,23.9445
+27,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam,1,52.3086,4.7639
+28,LHBP,Budapest,Hungría,buda,E,Europe/Budapest,1,47.4369,19.2556
+29,EIDW,Dublin,Irlanda (Eire),dubl,E,Europe/Dublin,0,53.4273,-6.2436
+30,BIKF,Reykjavik,Islandia,reyk,E,Atlantic/Reykjavik,0,63.9850,-22.6056
+31,LIRA,Roma,Italia,roma,E,Europe/Rome,1,41.8003,12.2389
+32,EVRA,Riga,Letonia,riga,E,Europe/Riga,2,56.9236,23.9711
+33,ELLX,Luxemburgo,Luxemburgo,luxe,E,Europe/Luxembourg,1,49.6266,6.2115
+34,LMML,La Valeta,Malta,lava,E,Europe/Malta,1,35.8575,14.4775
+35,ENGM,Oslo,Noruega,oslo,E,Europe/Oslo,1,60.1976,11.1004
+36,EPMO,Varsovia,Polonia,vars,E,Europe/Warsaw,1,52.4511,20.6515
+37,LPPT,Lisboa,Portugal,lisb,E,Europe/Lisbon,0,38.7742,-9.1342
+38,EGLL,Londres,Reino Unido,lond,E,Europe/London,0,51.4700,-0.4543
+39,ESKN,Estocolmo,Suecia,esto,E,Europe/Stockholm,1,59.6519,17.9186
+40,LSZB,Berna,Suiza,bern,E,Europe/Zurich,1,46.9141,7.4971
