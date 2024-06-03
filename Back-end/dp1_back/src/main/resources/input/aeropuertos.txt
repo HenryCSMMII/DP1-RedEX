@@ -1,0 +1,30 @@
+01,SKBO,Bogota,Colombia,bogo,AS,America/Bogota,-5,4.7014,-74.1469,430
+02,SEQM,Quito,Ecuador,quit,AS,America/Quito,-5,0.1133,-78.3586,410
+03,SVMI,Caracas,Venezuela,cara,AS,America/Caracas,-4,10.6031,-66.9906,400
+04,SBBR,Brasilia,Brasil,bras,AS,America/Brasilia,-3,-15.8647,-47.9181,480
+05,SPIM,Lima,Peru,lima,AS,America/Lima,-5,-12.0219,-77.1144,440
+06,SLLP,La Paz,Bolivia,lapa,AS,America/La_Paz,-4,-16.5131,-68.1922,420
+07,SCEL,Santiago de Chile,Chile,sant,AS,America/Santiago,-3,-33.3964,-70.7947,460
+08,SABE,Buenos Aires,Argentina,buen,AS,America/Buenos_Aires,-3,-34.5592,-58.4156,460
+09,SGAS,Asunción,Paraguay,asun,AS,America/Asunción,-4,-25.2400,-57.5200,400
+10,SUAA,Montevideo,Uruguay,mont,AS,America/Montevideo,-3,-34.7892,-56.2647,400
+11,LATI,Tirana,Albania,tira,E,Europe/Tirana,+2,41.4147,19.7206,410
+12,EDDI,Berlin,Alemania,berl,E,Europe/Berlin,+2,52.4736,13.4017,480
+13,LOWW,Viena,Austria,vien,E,Europe/Viena,+2,48.1108,16.5708,430
+14,EBCI,Bruselas,Belgica,brus,E,Europe/Bruselas,+2,50.4592,4.4536,440
+15,UMMS,Minsk,Bielorrusia,mins,E,Europe/Minsk,+3,53.8825,28.0325,400
+16,LBSF,Sofia,Bulgaria,sofi,E,Europe/Sofia,+3,42.6903,23.4047,400
+17,LKPR,Praga,Checa,prag,E,Europe/Praga,+2,50.1014,14.2656,400
+18,LDZA,Zagreb,Croacia,zagr,E,Europe/Zagreb,+2,45.7428,16.0686,420
+19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhague,+2,55.6181,12.6561,480
+20,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam,+2,52.3000,4.7650,480
+21,VIDP,Delhi,India,delh,A,Asia/Delhi,+5,28.5664,77.1031,480
+22,RKSI,Seul,Corea del Sur,seul,A,Asia/Seul,+9,37.4633,126.4400,400
+23,VTBS,Bangkok,Tailandia,bang,A,Asia/Bangkok,+7,13.6808,100.7472,420
+24,OMDB,Dubai,Emiratos A.U,emir,A,Asia/Dubai,+4,25.2528,55.3644,420
+25,ZBAA,Beijing,China,beij,A,Asia/Beijing,+8,40.0725,116.5975,480
+26,RJTT,Tokyio,Japon,toky,A,Asia/Tokyio,+9,35.5522,139.7800,460
+27,WMKK,Kuala,Malasia,kual,A,Asia/Kuala,+8,2.7433,101.6981,420
+28,WSSS,Singapure,Singapure,sing,A,Asia/Singapure,+8,1.3569,103.9886,400
+29,WIII,Jakarta,Indonesia,jaka,A,Asia/Jakarta,+7,-6.1256,106.6558,400
+30,RPLL,Manila,Filipinas,mani,A,Asia/Manila,+8,14.5086,121.0194,400
