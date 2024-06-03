@@ -1,12 +1,20 @@
 package com.edu.pucp.dp1.redex.utils;
 
+import java.io.File;
 import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
+import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Continent;
 import com.edu.pucp.dp1.redex.model.Country;
@@ -17,7 +25,7 @@ import com.edu.pucp.dp1.redex.model.StorageCapacity;
 public class FileReader {
     public static void read_list_airports()  {
 		
-		GeneralData.list_aiport = new ArrayList<Airport>();
+		BD.airports = new ArrayList<Airport>();
 		
 		try {
 			File file = new File("D:\\archivos\\datos.txt");
@@ -45,10 +53,10 @@ public class FileReader {
 		        
 		        // ---------- Max capacity ---------- //
 		        if(split[5] == "AS") {
-		        	airport.setMax_capacity(geneticParameters.MAX_CAPACITY_STORAGE_AMERICA);
+		        	airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_AMERICA);
 		        }
 		        else if(split[5] == "E") {
-	        		airport.setMax_capacity(geneticParameters.MAX_CAPACITY_STORAGE_EUROPE);
+	        		airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_EUROPE);
 	        	}
 		       
 		        country.setContinent(continent);
@@ -60,7 +68,7 @@ public class FileReader {
 		        airport.setLongitude(split[8]);
 		        airport.setStorage(new ArrayList<StorageCapacity>());
 		        //System.out.println("hola");
-		        GeneralData.list_aiport.add(airport);
+		        BD.airports.add(airport);
 		        
 			}
 			scannerObj.close();
@@ -72,7 +80,7 @@ public class FileReader {
 	
 	public static void read_list_flights()  {
 		
-		GeneralData.list_pool_fligths_temp = new ArrayList<Flight>();
+		BD.flightsTemp = new ArrayList<Flight>();
 		
 		try {
 			File file = new File("D:\\archivos\\itinerario.txt");
@@ -92,14 +100,14 @@ public class FileReader {
 		        Airport airport_1 = new Airport();
 		        airport_1.setCode(split[0]);
 		        int index_system=0;
-		        for(int i=0;i<GeneralData.list_aiport.size();i++) {
-		        	if(GeneralData.list_aiport.get(i).getCode().equals(split[0])) {
-		        		airport_1.setCountry(GeneralData.list_aiport.get(i).getCountry());
-		        		airport_1.setTime_zone(GeneralData.list_aiport.get(i).getTime_zone());
-		        		airport_1.setLatitude(GeneralData.list_aiport.get(i).getLatitude());
-		        		airport_1.setLongitude(GeneralData.list_aiport.get(i).getLongitude());
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[0])) {
+		        		airport_1.setCountry(BD.airports.get(i).getCountry());
+		        		airport_1.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		airport_1.setLatitude(BD.airports.get(i).getLatitude());
+		        		airport_1.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
-		        	if(GeneralData.list_aiport.get(i).getCode().equals("SPIM")) {
+		        	if(BD.airports.get(i).getCode().equals("SPIM")) {
 		        		index_system=i;
 					}
 		        }
@@ -109,12 +117,12 @@ public class FileReader {
 		        Airport airport_2 = new Airport();
 		        airport_2.setCode(split[1]);
 		        
-		        for(int i=0;i<GeneralData.list_aiport.size();i++) {
-		        	if(GeneralData.list_aiport.get(i).getCode().equals(split[1])) {
-		        		airport_2.setCountry(GeneralData.list_aiport.get(i).getCountry());
-		        		airport_2.setTime_zone(GeneralData.list_aiport.get(i).getTime_zone());
-		        		airport_2.setLatitude(GeneralData.list_aiport.get(i).getLatitude());
-		        		airport_2.setLongitude(GeneralData.list_aiport.get(i).getLongitude());
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[1])) {
+		        		airport_2.setCountry(BD.airports.get(i).getCountry());
+		        		airport_2.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		airport_2.setLatitude(BD.airports.get(i).getLatitude());
+		        		airport_2.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
 		        
@@ -123,15 +131,15 @@ public class FileReader {
 		        // ---------- Max capacity same continent ---------- //
 		        if(airport_1.getCountry().getContinent().getAbbrev().equals(airport_2.getCountry().getContinent().getAbbrev())) {
 		        	if(airport_1.getCountry().getContinent().getAbbrev().equals("AS")) {
-		        		flight.setMax_capacity(geneticParameters.MAX_CAPACITY_FLIGHT_AMERICA);
+		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_AMERICA);
 		        	}
 		        	else if(airport_1.getCountry().getContinent().getAbbrev().equals("E")) {
-		        		flight.setMax_capacity(geneticParameters.MAX_CAPACITY_FLIGHT_EUROPE);
+		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_EUROPE);
 		        	}
 		        }
 		        // ---------- Max capacity different continent ---------- //
 		        else {
-		        	flight.setMax_capacity(geneticParameters.MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
+		        	flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
 		        }
 		        
 		        SimpleDateFormat formatter=new SimpleDateFormat("HH:mm");
@@ -153,8 +161,8 @@ public class FileReader {
 		        flight.setArrival_date_time(arrival_time);
 		        //System.out.println("hola");
 		        flight.calcEstimatedTime();
-		        flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), GeneralData.list_aiport.get(index_system))*60*1000);
-		        GeneralData.list_pool_fligths_temp.add(flight);
+		        flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), BD.airports.get(index_system))*60*1000);
+		        BD.flightsTemp.add(flight);
 		        
 			}
 			scannerObj.close();
@@ -164,8 +172,8 @@ public class FileReader {
 		
 	}
 	
-	public static void read_list_shipment(){
-		GeneralData.list_shipment = new ArrayList<Shipment>();
+	public static void read_shipmentsTemp(){
+		BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance(); 
 		try {
 			File file = new File("D:\\archivos\\envios.txt");
@@ -187,13 +195,13 @@ public class FileReader {
 		        Airport departure = new Airport();
 		        departure.setCode(split[0].substring(0, 4));
 		        //System.out.println("entro ps4");
-		        for(int i=0;i<GeneralData.list_aiport.size();i++) {
-		        	if(GeneralData.list_aiport.get(i).getCode().equals(split[0].substring(0, 4))) {
-		        		departure.setCountry(GeneralData.list_aiport.get(i).getCountry());
-		        		departure.setTime_zone(GeneralData.list_aiport.get(i).getTime_zone());
-		        		departure.setId(GeneralData.list_aiport.get(i).getId());
-		        		departure.setLatitude(GeneralData.list_aiport.get(i).getLatitude());
-		        		departure.setLongitude(GeneralData.list_aiport.get(i).getLongitude());
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
+		        		departure.setCountry(BD.airports.get(i).getCountry());
+		        		departure.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		departure.setId(BD.airports.get(i).getId());
+		        		departure.setLatitude(BD.airports.get(i).getLatitude());
+		        		departure.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
 		        //System.out.println("entro ps5");
@@ -216,13 +224,13 @@ public class FileReader {
 		        Airport arrival = new Airport();
 		        arrival.setCode(split[3].substring(0, 4));
 		        
-		        for(int i=0;i<GeneralData.list_aiport.size();i++) {
-		        	if(GeneralData.list_aiport.get(i).getCode().equals(split[3].substring(0, 4))) {
-		        		arrival.setCountry(GeneralData.list_aiport.get(i).getCountry());
-		        		arrival.setTime_zone(GeneralData.list_aiport.get(i).getTime_zone());
-		        		arrival.setId(GeneralData.list_aiport.get(i).getId());
-		        		arrival.setLatitude(GeneralData.list_aiport.get(i).getLatitude());
-		        		arrival.setLongitude(GeneralData.list_aiport.get(i).getLongitude());
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
+		        		arrival.setCountry(BD.airports.get(i).getCountry());
+		        		arrival.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		arrival.setId(BD.airports.get(i).getId());
+		        		arrival.setLatitude(BD.airports.get(i).getLatitude());
+		        		arrival.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
 		        //System.out.println("entro ps2");
@@ -238,7 +246,7 @@ public class FileReader {
 		        shipment.setState(null);
 		        
 		        //System.out.println("hola");
-		        GeneralData.list_shipment.add(shipment);
+		        BD.shipmentsTemp.add(shipment);
 			}
 			scannerObj.close();
 		}catch(Exception e) {
@@ -246,19 +254,19 @@ public class FileReader {
 		}
 	}
 	
-	public static void read_list_shipment_with_date(long date_simulation, int type_simulation){
+	public static void read_shipmentsTemp_with_date(long date_simulation, int type_simulation){
 		long limit_date_data = 0;
 		
-		GeneralData.list_shipment = new ArrayList<Shipment>();
+		BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance(); 
         SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         SimpleDateFormat formatter_date_limit = new SimpleDateFormat("dd/MM/yyyy");
         
         if(type_simulation == 1) {
-        	limit_date_data = date_simulation + geneticParameters.ONE_DAY_MS + geneticParameters.ONE_DAY_MS;
+        	limit_date_data = date_simulation + BD.ONE_DAY_MS + BD.ONE_DAY_MS;
         }
 		else if(type_simulation == 5){
-			limit_date_data = date_simulation + geneticParameters.FIVE_DAYS_MS + geneticParameters.ONE_DAY_MS;
+			limit_date_data = date_simulation + BD.FIVE_DAYS_MS + BD.ONE_DAY_MS;
 		}
         
         /*************************** READ ALL PACK FILES ****************************/
@@ -311,13 +319,13 @@ public class FileReader {
 				        Airport departure = new Airport();
 				        departure.setCode(split[0].substring(0, 4));
 				        
-				        for(int i=0;i<GeneralData.list_aiport.size();i++) {
-				        	if(GeneralData.list_aiport.get(i).getCode().equals(split[0].substring(0, 4))) {
-				        		departure.setCountry(GeneralData.list_aiport.get(i).getCountry());
-				        		departure.setTime_zone(GeneralData.list_aiport.get(i).getTime_zone());
-				        		departure.setId(GeneralData.list_aiport.get(i).getId());
-				        		departure.setLatitude(GeneralData.list_aiport.get(i).getLatitude());
-				        		departure.setLongitude(GeneralData.list_aiport.get(i).getLongitude());
+				        for(int i=0;i<BD.airports.size();i++) {
+				        	if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
+				        		departure.setCountry(BD.airports.get(i).getCountry());
+				        		departure.setTime_zone(BD.airports.get(i).getTime_zone());
+				        		departure.setId(BD.airports.get(i).getId());
+				        		departure.setLatitude(BD.airports.get(i).getLatitude());
+				        		departure.setLongitude(BD.airports.get(i).getLongitude());
 				        	}
 				        }
 				        //System.out.println("entro ps5");
@@ -340,13 +348,13 @@ public class FileReader {
 				        Airport arrival = new Airport();
 				        arrival.setCode(split[3].substring(0, 4));
 				        
-				        for(int i=0;i<GeneralData.list_aiport.size();i++) {
-				        	if(GeneralData.list_aiport.get(i).getCode().equals(split[3].substring(0, 4))) {
-				        		arrival.setCountry(GeneralData.list_aiport.get(i).getCountry());
-				        		arrival.setTime_zone(GeneralData.list_aiport.get(i).getTime_zone());
-				        		arrival.setId(GeneralData.list_aiport.get(i).getId());
-				        		arrival.setLatitude(GeneralData.list_aiport.get(i).getLatitude());
-				        		arrival.setLongitude(GeneralData.list_aiport.get(i).getLongitude());
+				        for(int i=0;i<BD.airports.size();i++) {
+				        	if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
+				        		arrival.setCountry(BD.airports.get(i).getCountry());
+				        		arrival.setTime_zone(BD.airports.get(i).getTime_zone());
+				        		arrival.setId(BD.airports.get(i).getId());
+				        		arrival.setLatitude(BD.airports.get(i).getLatitude());
+				        		arrival.setLongitude(BD.airports.get(i).getLongitude());
 				        	}
 				        }
 				        
@@ -361,19 +369,19 @@ public class FileReader {
 				        shipment.setOperator(null);
 				        shipment.setState(null);
 				        
-				        GeneralData.list_shipment.add(shipment);
+				        BD.shipmentsTemp.add(shipment);
 			        }
 				}
 				scannerObj.close();
 				
 				System.out.println("ARCHIVO NUMERO: " + j);
-		        System.out.println("TAMANO DE LA LISTA DE ENVIOS: " + GeneralData.list_shipment.size());
+		        System.out.println("TAMANO DE LA LISTA DE ENVIOS: " + BD.shipmentsTemp.size());
 		        //System.out.println("FECHA LIMITE: " + limit_date_data);
 			}
 		}catch(Exception e) {
 			System.out.println("EXCEPTION SHIPMENTS CON PARAMETRO: " + e.getMessage());
 		}
 		
-		System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + GeneralData.list_shipment.size());
+		System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + BD.shipmentsTemp.size());
 	}
 }

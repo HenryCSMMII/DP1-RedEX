@@ -1,5 +1,7 @@
 package com.edu.pucp.dp1.redex.model;
 
+import java.util.Date;
+
 public class StorageCapacity {
     private int id;
 	private Date start_time;

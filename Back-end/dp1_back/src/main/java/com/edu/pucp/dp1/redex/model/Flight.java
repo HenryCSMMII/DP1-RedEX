@@ -1,5 +1,10 @@
 package com.edu.pucp.dp1.redex.model;
 
+import java.util.Date;
+
+import com.edu.pucp.dp1.redex.Algorithm.BD;
+import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
+
 public class Flight {
     
 	private int id;
@@ -15,7 +20,7 @@ public class Flight {
 	private long difference_system;//diferencia de peru con aeropuerto de salida
 
 	public Flight() {
-		this.used_capacity = new int[geneticParameters.POPULATION_NUM_INDIVIDUALS*2];
+		this.used_capacity = new int[BD.POPULATION_NUM_INDIVIDUALS*2];
 		this.id = increment + 1; 
 		Flight.increment += 1;
 		
@@ -47,7 +52,7 @@ public class Flight {
 		if(flight.getDeparture_airport()!=null) this.departure_airport = new Airport(flight.getDeparture_airport());
 		if(flight.getArrival_airport()!=null)this.arrival_airport = new Airport(flight.getArrival_airport());
 		if(flight.getUsed_capacity()!=null) {
-			this.used_capacity = new int[geneticParameters.POPULATION_NUM_INDIVIDUALS*2];
+			this.used_capacity = new int[BD.POPULATION_NUM_INDIVIDUALS*2];
 			for(int i=0;i<flight.getUsed_capacity().length;i++) {
 				this.used_capacity[i] = flight.getUsed_capacity()[i];
 			}

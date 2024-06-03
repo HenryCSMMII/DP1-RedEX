@@ -1,9 +1,10 @@
 package com.edu.pucp.dp1.redex.model;
-
 import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
 
 public class Airport {
-    
+	
 	private int id;
 	private static int increment = 0;
 	private String name;
@@ -117,5 +118,5 @@ public class Airport {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
-
+	
 }
