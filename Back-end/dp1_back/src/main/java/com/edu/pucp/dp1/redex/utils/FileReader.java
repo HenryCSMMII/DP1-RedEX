@@ -23,7 +23,7 @@ import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.model.StorageCapacity;
 
 public class FileReader {
-    public static void read_list_airports()  {
+	public static void read_list_airports()  {
 		
 		BD.airports = new ArrayList<Airport>();
 		
@@ -172,7 +172,7 @@ public class FileReader {
 		
 	}
 	
-	public static void read_shipmentsTemp(){
+	public static void read_list_shipment(){
 		BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance(); 
 		try {
@@ -254,7 +254,7 @@ public class FileReader {
 		}
 	}
 	
-	public static void read_shipmentsTemp_with_date(long date_simulation, int type_simulation){
+	public static void read_list_shipment_with_date(long date_simulation, int type_simulation){
 		long limit_date_data = 0;
 		
 		BD.shipmentsTemp = new ArrayList<Shipment>();
