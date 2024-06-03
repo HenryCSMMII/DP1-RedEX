@@ -1,0 +1,40 @@
+01,SKBO,Bogota,Colombia,bogo,AS,America/Bogota
+02,SEQM,Quito,Ecuador,quit,AS,America/Guayaquil
+03,SVMI,Caracas,Venezuela,cara,AS,America/Caracas
+04,SBBR,Brasilia,Brasil,bras,AS,America/Sao_Paulo
+05,SPIM,Lima,Perú,lima,AS,America/Lima
+06,SLLP,La Paz,Bolivia,lapa,AS,America/La_Paz
+07,SCEL,Santiago de Chile,Chile,sant,AS,America/Santiago
+08,SABE,Buenos Aires,Argentina,buen,AS,America/Buenos_Aires
+09,SGAS,Asunción,Paraguay,asun,AS,America/Asuncion
+10,SUAA,Motenvideo,Uruguay,mont,AS,America/Montevideo
+11,LATI,Tirana,Albania,tira,E,Europe/Tirane
+12,EDDI,Berlin,Alemania,berl,E,Europe/Berlin
+13,LOWW,Viena,Austria,vien,E,Europe/Vienna
+14,EBCI,Bruselas,Belgica,brus,E,Europe/Brussels
+15,UMMS,Minsk,Bielorrusia,mins,E,Europe/Minsk
+16,LBSF,Sofia,Bulgaria,sofi,E,Europe/Sofia
+17,LKPR,Praga,Checa,prag,E,Europe/Prague
+18,LDZA,Zagreb,Croacia,zagr,E,Europe/Zagreb
+19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhagen
+20,LZIB,Bratislava,Eslovaquia,brat,E,Europe/Bratislava
+21,LJLJ,Liubliana,Eslovenia,liub,E,Europe/Ljubljana
+22,LEMD,Madrid,España,madr,E,Europe/Madrid
+23,EETN,Tallin,Estonia,tall,E,Europe/Tallinn
+24,EFHK,Helsinki,Finlandia,hels,E,Europe/Helsinki
+25,LFPG,Paris,Francia,pari,E,Europe/Paris
+26,LGAV,Atenas,Grecia,aten,E,Europe/Athens
+27,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam
+28,LHBP,Budapest,Hungría,buda,E,Europe/Budapest
+29,EIDW,Dublin,Irlanda (Eire),dubl,E,Europe/Dublin
+30,BIKF,Reykjavik,Islandia,reyk,E,Atlantic/Reykjavik
+31,LIRA,Roma,Italia,roma,E,Europe/Rome
+32,EVRA,Riga,Letonia,riga,E,Europe/Riga
+33,ELLX,Luxemburgo,Luxemburgo,luxe,E,Europe/Luxembourg
+34,LMML,LaValletta,Malta,lava,E,Europe/Malta
+35,ENGM,Oslo,Noruega,oslo,E,Europe/Oslo
+36,EPMO,Varsovia,Polonia,vars,E,Europe/Warsaw
+37,LPPT,Lisboa,Portugal,lisb,E,Europe/Lisbon
+38,EGLL,Londres,Reino Unido,lond,E,Europe/London
+39,ESKN,Estocolmo,Suecia,esto,E,Europe/Stockholm
+40,LSZB,Berna,Suiza,bern,E,Europe/Zurich

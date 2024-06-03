@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.json.JSONArray;
+//import org.json;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +20,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.yaml.snakeyaml.util.ArrayUtils;
 
+import com.edu.pucp.dp1.redex.Algorithm.BD;
+import com.edu.pucp.dp1.redex.Algorithm.Individual;
+import com.edu.pucp.dp1.redex.Algorithm.Population;
+import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.Flight;
+import com.edu.pucp.dp1.redex.utils.CalendarFlightPool;
+import com.edu.pucp.dp1.redex.utils.FileReader;
+import com.edu.pucp.dp1.redex.utils.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,7 +47,7 @@ public class AlgorithmController {
 	public List<Airport> run2() throws IOException{
 		FileReader.read_list_airports();
 		FileReader.read_list_flights();
-		return GeneralData.list_aiport;
+		return BD.airports;
 	}
 	
 	@RequestMapping(value="read2/", method = RequestMethod.GET)
@@ -65,21 +73,21 @@ public class AlgorithmController {
 		FileReader.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		
-		Population population = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
+		Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
 		
-		population.initialize(GeneralData.list_shipment);
+		population.initialize(BD.shipmentsTemp);
 		population.evaluate();
 
 		int num_generations=0;
 		int index_best_individual = 0;
 		
-		while(num_generations != geneticParameters.NUM_GENERATIONS) {
+		while(num_generations != BD.NUM_GENERATIONS) {
 		
 			List<Individual[]> new_parents = new ArrayList<Individual[]>();
 			
 			//System.out.println("============== HOLA ==============");
 			
-			for(int i = 0; i < geneticParameters.POPULATION_NUM_INDIVIDUALS/2; i++) {
+			for(int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS/2; i++) {
 				//System.out.println("============== ROULETTE ==============");
 				
 				//Individual[] new_parents_group = population.selection_parents_tournament(population, 4);
@@ -100,7 +108,7 @@ public class AlgorithmController {
 				new_offspring.get(i).mutation1(population);
 			}
 			
-			Population population_temp = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS*2);
+			Population population_temp = new Population(BD.POPULATION_NUM_INDIVIDUALS*2);
 			
 			for(int i=0, k=0;i<new_parents.size();i++, k+=2) {
 				System.out.println("i :" + i + " k: " + k);
@@ -109,7 +117,7 @@ public class AlgorithmController {
 			}
 			
 			for(int i=0;i<new_offspring.size();i++) {
-				population_temp.getIndividuals()[i+geneticParameters.POPULATION_NUM_INDIVIDUALS] = new_offspring.get(i);
+				population_temp.getIndividuals()[i+BD.POPULATION_NUM_INDIVIDUALS] = new_offspring.get(i);
 			}
 			
 			//Seleccionar los 10 mejores
@@ -126,12 +134,12 @@ public class AlgorithmController {
 
 			Arrays.sort(list_fitness_temp);
 			
-			int[] list_index = new int[geneticParameters.POPULATION_NUM_INDIVIDUALS];
+			int[] list_index = new int[BD.POPULATION_NUM_INDIVIDUALS];
 			
 			int j=0;
 			int flag_exist=0;
 			for(int i=list_fitness_temp.length-1;i>=0;i--) {
-				if(i ==  list_fitness_temp.length-1-geneticParameters.POPULATION_NUM_INDIVIDUALS) break;
+				if(i ==  list_fitness_temp.length-1-BD.POPULATION_NUM_INDIVIDUALS) break;
 				flag_exist = 0;
 				for(int k=0;k<list_fitness.length;k++) {
 					if(list_fitness[k] == list_fitness_temp[i]) {
@@ -156,18 +164,18 @@ public class AlgorithmController {
 			//	population_selected.getIndividuals() = population_temp.getIndividuals()
 			//}
 
-			population = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
-			for(int i=0;i<geneticParameters.POPULATION_NUM_INDIVIDUALS;i++) {
+			population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
+			for(int i=0;i<BD.POPULATION_NUM_INDIVIDUALS;i++) {
 				population.getIndividuals()[i] = population_temp.getIndividuals()[list_index[i]];
 			}
 	
 			for(int k=0;k<2;k++) {
 				for(int n=0;n<=365;n++) {
-					for(int m=0;m<GeneralData.list_pool_fligths[k][n].size();m++) {
-						for(int a=0;a<GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity().length;a++) {
-							if(a==geneticParameters.POPULATION_NUM_INDIVIDUALS) break;
-							GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity()[a]= 
-									GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity()[list_index[a]];
+					for(int m=0;m<BD.flights[k][n].size();m++) {
+						for(int a=0;a<BD.flights[k][n].get(m).getUsed_capacity().length;a++) {
+							if(a==BD.POPULATION_NUM_INDIVIDUALS) break;
+							    BD.flights[k][n].get(m).getUsed_capacity()[a]= 
+                                BD.flights[k][n].get(m).getUsed_capacity()[list_index[a]];
 						}
 					}
 				}
@@ -197,11 +205,11 @@ public class AlgorithmController {
 			return null;
 		}
 		
-		System.out.println("Total de envios sin solucion "+ GeneralData.list_shipments_without_solution.size());
-		for (int i = 0; i < GeneralData.list_shipments_without_solution.size(); i++) {
-			if(GeneralData.list_shipments_without_solution.get(i).getPackageQuantity() >= 25) {
-				System.out.println("SALIDA: " + GeneralData.list_shipments_without_solution.get(i).getDepartureAirport().getCode());
-				System.out.println("LLEGADA: " + GeneralData.list_shipments_without_solution.get(i).getArrivalAirport().getCode());
+		System.out.println("Total de envios sin solucion "+ BD.shipments.size());
+		for (int i = 0; i < BD.shipments.size(); i++) {
+			if(BD.shipments.get(i).getPackageQuantity() >= 25) {
+				System.out.println("SALIDA: " + BD.shipments.get(i).getDepartureAirport().getCode());
+				System.out.println("LLEGADA: " + BD.shipments.get(i).getArrivalAirport().getCode());
 			}
 		}
 		
@@ -233,15 +241,15 @@ public class AlgorithmController {
 				System.out.println("DIA DEL AÑO: " + (day_of_year + i));
 				// FIN DE AÑO -> verificar casos
 				if(day_of_year + i >= 365) {
-					GeneralData.list_pool_fligths[year_of_date][day_of_year - 1].addAll(GeneralData.list_pool_fligths[year_of_date + 1][i]);
+					BD.flights[year_of_date][day_of_year - 1].addAll(BD.flights[year_of_date + 1][i]);
 				}
 				else{
-					GeneralData.list_pool_fligths[year_of_date][day_of_year - 1].addAll(GeneralData.list_pool_fligths[year_of_date][day_of_year + i]);
+					BD.flights[year_of_date][day_of_year - 1].addAll(BD.flights[year_of_date][day_of_year + i]);
 				}
 			}
 		}
 		
-		return GeneralData.list_pool_fligths[year_of_date][day_of_year - 1];
+		return BD.flights[year_of_date][day_of_year - 1];
 	}
 	
 	@RequestMapping(value="test/", method = RequestMethod.GET)
@@ -252,50 +260,10 @@ public class AlgorithmController {
 		
 		//System.out.println("WENAS: "+ GeneralData.list_pool_fligths[1][20].getArrival_date_time().getTime());
 		
-		return GeneralData.list_pool_fligths[0][213];
+		return BD.flights[0][213];
 	}
 	
-	@RequestMapping(value="astar/", method = RequestMethod.GET)
-	public void test_astar(){
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
-		FileReader.read_list_shipment();
-
-		aStar astar = new aStar();
-		
-		for (int j = 0; j < GeneralData.list_shipment.size(); j++) {
-			astar.initialize(GeneralData.list_shipment.get(j));
-			astar.findFlightRoute(GeneralData.list_shipment.get(j));
-		}
-	}
 	
-	@RequestMapping(value="prueba/", method = RequestMethod.GET)
-	public void prueba(){
-		
-		List<A> list_a = new ArrayList<A>();
-		
-		List<A> list_b = new ArrayList<A>();
-		
-		A a1 = new A();
-		A a2 = new A();
-		A a3 = new A();
-		
-		list_a.add(a1);
-		list_a.add(a2);
-		list_a.add(a3);
-		
-		list_b.add(list_a.get(1));
-		
-		list_a = null;
-		
-		System.gc();
-		
-		System.out.println(list_b.get(0));
-		System.out.println(list_b.get(0).c.asd);
-		System.out.println(list_b.get(0).c.b.asd);
-		//System.out.println(a1);
-		
-	}
 	
 	@RequestMapping(value="read_files/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
 	public void read_files(@PathVariable("date_simulation") long date_simulation, 

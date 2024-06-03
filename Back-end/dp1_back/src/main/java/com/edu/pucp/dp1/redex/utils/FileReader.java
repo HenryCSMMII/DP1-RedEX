@@ -28,7 +28,7 @@ public class FileReader {
 		BD.airports = new ArrayList<Airport>();
 		
 		try {
-			File file = new File("D:\\archivos\\datos.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/datos.txt");
 			Scanner scannerObj = new Scanner(file);
 
 			while(scannerObj.hasNextLine()) {
@@ -83,7 +83,7 @@ public class FileReader {
 		BD.flightsTemp = new ArrayList<Flight>();
 		
 		try {
-			File file = new File("D:\\archivos\\itinerario.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/itinerario.txt");
 			Scanner scannerObj = new Scanner(file);
 
 			while(scannerObj.hasNextLine()) {
@@ -176,7 +176,7 @@ public class FileReader {
 		BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance(); 
 		try {
-			File file = new File("D:\\archivos\\envios.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/envios.txt");
 			Scanner scannerObj = new Scanner(file);
 			//System.out.println("entro ps");
 			

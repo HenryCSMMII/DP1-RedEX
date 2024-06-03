@@ -10,6 +10,13 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.Flight;
+import com.edu.pucp.dp1.redex.model.FlightSchedule;
+import com.edu.pucp.dp1.redex.model.Shipment;
+import com.edu.pucp.dp1.redex.utils.MathFunctions;
+import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
+
 
 
 public class Individual {
@@ -131,7 +138,7 @@ public class Individual {
 		
 		this.list_flight_schedule = new ArrayList<FlightSchedule>();
 	
-		GeneralData.list_shipments_without_solution = new ArrayList<Shipment>();
+		BD.shipments = new ArrayList<Shipment>();
 		int contador = 0;
 		for(int i=0;i<list_shipments.size();i++) {
 			
@@ -165,7 +172,7 @@ public class Individual {
 			
 			if(contador == 20) {
 				System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
-				GeneralData.list_shipments_without_solution.add(list_shipments.get(i));
+				BD.shipments.add(list_shipments.get(i));
 				
 			}
 			contador=0;
@@ -182,7 +189,7 @@ public class Individual {
 			long estimated_time, long max_time, int stopovers, Shipment shipment, long max_additional_days) {
 		//System.out.println("ORIGEN : " + departure_airport.getCountry().getCity() + " LLEGADA: " + arrival_airport.getCountry().getCity());
 		//System.out.println(max_time);
-		if(estimated_time > max_time || stopovers > geneticParameters.MAX_STOPOVERS) {
+		if(estimated_time > max_time || stopovers > BD.MAX_STOPOVERS) {
 			return 0;
 		}
 		if(departure_airport.getCode().equals(arrival_airport.getCode())) {
@@ -237,9 +244,9 @@ public class Individual {
 		
 		int one_hour = 1*60*60*1000;
 
-		List<Flight> list_mini_pool_flights_day3 = GeneralData.list_pool_fligths[index_year_3][index_day_3]; //ultimo dia - 3 dias martes
-		List<Flight> list_mini_pool_flights_day2 = GeneralData.list_pool_fligths[index_year_2][index_day_2]; //penultimo dia-2 dias lunes
-		List<Flight> list_mini_pool_flights_day1 = GeneralData.list_pool_fligths[index_year][index_day]; //primer dia - 1 dia domingo
+		List<Flight> list_mini_pool_flights_day3 = BD.flights[index_year_3][index_day_3]; //ultimo dia - 3 dias martes
+		List<Flight> list_mini_pool_flights_day2 = BD.flights[index_year_2][index_day_2]; //penultimo dia-2 dias lunes
+		List<Flight> list_mini_pool_flights_day1 = BD.flights[index_year][index_day]; //primer dia - 1 dia domingo
 		
 		List<Flight> list_mini_pool_flights_last_day = null;
 		if(max_days==3) {

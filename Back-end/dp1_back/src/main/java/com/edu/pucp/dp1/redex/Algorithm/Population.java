@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.edu.pucp.dp1.redex.model.Shipment;
+
 public class Population {
 	private Individual[] individuals;
 	
@@ -158,7 +160,7 @@ public class Population {
 	
 	public double[] evaluate() {
 		
-		double[] population_fitness = new double[geneticParameters.POPULATION_NUM_INDIVIDUALS*2];
+		double[] population_fitness = new double[BD.POPULATION_NUM_INDIVIDUALS*2];
 		
 		this.initialize_flight_capacity();
 		for(int i=0;i<this.individuals.length;i++) {
@@ -173,9 +175,9 @@ public class Population {
 		
 		for(int k=0;k<2;k++) {
 			for(int n=0;n<=365;n++) {
-				for(int m=0;m<GeneralData.list_pool_fligths[k][n].size();m++) {
-					for(int a=0;a<GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity().length;a++) {
-						GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity()[a]=0;
+				for(int m=0;m<BD.flights[k][n].size();m++) {
+					for(int a=0;a<BD.flights[k][n].get(m).getUsed_capacity().length;a++) {
+						BD.flights[k][n].get(m).getUsed_capacity()[a]=0;
 					}
 				}
 			}
