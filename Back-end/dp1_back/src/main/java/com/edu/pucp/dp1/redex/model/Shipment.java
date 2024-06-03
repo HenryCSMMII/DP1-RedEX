@@ -5,9 +5,8 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-public class Shipment{
-
-	private Integer id;
+public class Shipment {
+    private Integer id;
 	private String code;
 	private Date registerDateTime;
 	private Date departureTime;
@@ -15,9 +14,9 @@ public class Shipment{
 	private int packageQuantity;
 	private Airport departureAirport;
 	private Airport arrivalAirport;
-	private ItinerarioVuelos flightSchedule;
+	private FlightSchedule flightSchedule;
 	private Client client;
-	private Client operator;
+	private Operator operator;
 	private State state;
 	
 	public Shipment() {
@@ -31,7 +30,7 @@ public class Shipment{
 		if(shipment.getDepartureTime() != null) this.departureTime = new Date(shipment.getDepartureTime().getTime());
 		if(shipment.getArrivalTime() != null)	this.arrivalTime = new Date(shipment.getArrivalTime().getTime());
 		if(shipment.getClient() != null)	this.client = new Client(shipment.getClient());
-		this.operator = shipment.getClient();
+		this.operator = shipment.getOperator();
 		this.state = shipment.state;
 		this.packageQuantity = shipment.getPackageQuantity();
 		if(shipment.getDepartureAirport() != null){
@@ -102,11 +101,11 @@ public class Shipment{
     }
     
     
-    public ItinerarioVuelos getFlightSchedule() {
+    public FlightSchedule getFlightSchedule() {
         return flightSchedule;
     }
 
-    public void setFlightSchedule(ItinerarioVuelos flightSchedule) {
+    public void setFlightSchedule(FlightSchedule flightSchedule) {
         this.flightSchedule = flightSchedule;
     }
     
@@ -118,11 +117,11 @@ public class Shipment{
         this.client = client;
     }
     
-    public Client getOperator() {
+    public Operator getOperator() {
         return operator;
     }
 
-    public void setOperator(Client operator) {
+    public void setOperator(Operator operator) {
         this.operator = operator;
     }
 
@@ -147,8 +146,8 @@ public class Shipment{
 	}
     
     public Shipment(Integer id,	String code, Date departureTime, Date arrivalTime, Integer packageQuantity, 
-    				Airport departureAirport, Airport arrivalAirport, ItinerarioVuelos flightSchedule, State state,
-    				Client client, Client operator) {
+    				Airport departureAirport, Airport arrivalAirport, FlightSchedule flightSchedule, State state,
+    				Client client, Operator operator) {
         this.id = id;
         this.code = code;
         this.departureTime = departureTime;

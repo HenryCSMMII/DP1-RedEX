@@ -1,8 +1,7 @@
 package com.edu.pucp.dp1.redex.model;
 
 public class Continent {
-	
-	private int id;
+    private int id;
 	private String name;
 	private String abbrev;
 	
@@ -45,5 +44,5 @@ public class Continent {
 	public void setAbbrev(String abbrev) {
 		this.abbrev = abbrev;
 	}
-	
+
 }

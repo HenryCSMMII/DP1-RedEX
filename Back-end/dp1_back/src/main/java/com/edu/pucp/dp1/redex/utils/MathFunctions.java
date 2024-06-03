@@ -45,5 +45,4 @@ public class MathFunctions {
 		sq = standarDeviation/list.size();
 		return sq;
 	}
-
 }

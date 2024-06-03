@@ -1,21 +1,14 @@
 package com.edu.pucp.dp1.redex.utils;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
-import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.model.Flight;
 
 public class CalendarFlightPool {
-
     public static void generate_calendar() {
 		
-		BD.flights = new ArrayList[2][366];
+		GeneralData.list_pool_fligths = new ArrayList[2][366];
 		int year=52;
 		int day=0;
 		
@@ -30,10 +23,10 @@ public class CalendarFlightPool {
 	        	
 				list_flight_temp = new ArrayList<Flight>();
 				
-				for(int n=0;n<BD.flightsTemp.size();n++) {
+				for(int n=0;n<GeneralData.list_pool_fligths_temp.size();n++) {
 					Date date_temp = new Date(0);
 					
-					Flight flight = new Flight(BD.flightsTemp.get(n));
+					Flight flight = new Flight(GeneralData.list_pool_fligths_temp.get(n));
 					
 					c.setTime(date_temp);
 					//if(i==0) c.set(2022, 0, 0);
@@ -46,23 +39,18 @@ public class CalendarFlightPool {
 		        	
 		        	date_temp = c.getTime();
 		        	
-		        	//flight.setDeparture_date_time(new Date(flight.getDeparture_date_time().getTime() + date_temp.getTime()));
-                    flight.addSecondsToDepartureTime(date_temp.getTime()/1000);
-                    
-                    //flight.setArrival_date_time(new Date(flight.getArrival_date_time().getTime() + date_temp.getTime()));
-                    flight.addSecondsToArrivalTime(date_temp.getTime()/1000);
-
+		        	flight.setDeparture_date_time(new Date(flight.getDeparture_date_time().getTime() + date_temp.getTime()));
+		        	flight.setArrival_date_time(new Date(flight.getArrival_date_time().getTime() + date_temp.getTime()));
 		        	//arrival_time = c.getTime();
 					
 		        	list_flight_temp.add(flight);
 					//LocalDate localDate = new LocalDate(year, 0 ,0).set
 				}
-				BD.flights[i][k] = list_flight_temp;
+				GeneralData.list_pool_fligths[i][k] = list_flight_temp;
 				day+=1;
 				//c.add(Calendar.DATE, 1);
 			}
 			year+=1;
 		}
 	}
-
 }

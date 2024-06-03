@@ -1,42 +1,37 @@
 package com.edu.pucp.dp1.redex.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import com.edu.pucp.dp1.redex.Algorithm.BD;
-import com.edu.pucp.dp1.redex.Algorithm.Individual;
-import com.edu.pucp.dp1.redex.Algorithm.Population;
-import com.edu.pucp.dp1.redex.dto.FlightDTO;
-import com.edu.pucp.dp1.redex.model.Airport;
-import com.edu.pucp.dp1.redex.model.Flight;
-import com.edu.pucp.dp1.redex.services.AlgorithmService;
-import com.edu.pucp.dp1.redex.utils.CalendarFlightPool;
-
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
+import org.json.JSONArray;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.yaml.snakeyaml.util.ArrayUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 @RestController
-@RequestMapping("/algorithm")
-@CrossOrigin
+@RequestMapping("/api/algorithm/")
 public class AlgorithmController {
 
-    /*@Autowired
-    private AlgorithmService algorithmService;
-
-    @PostMapping("/optimizeFlights")
-    public List<FlightDTO> optimizeFlights(@RequestBody List<FlightDTO> flights) {
-        return algorithmService.optimizeFlights(flights);
-    }*/
 	@RequestMapping(value="read/", method = RequestMethod.GET)
 	public String read() throws IOException{
 		FileReader.read_list_airports();
+		System.out.println("ra uwu");
 		return null;
 	}
 	
@@ -44,18 +39,20 @@ public class AlgorithmController {
 	public List<Airport> run2() throws IOException{
 		FileReader.read_list_airports();
 		FileReader.read_list_flights();
-		return BD.airports;
+		return GeneralData.list_aiport;
 	}
 	
 	@RequestMapping(value="read2/", method = RequestMethod.GET)
 	public String read2() throws IOException{
 		FileReader.read_list_flights();
+		System.out.println("wenas si que si");
 		return null;
 	}
 	
 	@RequestMapping(value="read3/", method = RequestMethod.GET)
 	public String read3() throws IOException{
 		FileReader.read_list_shipment();
+		System.out.println("wenas si que si jaa");
 		return null;
 	}
 	
@@ -65,108 +62,121 @@ public class AlgorithmController {
 		
 		//FileReader.read_list_airports();
 		//FileReader.read_list_flights();
-		BD.read_list_shipment();
+		FileReader.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		
-		int iterGen=0;
-		Population population = new Population(10); //cant de individuos
+		Population population = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
 		
-		population.initialize(BD.shipmentsTemp);
+		population.initialize(GeneralData.list_shipment);
 		population.evaluate();
+
+		int num_generations=0;
+		int index_best_individual = 0;
 		
-		while(iterGen != 10) { //cant de individuos
+		while(num_generations != geneticParameters.NUM_GENERATIONS) {
 		
-			List<Individual[]> newParents = new ArrayList<Individual[]>();
+			List<Individual[]> new_parents = new ArrayList<Individual[]>();
 			
-			for(int i = 0; i < 5; i++) { //cant de individuos % 2
+			//System.out.println("============== HOLA ==============");
+			
+			for(int i = 0; i < geneticParameters.POPULATION_NUM_INDIVIDUALS/2; i++) {
+				//System.out.println("============== ROULETTE ==============");
 				
-				//Individual[] newParent = population.selectionTournament(population,4);
-				Individual[] newParent = population.selectionRoulette(population);
-				newParents.add(newParent);
+				//Individual[] new_parents_group = population.selection_parents_tournament(population, 4);
+				Individual[] new_parents_group = population.selection_parents_roulette(population);
+				new_parents.add(new_parents_group);
 			}
 			
-			List<Individual> newOffspring = new ArrayList<Individual>();
-			for(int i=0;i<newParents.size();i++) {
-				Individual[] children = newParents.get(i)[0].crossover_uniform(newParents.get(i)[1]);
-				newOffspring.add(children[0]);
-				newOffspring.add(children[1]);
+			List<Individual> new_offspring = new ArrayList<Individual>();
+			for(int i=0;i<new_parents.size();i++) {
+				//System.out.println("============== CROSSOVER ==============");
+				Individual[] children = new_parents.get(i)[0].crossover_uniform(new_parents.get(i)[1]);
+				new_offspring.add(children[0]);
+				new_offspring.add(children[1]);
 			}
 			
-			for(int i=0;i<newOffspring.size();i++) {
-				newOffspring.get(i).mutation1(population);
+			for(int i=0;i<new_offspring.size();i++) {
+			//	//System.out.println("============== MUTATION 1 ==============");
+				new_offspring.get(i).mutation1(population);
 			}
 			
-			Population tempPopulation = new Population(20); //cant de individuos * 2
+			Population population_temp = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS*2);
 			
-			for(int i=0, k=0;i<newParents.size();i++, k+=2) {
+			for(int i=0, k=0;i<new_parents.size();i++, k+=2) {
 				System.out.println("i :" + i + " k: " + k);
-				tempPopulation.getIndividuals()[k] = newParents.get(i)[0];
-				tempPopulation.getIndividuals()[k+1] = newParents.get(i)[1];
+				population_temp.getIndividuals()[k] = new_parents.get(i)[0];
+				population_temp.getIndividuals()[k+1] = new_parents.get(i)[1];
 			}
 			
-			for(int i=0;i<newOffspring.size();i++) {
-				tempPopulation.getIndividuals()[i+10] = newOffspring.get(i); //cant de individuos
+			for(int i=0;i<new_offspring.size();i++) {
+				population_temp.getIndividuals()[i+geneticParameters.POPULATION_NUM_INDIVIDUALS] = new_offspring.get(i);
 			}
+			
+			//Seleccionar los 10 mejores
+			double[] list_fitness = population_temp.evaluate();
+			
+			System.out.println("==========================");
+			for(int i=0;i<list_fitness.length;i++) {
+				System.out.println(list_fitness[i]);
+			}
+			System.out.println("==========================");
+			
+			
+			double[] list_fitness_temp = Arrays.copyOf(list_fitness, list_fitness.length);
 
-			double[] fitness = tempPopulation.evaluate();
+			Arrays.sort(list_fitness_temp);
 			
-			for(int i=0;i<fitness.length;i++) {
-				System.out.println(fitness[i]);
-			}
+			int[] list_index = new int[geneticParameters.POPULATION_NUM_INDIVIDUALS];
 			
-			double[] fitnessTemp = Arrays.copyOf(fitness, fitness.length);
-			Arrays.sort(fitnessTemp);
-			int[] listIndex = new int[10]; //cant de individuos
 			int j=0;
-			int flag=0;
-
-			for(int i = fitnessTemp.length-1; i>=0; i--) {
-
-				if(i == fitnessTemp.length-1-10) break; //cant de individuos
-				flag = 0;
-
-				for(int k=0;k<fitness.length;k++) {
-
-					if(fitness[k] == fitnessTemp[i]) {
-						for(int l=0;l<listIndex.length;l++) {
-							if(listIndex[l] == k) {
-								flag = 1;
+			int flag_exist=0;
+			for(int i=list_fitness_temp.length-1;i>=0;i--) {
+				if(i ==  list_fitness_temp.length-1-geneticParameters.POPULATION_NUM_INDIVIDUALS) break;
+				flag_exist = 0;
+				for(int k=0;k<list_fitness.length;k++) {
+					if(list_fitness[k] == list_fitness_temp[i]) {
+						for(int m=0;m<list_index.length;m++) {
+							if(list_index[m] == k) {
+								flag_exist = 1; //significa que este indice ya existe uwu
 							}							
 						}
-						
-						if(flag == 1) {
-							flag = 0;
+						if(flag_exist == 1) {
+							flag_exist = 0;
 							continue;
 						}
-						listIndex[j] = k;
+						list_index[j] = k;
 						break;
 					}
 				}
-				j++;
+				j+=1;
 			}
 			
 			//Population population_selected = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
 			//for(int i=0;i<10;i++) {
-			//	population_selected.getIndividuals() = tempPopulation.getIndividuals()
+			//	population_selected.getIndividuals() = population_temp.getIndividuals()
 			//}
 
-			population = new Population(10); //cant de individuos
-			for(int i=0;i<10;i++) { //cant de individuos
-				population.getIndividuals()[i] = tempPopulation.getIndividuals()[listIndex[i]];
+			population = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
+			for(int i=0;i<geneticParameters.POPULATION_NUM_INDIVIDUALS;i++) {
+				population.getIndividuals()[i] = population_temp.getIndividuals()[list_index[i]];
 			}
 	
 			for(int k=0;k<2;k++) {
-				for(int l=0;l<=365;l++) {
-					for(int m=0;m<BD.flights[k][l].size();m++) {
-						for(int n=0;n<BD.flights[k][l].get(m).getCurrentLoad().length;n++) {
-							if(n==10) break; //cant de individuos
-							BD.flights[k][l].get(m).getCurrentLoad()[n]= 
-                                BD.flights[k][l].get(m).getCurrentLoad()[listIndex[n]];
+				for(int n=0;n<=365;n++) {
+					for(int m=0;m<GeneralData.list_pool_fligths[k][n].size();m++) {
+						for(int a=0;a<GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity().length;a++) {
+							if(a==geneticParameters.POPULATION_NUM_INDIVIDUALS) break;
+							GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity()[a]= 
+									GeneralData.list_pool_fligths[k][n].get(m).getUsed_capacity()[list_index[a]];
 						}
 					}
 				}
 			}
-			iterGen+=1;
+
+			//los guardo en una nueva poblacion // los 10 mejores descendientes
+ 
+			num_generations+=1;
+
 		}
 		/*
 		int num=0;
@@ -180,18 +190,18 @@ public class AlgorithmController {
 			}
 		}*/
 		
-		Individual bestIndividual = population.getIndividuals()[0];
+		Individual best_individual = population.getIndividuals()[0];
 		
-		if(bestIndividual.getFitness(0) < 0.01) {
-			System.out.println("No se ha encontrado un plan de vuelos");
+		if(best_individual.getFitness(0) < 0.01) {
+			System.out.println("No hay solucion");
 			return null;
 		}
 		
-		System.out.println("Total de envios sin solucion "+ BD.shipments.size());
-		for (int i = 0; i < BD.shipments.size(); i++) {
-			if(BD.shipments.get(i).getCantidad() >= 25) {
-				System.out.println("SALIDA: " + BD.shipments.get(i).getOrigen().getCodigoIATA());
-				System.out.println("LLEGADA: " + BD.shipments.get(i).getDestino().getCodigoIATA());
+		System.out.println("Total de envios sin solucion "+ GeneralData.list_shipments_without_solution.size());
+		for (int i = 0; i < GeneralData.list_shipments_without_solution.size(); i++) {
+			if(GeneralData.list_shipments_without_solution.get(i).getPackageQuantity() >= 25) {
+				System.out.println("SALIDA: " + GeneralData.list_shipments_without_solution.get(i).getDepartureAirport().getCode());
+				System.out.println("LLEGADA: " + GeneralData.list_shipments_without_solution.get(i).getArrivalAirport().getCode());
 			}
 		}
 		
@@ -206,29 +216,123 @@ public class AlgorithmController {
 		//return GeneralData.list_pool_fligths[0][292];
 		
 		/********************************* DAYS OF THE YEAR - ARRAY ***************************************/
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate arrDate = LocalDate.parse(LocalDate.ofEpochDay(dateSim / (24 * 60 * 60 * 1000)).toString(), formatter);
+		DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
+		LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation)));
 				
-		int dd = arrDate.getDayOfYear();
-		System.out.println("DIA DEL AÑO: " + (dd));
+		int day_of_year = date_array.getDayOfYear();
+		System.out.println("DIA DEL AÑO: " + (day_of_year));
 		
-		int yy;
-		System.out.println("AÑO DE LA FECHA: " + arrDate.getYear());
+		int year_of_date;
+		System.out.println("AÑO DE LA FECHA: " + date_array.getYear());
 		
-		if(arrDate.getYear() == 2022) { yy = 0; }
-		else { yy = 1; }
+		if(date_array.getYear() == 2022) { year_of_date = 0; }
+		else { year_of_date = 1; }
 				
-		if(typeSim == 7) { // deberia ser 7 porque es semanal
-			for (int i = 0; i < typeSim; i++) {
+		if(type_simulation == 5) {
+			for (int i = 0; i < type_simulation; i++) {
+				System.out.println("DIA DEL AÑO: " + (day_of_year + i));
 				// FIN DE AÑO -> verificar casos
-				if(dd + i >= 365) {
-					BD.flights[yy][dd - 1].addAll(BD.flights[yy + 1][i]);
+				if(day_of_year + i >= 365) {
+					GeneralData.list_pool_fligths[year_of_date][day_of_year - 1].addAll(GeneralData.list_pool_fligths[year_of_date + 1][i]);
 				}
 				else{
-					BD.flights[yy][dd - 1].addAll(BD.flights[yy][dd + i]);
+					GeneralData.list_pool_fligths[year_of_date][day_of_year - 1].addAll(GeneralData.list_pool_fligths[year_of_date][day_of_year + i]);
 				}
 			}
 		}
-		return BD.flights[yy][dd - 1];
+		
+		return GeneralData.list_pool_fligths[year_of_date][day_of_year - 1];
 	}
+	
+	@RequestMapping(value="test/", method = RequestMethod.GET)
+	public List<Flight> test(){
+		FileReader.read_list_airports();
+		FileReader.read_list_flights();
+		CalendarFlightPool.generate_calendar();
+		
+		//System.out.println("WENAS: "+ GeneralData.list_pool_fligths[1][20].getArrival_date_time().getTime());
+		
+		return GeneralData.list_pool_fligths[0][213];
+	}
+	
+	@RequestMapping(value="astar/", method = RequestMethod.GET)
+	public void test_astar(){
+		FileReader.read_list_airports();
+		FileReader.read_list_flights();
+		FileReader.read_list_shipment();
+
+		aStar astar = new aStar();
+		
+		for (int j = 0; j < GeneralData.list_shipment.size(); j++) {
+			astar.initialize(GeneralData.list_shipment.get(j));
+			astar.findFlightRoute(GeneralData.list_shipment.get(j));
+		}
+	}
+	
+	@RequestMapping(value="prueba/", method = RequestMethod.GET)
+	public void prueba(){
+		
+		List<A> list_a = new ArrayList<A>();
+		
+		List<A> list_b = new ArrayList<A>();
+		
+		A a1 = new A();
+		A a2 = new A();
+		A a3 = new A();
+		
+		list_a.add(a1);
+		list_a.add(a2);
+		list_a.add(a3);
+		
+		list_b.add(list_a.get(1));
+		
+		list_a = null;
+		
+		System.gc();
+		
+		System.out.println(list_b.get(0));
+		System.out.println(list_b.get(0).c.asd);
+		System.out.println(list_b.get(0).c.b.asd);
+		//System.out.println(a1);
+		
+	}
+	
+	@RequestMapping(value="read_files/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
+	public void read_files(@PathVariable("date_simulation") long date_simulation, 
+							@PathVariable("type_simulation") int type_simulation){
+		FileReader.read_list_airports();
+		FileReader.read_list_flights();
+		//FileReader.read_list_shipment();
+		FileReader.read_list_shipment_with_date(date_simulation, type_simulation);
+		CalendarFlightPool.generate_calendar();
+		return;
+	}
+	
+	@CrossOrigin
+	@RequestMapping(value="get_simulation_flights/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
+	public List<ObjectNode> get_simulation_fligths(@PathVariable("date_simulation") long date_simulation, 
+													@PathVariable("type_simulation") int type_simulation) throws JsonProcessingException{
+		
+		// Tiempo de ejecucion del algoritmo => TA = 5min
+		// Salto de cada ejecucion => SA = 10min
+		// Proporcionalidad de tiempo => PT
+		// PT = 1 -> Operaciones diarias
+		// PT = algo que debemos descubrir -> Simulacion 5 dias
+		// PT = algo que debemos descubrir -> Simulacion colapso
+		
+		FileReader.read_list_airports();
+		FileReader.read_list_flights();
+		
+		List<Flight> list_flights = this.genetic_algorithm(date_simulation, type_simulation);
+			
+		List<ObjectNode> result_api = JsonFormat.convertFlightToJSON(list_flights);
+
+		//ObjectMapper objectMapper = new ObjectMapper();
+		//objectMapper.readValues(result_api, JSONArray.class)
+		
+		System.out.println("ESTA ES LA FECHA EN MS POR PARAMETRO: " + date_simulation);
+		
+		return result_api;
+	}
+	
 }
