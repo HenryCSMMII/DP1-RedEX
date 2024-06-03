@@ -252,7 +252,12 @@ public class AlgorithmController {
 		}
 		
         System.out.println("funciona");
-		return BD.flights[year_of_date][day_of_year - 1];
+		
+        System.out.println("NUMERO DE ITINERARIOS: "+population.getIndividuals()[0].getList_flight_schedule().size());
+        System.out.println("NUMERO DE PAQUETES: "+population.getIndividuals()[0].getList_shipments().size());
+        
+        return BD.flights[year_of_date][day_of_year - 1];
+        //return population.getIndividuals()[0].getList_flight_schedule().get(0).getFlights();
         
         //return null;
 	}
