@@ -1,5 +1,4 @@
 package com.edu.pucp.dp1.redex.model;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;

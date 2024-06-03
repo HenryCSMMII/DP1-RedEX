@@ -3,7 +3,7 @@ package com.edu.pucp.dp1.redex.Algorithm;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.Shipment;
-import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
+//import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,7 +19,13 @@ public class BD {
 	public static List<Shipment> shipmentsTemp;
 	public static List<Flight>[][] flights;
 	public static List<Shipment> shipments;
-	
+
+	// public static List<Airport> list_aiport;
+	// public static List<Flight> list_pool_fligths_temp;
+	// public static List<Shipment> list_shipment;
+	// public static List<Flight>[][] list_pool_fligths;
+	// public static List<Shipment> list_shipments_without_solution;	
+
 	
 	public static final int MIN_INITIAL_CHROMOSOME_LENGTH = 2;
 	public static final int MAX_INITIAL_CHROMOSOME_LENGTH = 5;
@@ -33,8 +39,8 @@ public class BD {
 	public static final int MAX_CAPACITY_FLIGHT_EUROPE = 250;
 	public static final int MAX_CAPACITY_FLIGHT_TWO_CONTINENTS = 350;
 	
-	public static final int MAX_CAPACITY_STORAGE_AMERICA = 850;
-	public static final int MAX_CAPACITY_STORAGE_EUROPE = 900;
+	// public static final int MAX_CAPACITY_STORAGE_AMERICA = 850;
+	// public static final int MAX_CAPACITY_STORAGE_EUROPE = 900;
 	
 	// Salto de cada ejecucion = 15 minutos
 	public static final long EXECUTION_TIME = 900000;
@@ -217,6 +223,4 @@ public class BD {
 		}
 		
 	}*/
-
-
 }

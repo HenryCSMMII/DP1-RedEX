@@ -1,7 +1,6 @@
 package com.edu.pucp.dp1.redex.model;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 
 public class Airport {
 	

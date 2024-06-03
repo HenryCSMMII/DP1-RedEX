@@ -32,7 +32,6 @@ import com.edu.pucp.dp1.redex.utils.FileReader;
 import com.edu.pucp.dp1.redex.utils.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 @RestController
 @RequestMapping("/api/algorithm/")
@@ -41,28 +40,28 @@ public class AlgorithmController {
 	@RequestMapping(value="read/", method = RequestMethod.GET)
 	public String read() throws IOException{
 		FileReader.read_list_airports();
-		System.out.println("ra uwu");
+		System.out.println("Acabo de leer lista de aeropuertos");
 		return null;
 	}
 	
 	@RequestMapping(value="run2/", method = RequestMethod.GET)
-	public List<Airport> run2() throws IOException{
+	public List<Flight> run2() throws IOException{
 		FileReader.read_list_airports();
 		FileReader.read_list_flights();
-		return BD.airports;
+		return BD.flightsTemp;
 	}
 	
 	@RequestMapping(value="read2/", method = RequestMethod.GET)
 	public String read2() throws IOException{
 		FileReader.read_list_flights();
-		System.out.println("wenas si que si");
+		System.out.println("Acabo de leer los vuelos");
 		return null;
 	}
 	
 	@RequestMapping(value="read3/", method = RequestMethod.GET)
 	public String read3() throws IOException{
 		FileReader.read_list_shipment();
-		System.out.println("wenas si que si jaa");
+		System.out.println("Acabo de leer los envíos");
 		return null;
 	}
 	
@@ -259,9 +258,7 @@ public class AlgorithmController {
         
         //return BD.flights[year_of_date][day_of_year - 1];
         return population.getIndividuals()[0].getList_flight_schedule();
-        
-        //return null;
-	}
+    }
 	
 	@RequestMapping(value="test/", method = RequestMethod.GET)
 	public List<Flight> test(){
