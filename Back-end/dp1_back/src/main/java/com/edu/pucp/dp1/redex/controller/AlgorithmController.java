@@ -26,6 +26,7 @@ import com.edu.pucp.dp1.redex.Algorithm.Individual;
 import com.edu.pucp.dp1.redex.Algorithm.Population;
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
+import com.edu.pucp.dp1.redex.model.FlightSchedule;
 import com.edu.pucp.dp1.redex.utils.CalendarFlightPool;
 import com.edu.pucp.dp1.redex.utils.FileReader;
 import com.edu.pucp.dp1.redex.utils.JsonFormat;
@@ -67,7 +68,7 @@ public class AlgorithmController {
 	
 	@CrossOrigin
 	@RequestMapping(value="run/", method = RequestMethod.GET)
-	public List<Flight> genetic_algorithm(/*@RequestBody long date_simulation, @RequestBody int type_simulation*/){
+	public List<FlightSchedule> genetic_algorithm(/*@RequestBody long date_simulation, @RequestBody int type_simulation*/){
 		long date_simulation = 1659398400000L;
         int type_simulation=1;
 		FileReader.read_list_airports();
@@ -256,8 +257,8 @@ public class AlgorithmController {
         System.out.println("NUMERO DE ITINERARIOS: "+population.getIndividuals()[0].getList_flight_schedule().size());
         System.out.println("NUMERO DE PAQUETES: "+population.getIndividuals()[0].getList_shipments().size());
         
-        return BD.flights[year_of_date][day_of_year - 1];
-        //return population.getIndividuals()[0].getList_flight_schedule().get(0).getFlights();
+        //return BD.flights[year_of_date][day_of_year - 1];
+        return population.getIndividuals()[0].getList_flight_schedule();
         
         //return null;
 	}

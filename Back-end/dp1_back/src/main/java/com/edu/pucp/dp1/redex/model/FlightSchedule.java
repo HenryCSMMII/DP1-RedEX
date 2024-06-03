@@ -15,7 +15,7 @@ public class FlightSchedule {
 		this.estimated_time = 0;
 		this.active = true;
 	}
-
+    
 	public FlightSchedule(int id, int estimated_time, Boolean active, List<Flight> flights) {
 		super();
 		this.id = id;

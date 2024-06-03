@@ -19,7 +19,7 @@ public class BD {
 	public static List<Shipment> shipmentsTemp;
 	public static List<Flight>[][] flights;
 	public static List<Shipment> shipments;
-
+	
 	
 	public static final int MIN_INITIAL_CHROMOSOME_LENGTH = 2;
 	public static final int MAX_INITIAL_CHROMOSOME_LENGTH = 5;
