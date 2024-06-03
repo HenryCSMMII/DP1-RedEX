@@ -59,13 +59,14 @@ public class FileReader {
 	        		airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_EUROPE);
 	        	}
 		       
-		        country.setContinent(continent);
+		        continent.setName(split[6]);
+                country.setContinent(continent);
 		        
 		        
-		        airport.setTime_zone(split[6]);
+		        //airport.setTime_zone(split[6]);
 		        airport.setCountry(country);
-		        airport.setLatitude(split[7]);
-		        airport.setLongitude(split[8]);
+		        //airport.setLatitude(split[7]);
+		        //airport.setLongitude(split[8]);
 		        airport.setStorage(new ArrayList<StorageCapacity>());
 		        //System.out.println("hola");
 		        BD.airports.add(airport);
@@ -198,10 +199,10 @@ public class FileReader {
 		        for(int i=0;i<BD.airports.size();i++) {
 		        	if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
 		        		departure.setCountry(BD.airports.get(i).getCountry());
-		        		departure.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		//departure.setTime_zone(BD.airports.get(i).getTime_zone());
 		        		departure.setId(BD.airports.get(i).getId());
-		        		departure.setLatitude(BD.airports.get(i).getLatitude());
-		        		departure.setLongitude(BD.airports.get(i).getLongitude());
+		        		//departure.setLatitude(BD.airports.get(i).getLatitude());
+		        		//departure.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
 		        //System.out.println("entro ps5");
@@ -227,10 +228,10 @@ public class FileReader {
 		        for(int i=0;i<BD.airports.size();i++) {
 		        	if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
 		        		arrival.setCountry(BD.airports.get(i).getCountry());
-		        		arrival.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		//arrival.setTime_zone(BD.airports.get(i).getTime_zone());
 		        		arrival.setId(BD.airports.get(i).getId());
-		        		arrival.setLatitude(BD.airports.get(i).getLatitude());
-		        		arrival.setLongitude(BD.airports.get(i).getLongitude());
+		        		//arrival.setLatitude(BD.airports.get(i).getLatitude());
+		        		//arrival.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
 		        //System.out.println("entro ps2");
