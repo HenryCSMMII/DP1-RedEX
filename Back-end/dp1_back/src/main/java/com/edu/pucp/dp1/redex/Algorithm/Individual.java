@@ -222,7 +222,7 @@ public class Individual {
 		int index_year;
 		c.setTime(shipment.getRegisterDateTime());
 		index_day = c.get(Calendar.DAY_OF_YEAR)-1;
-		index_year= c.get(Calendar.YEAR)-2022;
+		index_year= c.get(Calendar.YEAR)-2024;
 	
 		
 		//int max_days = (int) Math.ceil((double)max_time/(1000*60*60*24));
@@ -236,11 +236,11 @@ public class Individual {
 		
 		c.add(Calendar.DATE, 1);
 		int index_day_2 = c.get(Calendar.DAY_OF_YEAR)-1;
-		int index_year_2= c.get(Calendar.YEAR)-2022;
+		int index_year_2= c.get(Calendar.YEAR)-2024;
 		
 		c.add(Calendar.DATE, 1);
 		int index_day_3 = c.get(Calendar.DAY_OF_YEAR)-1;
-		int index_year_3= c.get(Calendar.YEAR)-2022;
+		int index_year_3= c.get(Calendar.YEAR)-2024;
 		
 		int one_hour = 1*60*60*1000;
 
