@@ -74,7 +74,7 @@ public class AlgorithmController {
 		int tamanio = 0;
 		BD.readAirports();
 		BD.readFlights();
-		BD.read_list_shipment_with_date(date_simulation, type_simulation);
+		tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		
 		Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
@@ -268,7 +268,7 @@ public class AlgorithmController {
 				Integer idVuelo = flight.getId();
 				System.out.println("IDVuelo: "+flight.getId());
 				for (int j=0; j<vuelos.size();j++){
-					if(idVuelo == vuelos.get(j)){
+					if(vuelos.get(j).equals(idVuelo)){
 						BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
 						noEncontrado=false;
 						break;

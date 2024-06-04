@@ -480,7 +480,7 @@ public class BD {
 		System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + tamanio);
 		return tamanio;
 	}
-
+/*
 	public static void read_list_shipment_with_datePEDRO(long date_simulation){
 		long limit_date_data = 0;
 		
@@ -491,7 +491,7 @@ public class BD {
         
 		limit_date_data = date_simulation + BD.ONE_DAY_MS + BD.ONE_DAY_MS;
 
-        /*************************** READ ALL PACK FILES ****************************/
+        /*************************** READ ALL PACK FILES ****************************a/
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("Back-end/dp1_back/src/main/resources/input/pack/"))) {
@@ -607,7 +607,7 @@ public class BD {
 		System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + tamanio);
 		return tamanio;
 	}
-
+/*
 	public static void read_list_shipment_with_datePEDRO(long date_simulation){
 		long limit_date_data = 0;
 		
@@ -618,7 +618,7 @@ public class BD {
         
 		limit_date_data = date_simulation + BD.ONE_DAY_MS + BD.ONE_DAY_MS;
 
-        /*************************** READ ALL PACK FILES ****************************/
+        /*************************** READ ALL PACK FILES ****************************a/
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("Back-end/dp1_back/src/main/resources/input/pack/"))) {
@@ -731,5 +731,5 @@ public class BD {
 			System.out.println("EXCEPTION SHIPMENTS CON PARAMETRO: " + e.getMessage());
 		}
 		System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + BD.shipmentsTemp.size());
-	}
+	}*/
 }
