@@ -268,7 +268,7 @@ public class AlgorithmController {
 				Integer idVuelo = flight.getId();
 				System.out.println("IDVuelo: "+flight.getId());
 				for (int j=0; j<vuelos.size();j++){
-					if(idVuelo == vuelos.get(j)){
+					if(vuelos.get(j).equals(idVuelo)){
 						BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
 						noEncontrado=false;
 						break;
