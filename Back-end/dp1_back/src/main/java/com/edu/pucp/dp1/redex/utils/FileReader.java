@@ -28,7 +28,7 @@ public class FileReader {
 		BD.airports = new ArrayList<Airport>();
 		
 		try {
-			File file = new File("Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/datos.txt");
 			Scanner scannerObj = new Scanner(file);
 
 			while(scannerObj.hasNextLine()) {
@@ -51,15 +51,13 @@ public class FileReader {
 		        Continent continent = new Continent();
 		        continent.setAbbrev(split[5]);
 		        
-				//NO SE USA PORQUE LA CAPACIDAD MÁXIMA DE LOS ALMACENES DE LOS AEROPUERTOS SE LEEN DE UN ARCHIVO
 		        // ---------- Max capacity ---------- //
-				//CAMBIAR LA CAPACIDAD MÁXIMA POR LA LECTURA DE DATOS
-		        // if(split[5] == "AS") {
-		        // 	airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_AMERICA);
-		        // }
-		        // else if(split[5] == "E") {
-	        	// 	airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_EUROPE);
-	        	// }
+		        if(split[5] == "AS") {
+		        	airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_AMERICA);
+		        }
+		        else if(split[5] == "E") {
+	        		airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_EUROPE);
+	        	}
 		       
 		        continent.setName(split[6]);
                 country.setContinent(continent);
@@ -69,7 +67,6 @@ public class FileReader {
 		        airport.setCountry(country);
 		        airport.setLatitude(split[8]);
 		        airport.setLongitude(split[9]);
-				airport.setMax_capacity(Integer.valueOf(split[10]));
 		        airport.setStorage(new ArrayList<StorageCapacity>());
 		        //System.out.println("hola");
 		        BD.airports.add(airport);
