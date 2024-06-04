@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Shipment {
     private Integer id;
+    private static int increment = 0;
 	private String code;
 	private Date registerDateTime;
 	private Date departureTime;
@@ -20,7 +21,7 @@ public class Shipment {
 	private State state;
 	
 	public Shipment() {
-
+        this.id = ++increment;
 	}
 	
 	public Shipment(Shipment shipment) {
@@ -165,7 +166,7 @@ public class Shipment {
     	
     	long max_time = 0;
     	
-    	if(this.departureAirport.getCountry().getContinent().getAbbrev().equals(this.arrivalAirport.getCountry().getContinent().getAbbrev())){ //Es el mismo continente
+    	if(this.departureAirport.getCountry().getContinent().getName().equals(this.arrivalAirport.getCountry().getContinent().getName())){ //Es el mismo continente
     		max_time=24*60*60*1000;
     	}
     	else {
@@ -191,7 +192,7 @@ public class Shipment {
     	
     	long max_time = 0;
     	
-    	if(this.departureAirport.getCountry().getContinent().getAbbrev().equals(this.arrivalAirport.getCountry().getContinent().getAbbrev())){ //Es el mismo continente
+    	if(this.departureAirport.getCountry().getContinent().getName().equals(this.arrivalAirport.getCountry().getContinent().getName())){ //Es el mismo continente
     		max_time=24*60*60*1000;
     	}
     	else {

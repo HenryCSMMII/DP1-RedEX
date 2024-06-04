@@ -60,21 +60,6 @@ public class Flight {
 		this.estimated_time = flight.getEstimated_time();
 		this.difference_system = flight.getDifference_system();
 	}
-
-	/*
-	public Flight(int x, int y, Date z, Test test) {
-		this.x = x;
-		this.y = y;
-		this.z = new Date(z.getTime());
-		this.test = new Test(test.n,test.m);
-	}
-	
-	public Flight(Flight flight) {
-		this.x = flight.x;
-		this.y = flight.y;
-		this.z = new Date(flight.z.getTime());
-		this.test = new Test(flight.test.n,flight.test.m);
-	}*/
 	
 	public int getId() {
 		return id;

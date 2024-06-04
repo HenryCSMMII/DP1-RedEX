@@ -1,0 +1,40 @@
+1;Colombia;CO;America;Bogota
+2;Ecuador;EC;America;Quito
+3;Venezuela;VE;America;Caracas
+4;Brasil;BR;America;Brasilia
+5;Peru;PE;America;Lima
+6;Bolivia;BO;America;La Paz
+7;Chile;CL;America;Santiago de Chile
+8;Argentina;AR;America;Buenos Aires
+9;Paraguay;PY;America;Asunción
+10;Uruguay;UY;America;Montevideo
+11;Albania;AL;Europe;Tirana
+12;Alemania;DE;Europe;Berlin
+13;Austria;AT;Europe;Viena
+14;Belgica;BE;Europe;Bruselas
+15;Bielorrusia;BY;Europe;Minsk
+16;Bulgaria;BG;Europe;Sofia
+17;Checa;CZ;Europe;Praga
+18;Croacia;HR;Europe;Zagreb
+19;Dinamarca;DK;Europe;Copenhague
+20;Eslovaquia;SK;Europe;Bratislava
+21;Eslovenia;SI;Europe;Liubliana
+22;España;ES;Europe;Madrid
+23;Estonia;EE;Europe;Tallin
+24;Finlandia;FI;Europe;Helsinki
+25;Francia;FR;Europe;Paris
+26;Grecia;GR;Europe;Atenas
+27;Holanda;NL;Europe;Amsterdam
+28;Hungría;HU;Europe;Budapest
+29;Irlanda;IE;Europe;Dublin
+30;Islandia;IS;Europe;Reykjavik
+31;Italia;IT;Europe;Roma
+32;Letonia;LV;Europe;Riga
+33;Luxemburgo;LU;Europe;Luxemburgo
+34;Malta;MT;Europe;La Valeta
+35;Noruega;NO;Europe;Oslo
+36;Polonia;PL;Europe;Varsovia
+37;Portugal;PT;Europe;Lisboa
+38;Reino Unido;GB;Europe;Londres
+39;Suecia;SE;Europe;Estocolmo
+40;Suiza;CH;Europe;Berna

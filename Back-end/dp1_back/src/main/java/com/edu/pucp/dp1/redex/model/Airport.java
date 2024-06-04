@@ -6,7 +6,6 @@ import java.util.TimeZone;
 public class Airport {
 	
 	private int id;
-	private static int increment = 0;
 	private String name;
 	private String code;
 	private String latitude;
@@ -17,8 +16,6 @@ public class Airport {
 	private Country country;
 
 	public Airport() {
-		this.id=increment+1; 
-		this.increment +=1;
 	}
 	
 	public Airport(int id, String name, String code, String latitude, String longitude, int max_capacity,

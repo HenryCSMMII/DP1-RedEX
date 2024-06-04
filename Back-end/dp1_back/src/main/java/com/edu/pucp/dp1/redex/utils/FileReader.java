@@ -49,7 +49,7 @@ public class FileReader {
 		        country.setAbbrev(split[4]);
 		        
 		        Continent continent = new Continent();
-		        continent.setAbbrev(split[5]);
+		        //continent.setAbbrev(split[5]);
 		        
 		        // ---------- Max capacity ---------- //
 		        if(split[5] == "AS") {
@@ -130,11 +130,11 @@ public class FileReader {
 		        flight.setArrival_airport(airport_2);
 		        
 		        // ---------- Max capacity same continent ---------- //
-		        if(airport_1.getCountry().getContinent().getAbbrev().equals(airport_2.getCountry().getContinent().getAbbrev())) {
-		        	if(airport_1.getCountry().getContinent().getAbbrev().equals("AS")) {
+		        if(airport_1.getCountry().getContinent().getName().equals(airport_2.getCountry().getContinent().getName())) {
+		        	if(airport_1.getCountry().getContinent().getName().equals("America")) {
 		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_AMERICA);
 		        	}
-		        	else if(airport_1.getCountry().getContinent().getAbbrev().equals("E")) {
+		        	else if(airport_1.getCountry().getContinent().getName().equals("Europe")) {
 		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_EUROPE);
 		        	}
 		        }

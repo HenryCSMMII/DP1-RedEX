@@ -5,21 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 public class ShipmentDTO {
-
-    private int id;
-    private int cantidad;
-    private int origenId;
-    private int destinoId;
-    private int tipo;
-    private LocalDate fechaInicio;
-    private LocalDate fechaFin;
-    private double tiempoActivo;
-    private int clientSenderId;
-    private int clientReceiverId;
+    private Integer id;
+    private int packageQuantity;
+    private int departureAirportId;
+    private int arrivalAirportId;
+    private String state;
+    private Date departureTime;
+    private Date arrivalTime;
+    private Integer clientSenderId;  // Asegúrate de que este campo es Integer
 }

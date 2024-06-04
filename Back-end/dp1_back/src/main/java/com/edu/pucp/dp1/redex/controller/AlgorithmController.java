@@ -32,7 +32,6 @@ import com.edu.pucp.dp1.redex.utils.FileReader;
 import com.edu.pucp.dp1.redex.utils.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 @RestController
 @RequestMapping("/api/algorithm/")
@@ -40,40 +39,40 @@ public class AlgorithmController {
 
 	@RequestMapping(value="read/", method = RequestMethod.GET)
 	public String read() throws IOException{
-		FileReader.read_list_airports();
-		System.out.println("ra uwu");
+		BD.readAirports();
+		System.out.println("Acabo de leer lista de aeropuertos");
 		return null;
 	}
 	
 	@RequestMapping(value="run2/", method = RequestMethod.GET)
-	public List<Airport> run2() throws IOException{
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
-		return BD.airports;
+	public List<Flight> run2() throws IOException{
+		BD.readAirports();
+		BD.readFlights();
+		return BD.flightsTemp;
 	}
 	
 	@RequestMapping(value="read2/", method = RequestMethod.GET)
 	public String read2() throws IOException{
-		FileReader.read_list_flights();
-		System.out.println("wenas si que si");
+		BD.readFlights();
+		System.out.println("Acabo de leer los vuelos");
 		return null;
 	}
 	
 	@RequestMapping(value="read3/", method = RequestMethod.GET)
 	public String read3() throws IOException{
-		FileReader.read_list_shipment();
-		System.out.println("wenas si que si jaa");
+		BD.readShipments();
+		System.out.println("Acabo de leer los envíos");
 		return null;
 	}
 	
 	@CrossOrigin
 	@RequestMapping(value="run/", method = RequestMethod.GET)
-	public List<FlightSchedule> genetic_algorithm(/*@RequestBody long date_simulation, @RequestBody int type_simulation*/){
+	public List<FlightSchedule> genetic_algorithm(/*long date_simulation,int type_simulation*/){
 		long date_simulation = 1659398400000L;
         int type_simulation=1;
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
-		FileReader.read_list_shipment_with_date(date_simulation, type_simulation);
+		BD.readAirports();
+		BD.readFlights();
+		BD.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		
 		Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
@@ -259,14 +258,12 @@ public class AlgorithmController {
         
         //return BD.flights[year_of_date][day_of_year - 1];
         return population.getIndividuals()[0].getList_flight_schedule();
-        
-        //return null;
-	}
+    }
 	
 	@RequestMapping(value="test/", method = RequestMethod.GET)
 	public List<Flight> test(){
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
+		BD.readAirports();
+		BD.readFlights();
 		CalendarFlightPool.generate_calendar();
 		
 		//System.out.println("WENAS: "+ GeneralData.list_pool_fligths[1][20].getArrival_date_time().getTime());
@@ -279,39 +276,39 @@ public class AlgorithmController {
 	@RequestMapping(value="read_files/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
 	public void read_files(@PathVariable("date_simulation") long date_simulation, 
 							@PathVariable("type_simulation") int type_simulation){
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
-		//FileReader.read_list_shipment();
-		FileReader.read_list_shipment_with_date(date_simulation, type_simulation);
+		BD.readAirports();
+		BD.readFlights();
+		//BD.read_list_shipment();
+		BD.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		return;
 	}
 	
-	@CrossOrigin
-	@RequestMapping(value="get_simulation_flights/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
-	public List<ObjectNode> get_simulation_fligths(@PathVariable("date_simulation") long date_simulation, 
-													@PathVariable("type_simulation") int type_simulation) throws JsonProcessingException{
+	// @CrossOrigin
+	// @RequestMapping(value="get_simulation_flights/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
+	// public List<ObjectNode> get_simulation_fligths(@PathVariable("date_simulation") long date_simulation, 
+	// 												@PathVariable("type_simulation") int type_simulation) throws JsonProcessingException{
 		
-		// Tiempo de ejecucion del algoritmo => TA = 5min
-		// Salto de cada ejecucion => SA = 10min
-		// Proporcionalidad de tiempo => PT
-		// PT = 1 -> Operaciones diarias
-		// PT = algo que debemos descubrir -> Simulacion 5 dias
-		// PT = algo que debemos descubrir -> Simulacion colapso
+	// 	// Tiempo de ejecucion del algoritmo => TA = 5min
+	// 	// Salto de cada ejecucion => SA = 10min
+	// 	// Proporcionalidad de tiempo => PT
+	// 	// PT = 1 -> Operaciones diarias
+	// 	// PT = algo que debemos descubrir -> Simulacion 5 dias
+	// 	// PT = algo que debemos descubrir -> Simulacion colapso
 		
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
+	// 	BD.read_list_airports();
+	// 	BD.read_list_flights();
 		
-		List<Flight> list_flights = this.genetic_algorithm(date_simulation, type_simulation);
+	// 	// List<Flight> list_flights = this.genetic_algorithm(date_simulation, type_simulation);
 			
-		List<ObjectNode> result_api = JsonFormat.convertFlightToJSON(list_flights);
+	// 	// List<ObjectNode> result_api = JsonFormat.convertFlightToJSON(list_flights);
 
-		//ObjectMapper objectMapper = new ObjectMapper();
-		//objectMapper.readValues(result_api, JSONArray.class)
+	// 	//ObjectMapper objectMapper = new ObjectMapper();
+	// 	//objectMapper.readValues(result_api, JSONArray.class)
 		
-		System.out.println("ESTA ES LA FECHA EN MS POR PARAMETRO: " + date_simulation);
+	// 	System.out.println("ESTA ES LA FECHA EN MS POR PARAMETRO: " + date_simulation);
 		
-		return result_api;
-	}
+	// 	return result_api;
+	// }
 	
 }
