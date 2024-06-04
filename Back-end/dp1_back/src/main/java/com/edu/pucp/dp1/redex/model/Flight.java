@@ -1,6 +1,7 @@
 package com.edu.pucp.dp1.redex.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
@@ -18,6 +19,15 @@ public class Flight {
 	private Airport arrival_airport;
 	private long estimated_time;
 	private long difference_system;//diferencia de peru con aeropuerto de salida
+	private List<Shipment> shipments;
+
+	public List<Shipment> getShipments() {
+		return shipments;
+	}
+
+	public void setShipments(List<Shipment> shipments) {
+		this.shipments = shipments;
+	}
 
 	public Flight() {
 		this.used_capacity = new int[BD.POPULATION_NUM_INDIVIDUALS*2];

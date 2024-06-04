@@ -36,6 +36,24 @@ public class Population {
 		}
 		
 	}
+
+
+	public void initializePEDRO(List<Shipment> list_of_shipments_original) {
+		
+		System.out.println(list_of_shipments_original.size());
+		for(int i=0; i<this.individuals.length;i++) {
+			
+			List<Shipment> list_of_shipments = new ArrayList<Shipment>();
+			for(int k=0; k<list_of_shipments_original.size();k++) {
+				list_of_shipments.add(new Shipment(list_of_shipments_original.get(k)));
+			}
+			this.individuals[i] = new Individual();
+			this.individuals[i].setList_shipments(list_of_shipments);
+			this.individuals[i].initialize();
+		}
+		
+	}
+
 	
 	// ---------------------- PARENT SELECTION ---------------------- //
 	public Individual[] selection_parents_roulette(Population population){

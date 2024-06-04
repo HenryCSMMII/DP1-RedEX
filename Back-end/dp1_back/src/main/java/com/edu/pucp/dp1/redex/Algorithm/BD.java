@@ -26,11 +26,15 @@ import java.util.Set;
 public class BD {
     public static List<Airport> airports;
 	public static List<Flight> flightsTemp;
-	public static List<Shipment> shipmentsTemp;
+	public static List<Shipment> shipmentsTemp = new ArrayList<Shipment>();
 	public static List<Flight>[][] flights;
 	public static List<Shipment> shipments;
 	public static List<Continent> continents;
 	public static List<Country> countries;
+	public static List<Shipment> shipmentsWaitingList = new ArrayList<Shipment>();
+	public static List<Shipment> shipmentsResolved = new ArrayList<Shipment>();
+	public static List<Flight> flightsResolved = new ArrayList<Flight>();
+	
 	
 	public static final int MIN_INITIAL_CHROMOSOME_LENGTH = 2;
 	public static final int MAX_INITIAL_CHROMOSOME_LENGTH = 5;
@@ -53,6 +57,7 @@ public class BD {
 	public static final long ONE_DAY_MS = 86400000;
 	public static final long SEVEN_DAYS_MS = 604800000;
 
+<<<<<<< Updated upstream
     public static void readContinents() throws IOException {
 
         BD.continents = new ArrayList<Continent>();
@@ -262,6 +267,14 @@ public class BD {
 	
 	public static void readShipments(){
 		BD.shipmentsTemp = new ArrayList<Shipment>();
+=======
+	//SEMANAL
+	public static final int SEMANAL_DAYS = 7;
+	public static final int SHIPMENTS_PER_ITERATION = 100;
+
+	/*public static void read_list_shipment(){
+		shipmentsTemp = new ArrayList<Shipment>();
+>>>>>>> Stashed changes
 		Calendar c = Calendar.getInstance(); 
 		try {
 			File file = new File("Back-end/dp1_back/src/main/resources/input/envios.txt");
