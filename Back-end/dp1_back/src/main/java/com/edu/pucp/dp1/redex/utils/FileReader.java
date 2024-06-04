@@ -28,7 +28,7 @@ public class FileReader {
 		BD.airports = new ArrayList<Airport>();
 		
 		try {
-			File file = new File("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/aeropuertos.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/aeropuertos.txt");
 			Scanner scannerObj = new Scanner(file);
 
 			while(scannerObj.hasNextLine()) {
@@ -89,7 +89,7 @@ public class FileReader {
 		BD.flightsTemp = new ArrayList<Flight>();
 		
 		try {
-			File file = new File("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/planes_vuelo.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/itinerario.txt");
 			Scanner scannerObj = new Scanner(file);
 
 			while(scannerObj.hasNextLine()) {
@@ -134,22 +134,20 @@ public class FileReader {
 		        
 		        flight.setArrival_airport(airport_2);
 		        
-		        // // ---------- Max capacity same continent ---------- //
-		        // if(airport_1.getCountry().getContinent().getAbbrev().equals(airport_2.getCountry().getContinent().getAbbrev())) {
-		        // 	if(airport_1.getCountry().getContinent().getAbbrev().equals("AS")) {
-		        // 		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_AMERICA);
-		        // 	}
-		        // 	else if(airport_1.getCountry().getContinent().getAbbrev().equals("E")) {
-		        // 		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_EUROPE);
-		        // 	}
-		        // }
-		        // // ---------- Max capacity different continent ---------- //
-		        // else {
-		        // 	flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
-		        // }
+		        // ---------- Max capacity same continent ---------- //
+		        if(airport_1.getCountry().getContinent().getAbbrev().equals(airport_2.getCountry().getContinent().getAbbrev())) {
+		        	if(airport_1.getCountry().getContinent().getAbbrev().equals("AS")) {
+		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_AMERICA);
+		        	}
+		        	else if(airport_1.getCountry().getContinent().getAbbrev().equals("E")) {
+		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_EUROPE);
+		        	}
+		        }
+		        // ---------- Max capacity different continent ---------- //
+		        else {
+		        	flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
+		        }
 		        
-				flight.setMax_capacity(Integer.valueOf(split[4]));
-
 		        SimpleDateFormat formatter=new SimpleDateFormat("HH:mm");
 		        Date departure_time = formatter.parse(split[2]);
 		        Date arrival_time = formatter.parse(split[3]);
@@ -164,8 +162,10 @@ public class FileReader {
 		        	arrival_time = c.getTime();
 		        	//arrival_time.setTime(arrival_time.getTime() + 1*24*60*60*1000);
 		        }
+		        
 		        flight.setDeparture_date_time(departure_time);
 		        flight.setArrival_date_time(arrival_time);
+		        //System.out.println("hola");
 		        flight.calcEstimatedTime();
 		        flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), BD.airports.get(index_system))*60*1000);
 		        BD.flightsTemp.add(flight);
@@ -175,9 +175,7 @@ public class FileReader {
 		}catch(Exception e) {
 			System.out.println("EXCEPTION FLIGHTS: " + e.getMessage());
 		}
-		for(int i=0;i<BD.flightsTemp.size();i++) {
-			System.out.println(BD.flightsTemp.get(i).getCode() + " " + BD.flightsTemp.get(i).getDeparture_airport().getCode() + " " + BD.flightsTemp.get(i).getArrival_airport().getCode() + " " + BD.flightsTemp.get(i).getMax_capacity() + " " + BD.flightsTemp.get(i).getDeparture_date_time() + " " + BD.flightsTemp.get(i).getArrival_date_time() + " " + BD.flightsTemp.get(i).getEstimated_time() + " " + BD.flightsTemp.get(i).getDifference_system());
-		}
+		
 	}
 	
 	public static void read_list_shipment(){
