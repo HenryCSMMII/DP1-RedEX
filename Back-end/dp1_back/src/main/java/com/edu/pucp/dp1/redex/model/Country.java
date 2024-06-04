@@ -1,45 +1,72 @@
 package com.edu.pucp.dp1.redex.model;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Entity
-@Table(name = "country")
-@SQLDelete(sql = "UPDATE country SET activo = 0 WHERE id = ?")
-@Where(clause = "activo = 1")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter @Setter
-public class Country extends BaseEntity {
+public class Country {
+    private int id;
+	private String name;
+	private String abbrev;
+	private Continent continent;
+	private String city;
+	
+	public Country() {
 
-    @Column(name = "name", nullable = false)
-    private String name;
+	}
+	
+	public Country(int id, String name, String abbrev, Continent continent, String city) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.abbrev = abbrev;
+		this.continent = continent;
+		this.city = city;
+	}
+	
+	public Country(Country country) {
+		this.name = country.getName();
+		this.abbrev = country.getAbbrev();
+		if(country.getContinent() != null) {
+			this.continent = new Continent(country.getContinent());
+		}
+		this.city = country.getCity();
+	}
 
-    @Column(name = "shortname", nullable = false)
-    private String shortname;
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getAbbrev() {
+		return abbrev;
+	}
+	
+	public void setAbbrev(String abbrev) {
+		this.abbrev = abbrev;
+	}
+	
+	public Continent getContinent() {
+		return continent;
+	}
+	
+	public void setContinent(Continent continent) {
+		this.continent = continent;
+	}
+	
+	public String getCity() {
+		return city;
+	}
+	
+	public void setCity(String city) {
+		this.city = city;
+	}
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "continent_id", nullable = false)
-    private Continent continent;
-
-    // ToString method for debugging purposes
-    @Override
-    public String toString() {
-        return "Country{" +
-                "name='" + name + '\'' +
-                ", shortname='" + shortname + '\'' +
-                ", continent=" + (continent != null ? continent.getName() : "null") +
-                '}';
-    }
 }

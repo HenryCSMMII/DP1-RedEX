@@ -1,7 +1,8 @@
 package com.edu.pucp.dp1.redex.dto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.util.Date;
+
+import com.edu.pucp.dp1.redex.model.Airport;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,17 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
+
 public class FlightDTO {
-    private int id;
-    private String origin;
-    private String destination;
-    private LocalTime departureTime;
-    private LocalTime arrivalTime;
-    private int capacity;
-    private String flightNumber;
-    private int currentLoad;
-    private int duration;
-    private int estadoVueloId;
-    private LocalDate arrivalDate;
-    private LocalDate departureDate;
+	private int id;
+	private String code;
+	private int max_capacity;
+	private int[] used_capacity;
+	private Date departure_date_time;
+	private Date arrival_date_time;
+	private int departure_airportId;
+	private int arrival_airportId;
+	private long estimated_time;
 }

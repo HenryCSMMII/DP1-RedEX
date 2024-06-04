@@ -1,65 +1,40 @@
 package com.edu.pucp.dp1.redex.controller;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.dto.AirportDTO;
-import com.edu.pucp.dp1.redex.services.AirportService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/airport")
-@CrossOrigin
+@RequestMapping("/api/airports")
 public class AirportController {
 
-    @Autowired
-    private AirportService airportService;
-
-    @GetMapping(value = "/")
-    List<AirportDTO> getAll(){
-        return airportService.getAll();
+    @GetMapping("/all")
+    public List<AirportDTO> getAllAirports() {
+                return BD.airports.stream()
+                .map(airport -> new AirportDTO(
+                    airport.getId(),
+                    airport.getCode(),
+                    airport.getLatitude(),
+                    airport.getLongitude(),
+                    airport.getMax_capacity(),
+                    airport.getCountry().getId()))
+                .collect(Collectors.toList());
     }
 
-    @GetMapping(value = "/{id}")
-    AirportDTO get(@PathVariable int id){
-        return airportService.get(id);
-    }
-
-    @PostMapping(value = "/")
-    AirportDTO register(@RequestBody AirportDTO airportDTO) throws SQLException{
-        return airportService.register(airportDTO);
-    }
-
-    @PutMapping(value = "/")
-    AirportDTO update(@RequestBody AirportDTO airportDTO) throws SQLException{
-        return airportService.update(airportDTO);
-    }
-
-    @DeleteMapping(value = "/{id}")
-    void delete(@PathVariable int id){
-        airportService.delete(id);
-    }
-
-    @GetMapping(value = "/{idInicio}/{idFinal}")
-    List<AirportDTO> listaAirportsPorIds(@PathVariable int idInicio, @PathVariable int idFinal){
-        return airportService.listAirportsByIds(idInicio, idFinal);
-    }
-
-    @PostMapping(value = "/upload", consumes = "multipart/form-data")
-    public void uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        airportService.processFile(file.getInputStream());
+    @GetMapping("/read")
+    public String readAirports() {
+        try {
+            BD.readAirports();
+            return "Aeropuertos leídos exitosamente.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error al leer el archivo de aeropuertos.";
+        }
     }
 }
