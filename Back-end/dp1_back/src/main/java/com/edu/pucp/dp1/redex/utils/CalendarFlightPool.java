@@ -32,7 +32,7 @@ public class CalendarFlightPool {
 					Flight flight = new Flight(BD.flightsTemp.get(n));
 					
 					c.setTime(date_temp);
-					//if(i==0) c.set(2024, 0, 0);
+					//if(i==0) c.set(2022, 0, 0);
 					//else c.set(2023, 0, 0);
 					c.add(Calendar.YEAR, year);
 		        	c.add(Calendar.DATE, day);

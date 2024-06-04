@@ -5,7 +5,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -79,9 +78,9 @@ public class FileReader {
 		}catch(Exception e) {
 			System.out.println("EXCEPTION AIRPORTS: " + e.getMessage());
 		}
-		// for(int i=0;i<BD.airports.size();i++) {
-		// 	System.out.println(BD.airports.get(i).getId() + " " + BD.airports.get(i).getCode() + " " + BD.airports.get(i).getCountry().getCity() + " " + BD.airports.get(i).getCountry().getName() + " " + BD.airports.get(i).getCountry().getAbbrev() + " " + BD.airports.get(i).getCountry().getContinent().getAbbrev() + " " + BD.airports.get(i).getCountry().getContinent().getName() + " " + BD.airports.get(i).getTime_zone() + " " + BD.airports.get(i).getLatitude() + " " + BD.airports.get(i).getLongitude() + " " + BD.airports.get(i).getMax_capacity());
-		// }
+		for(int i=0;i<BD.airports.size();i++) {
+			System.out.println(BD.airports.get(i).getId() + " " + BD.airports.get(i).getCode() + " " + BD.airports.get(i).getCountry().getCity() + " " + BD.airports.get(i).getCountry().getName() + " " + BD.airports.get(i).getCountry().getAbbrev() + " " + BD.airports.get(i).getCountry().getContinent().getAbbrev() + " " + BD.airports.get(i).getCountry().getContinent().getName() + " " + BD.airports.get(i).getTime_zone() + " " + BD.airports.get(i).getLatitude() + " " + BD.airports.get(i).getLongitude() + " " + BD.airports.get(i).getMax_capacity());
+		}
 		
 	}
 	
@@ -176,43 +175,47 @@ public class FileReader {
 		}catch(Exception e) {
 			System.out.println("EXCEPTION FLIGHTS: " + e.getMessage());
 		}
-		// for(int i=0;i<BD.flightsTemp.size();i++) {
-		// 	System.out.println(BD.flightsTemp.get(i).getCode() + " " + BD.flightsTemp.get(i).getDeparture_airport().getCode() + " " + BD.flightsTemp.get(i).getArrival_airport().getCode() + " " + BD.flightsTemp.get(i).getMax_capacity() + " " + BD.flightsTemp.get(i).getDeparture_date_time() + " " + BD.flightsTemp.get(i).getArrival_date_time() + " " + BD.flightsTemp.get(i).getEstimated_time() + " " + BD.flightsTemp.get(i).getDifference_system());
-		// }
+		for(int i=0;i<BD.flightsTemp.size();i++) {
+			System.out.println(BD.flightsTemp.get(i).getCode() + " " + BD.flightsTemp.get(i).getDeparture_airport().getCode() + " " + BD.flightsTemp.get(i).getArrival_airport().getCode() + " " + BD.flightsTemp.get(i).getMax_capacity() + " " + BD.flightsTemp.get(i).getDeparture_date_time() + " " + BD.flightsTemp.get(i).getArrival_date_time() + " " + BD.flightsTemp.get(i).getEstimated_time() + " " + BD.flightsTemp.get(i).getDifference_system());
+		}
 	}
 	
 	public static void read_list_shipment(){
 		BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance(); 
 		try {
-			File file = new File("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/envios.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/envios.txt");
 			Scanner scannerObj = new Scanner(file);
 			//System.out.println("entro ps");
 			
 			while(scannerObj.hasNextLine()) {
 				String data = scannerObj.nextLine();
+				//System.out.println("entro ps2");
 				//System.out.println(data);
 				String[] split = data.split("-");
 				//System.out.println(split.length);
 		        //for (int i=0; i<split.length; i++)
 		            //System.out.print(split[i]);
+		        //System.out.println("entro ps3");
 		        Shipment shipment = new Shipment();
-		        shipment.setCode(split[0]+"-"+split[1]);
+		        shipment.setCode(split[0]);
 		        
 		        Airport departure = new Airport();
-		        departure.setCode(split[0]);
+		        departure.setCode(split[0].substring(0, 4));
+		        //System.out.println("entro ps4");
 		        for(int i=0;i<BD.airports.size();i++) {
-		        	if(BD.airports.get(i).getCode().equals(split[0])) {
+		        	if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
 		        		departure.setCountry(BD.airports.get(i).getCountry());
-		        		departure.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		//departure.setTime_zone(BD.airports.get(i).getTime_zone());
 		        		departure.setId(BD.airports.get(i).getId());
-		        		departure.setLatitude(BD.airports.get(i).getLatitude());
-		        		departure.setLongitude(BD.airports.get(i).getLongitude());
+		        		//departure.setLatitude(BD.airports.get(i).getLatitude());
+		        		//departure.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
+		        //System.out.println("entro ps5");
 		        shipment.setDeparturAirport(departure);
 		        
-		        String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
+		        String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
 		        //System.out.println(dateTime);
 		        
 		        SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -223,22 +226,25 @@ public class FileReader {
 		        //register_date_time = c.getTime();
 		        shipment.setRegisterDateTime(register_date_time);
 		        
-		        		        
+		        
+		        //System.out.println("entro ps6");
+		        
 		        Airport arrival = new Airport();
-		        arrival.setCode(split[4].substring(0, 4));
+		        arrival.setCode(split[3].substring(0, 4));
 		        
 		        for(int i=0;i<BD.airports.size();i++) {
-		        	if(BD.airports.get(i).getCode().equals(split[4].substring(0, 4))) {
+		        	if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
 		        		arrival.setCountry(BD.airports.get(i).getCountry());
-		        		arrival.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		//arrival.setTime_zone(BD.airports.get(i).getTime_zone());
 		        		arrival.setId(BD.airports.get(i).getId());
-		        		arrival.setLatitude(BD.airports.get(i).getLatitude());
-		        		arrival.setLongitude(BD.airports.get(i).getLongitude());
+		        		//arrival.setLatitude(BD.airports.get(i).getLatitude());
+		        		//arrival.setLongitude(BD.airports.get(i).getLongitude());
 		        	}
 		        }
+		        //System.out.println("entro ps2");
 		        shipment.setArrivalAirport(arrival);
 		        
-		        shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
+		        shipment.setPackageQuantity(Integer.parseInt(split[3].substring(5)));
 		        
 		        shipment.setDepartureTime(null);
 		        shipment.setArrivalTime(null);
@@ -247,39 +253,34 @@ public class FileReader {
 		        shipment.setOperator(null);
 		        shipment.setState(null);
 		        
+		        //System.out.println("hola");
 		        BD.shipmentsTemp.add(shipment);
 			}
 			scannerObj.close();
 		}catch(Exception e) {
 			System.out.println("EXCEPTION SHIPMENTS SIN PARAMETRO: " + e.getMessage());
 		}
-		for(int i=0;i<BD.shipmentsTemp.size();i++) {
-			System.out.println(BD.shipmentsTemp.get(i).getCode() + " " + BD.shipmentsTemp.get(i).getDepartureAirport().getCode() + " " + BD.shipmentsTemp.get(i).getRegisterDateTime() + " " + BD.shipmentsTemp.get(i).getArrivalAirport().getCode() + " " + BD.shipmentsTemp.get(i).getPackageQuantity());
-		}
 	}
 	
-	public static void read_list_shipment_with_date(long date_simulation, int type_simulation) throws ParseException{
+	public static void read_list_shipment_with_date(long date_simulation, int type_simulation){
 		long limit_date_data = 0;
 		
 		BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance(); 
         SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         SimpleDateFormat formatter_date_limit = new SimpleDateFormat("dd/MM/yyyy");
-
-		String limit_date_data_format = Long.toString(date_simulation).substring(6) + '/' + Long.toString(date_simulation).substring(4, 6) + '/' + Long.toString(date_simulation).substring(0, 4);
-		Date limit_date_time = formatter_date_limit.parse(limit_date_data_format);
-
+        
         if(type_simulation == 1) {
-        	limit_date_data = limit_date_time.getTime() + BD.ONE_DAY_MS + BD.ONE_DAY_MS;
+        	limit_date_data = date_simulation + BD.ONE_DAY_MS + BD.ONE_DAY_MS;
         }
 		else if(type_simulation == 7){
-			limit_date_data = limit_date_time.getTime() + BD.SEVEN_DAYS_MS + BD.ONE_DAY_MS;
+			limit_date_data = date_simulation + BD.SEVEN_DAYS_MS + BD.ONE_DAY_MS;
 		}
         
         /*************************** READ ALL PACK FILES ****************************/
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
-	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/pack/"))) {
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("Back-end/dp1_back/src/main/resources/input/pack/"))) {
 	        for (Path path : stream) {
 	            if (!Files.isDirectory(path)) {
 	                fileSet.add(path.getFileName()
@@ -294,7 +295,7 @@ public class FileReader {
 
 		try {
 			for (int j = 0; j < pack_files.size(); j++) {
-				File file = new File("C:/Users/henry/OneDrive/Escritorio/DP1/DP1-RedEx/Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
+				File file = new File("Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
 				Scanner scannerObj = new Scanner(file);
 				
 				while(scannerObj.hasNextLine()) {
@@ -305,35 +306,29 @@ public class FileReader {
 			        //for (int i=0; i<split.length; i++)
 			            //System.out.println(split[i]);
 			        
-			        String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
+			        String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
 			        //System.out.println(dateTime);
 			        
 			        Date register_date_time = formatter_date.parse(dateTime);
 			        //System.out.println("FECHA REGISTRO EN MS: " + register_date_time.getTime());
 			        
-			        String actual_date_format = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4);
-					System.out.println("FECHA ACTUAL FORMATO: " + actual_date_format);
+			        String actual_date_format = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4);
 			        Date actual_date = formatter_date_limit.parse(actual_date_format);
-			        System.out.println("FECHA ACTUAL: " + actual_date);
-
-					System.out.println("FECHA ACTUAL: " + actual_date.getTime());
-					System.out.println("FECHA LIMITE: " + limit_date_data);
 			        
 					if(actual_date.getTime() >= limit_date_data) {
-						System.out.println("ENTRO AL BREAK");
 						break;
 					}
 		        
 			        if(register_date_time.getTime() >= date_simulation && register_date_time.getTime() <= limit_date_data) {
 			        	//System.out.println("entro ps4");
 			        	Shipment shipment = new Shipment();
-				        shipment.setCode(split[0] + "-" + split[1]);
+				        shipment.setCode(split[0]);
 				        
 				        Airport departure = new Airport();
-				        departure.setCode(split[0]);
+				        departure.setCode(split[0].substring(0, 4));
 				        
 				        for(int i=0;i<BD.airports.size();i++) {
-				        	if(BD.airports.get(i).getCode().equals(split[0])) {
+				        	if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
 				        		departure.setCountry(BD.airports.get(i).getCountry());
 				        		departure.setTime_zone(BD.airports.get(i).getTime_zone());
 				        		departure.setId(BD.airports.get(i).getId());
@@ -341,6 +336,7 @@ public class FileReader {
 				        		departure.setLongitude(BD.airports.get(i).getLongitude());
 				        	}
 				        }
+				        //System.out.println("entro ps5");
 				        shipment.setDeparturAirport(departure);
 				        
 				        //String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
@@ -355,12 +351,13 @@ public class FileReader {
 				        shipment.setRegisterDateTime(register_date_time);
 				        
 				        
+				        //System.out.println("entro ps6");
 				        
 				        Airport arrival = new Airport();
-				        arrival.setCode(split[4].substring(0, 4));
+				        arrival.setCode(split[3].substring(0, 4));
 				        
 				        for(int i=0;i<BD.airports.size();i++) {
-				        	if(BD.airports.get(i).getCode().equals(split[4].substring(0, 4))) {
+				        	if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
 				        		arrival.setCountry(BD.airports.get(i).getCountry());
 				        		arrival.setTime_zone(BD.airports.get(i).getTime_zone());
 				        		arrival.setId(BD.airports.get(i).getId());
@@ -371,7 +368,7 @@ public class FileReader {
 				        
 				        shipment.setArrivalAirport(arrival);
 				        
-				        shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
+				        shipment.setPackageQuantity(Integer.parseInt(split[3].substring(5)));
 				        
 				        shipment.setDepartureTime(null);
 				        shipment.setArrivalTime(null);
@@ -380,8 +377,6 @@ public class FileReader {
 				        shipment.setOperator(null);
 				        shipment.setState(null);
 				        
-						System.out.println(shipment.getCode() + " " + shipment.getDepartureAirport().getCode() + " " + shipment.getRegisterDateTime() + " " + shipment.getArrivalAirport().getCode() + " " + shipment.getPackageQuantity());
-
 				        BD.shipmentsTemp.add(shipment);
 			        }
 				}

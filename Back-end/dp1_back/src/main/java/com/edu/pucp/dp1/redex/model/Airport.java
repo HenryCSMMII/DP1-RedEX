@@ -6,7 +6,7 @@ public class Airport {
 	
 	private int id;
 	private static int increment = 0;
-	//private String name;
+	private String name;
 	private String code;
 	private String latitude;
 	private String longitude;
@@ -20,11 +20,11 @@ public class Airport {
 		this.increment +=1;
 	}
 	
-	public Airport(int id, /*String name,*/ String code, String latitude, String longitude, int max_capacity,
+	public Airport(int id, String name, String code, String latitude, String longitude, int max_capacity,
 			List<StorageCapacity> storage, String time_zone, Country country) {
 		super();
 		this.id = id;
-		//this.name = name;
+		this.name = name;
 		this.code = code;
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -36,7 +36,7 @@ public class Airport {
 	
 	public Airport(Airport airport) {
 		this.id = airport.getId();
-		//this.name = airport.getName();
+		this.name = airport.getName();
 		this.code = airport.getCode();
 		this.latitude = airport.getLatitude();
 		this.longitude = airport.getLongitude();
@@ -59,12 +59,12 @@ public class Airport {
 		this.id = id;
 	}
 	
-	// public String getName() {
-	// 	return name;
-	// }
-	// public void setName(String name) {
-	// 	this.name = name;
-	// }
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	
 	public String getCode() {
 		return code;
