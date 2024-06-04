@@ -28,7 +28,7 @@ public class FileReader {
 		BD.airports = new ArrayList<Airport>();
 		
 		try {
-			File file = new File("Back-end/dp1_back/src/main/resources/input/aeropuertos.txt");
+			File file = new File("Back-end/dp1_back/src/main/resources/input/Aeropuerto.husos.v2.txt");
 			Scanner scannerObj = new Scanner(file);
 
 			while(scannerObj.hasNextLine()) {
@@ -71,15 +71,13 @@ public class FileReader {
 		        airport.setLongitude(split[9]);
 				airport.setMax_capacity(Integer.valueOf(split[10]));
 		        airport.setStorage(new ArrayList<StorageCapacity>());
+		        //System.out.println("hola");
 		        BD.airports.add(airport);
-
+		        
 			}
 			scannerObj.close();
 		}catch(Exception e) {
 			System.out.println("EXCEPTION AIRPORTS: " + e.getMessage());
-		}
-		for(int i=0;i<BD.airports.size();i++) {
-			System.out.println(BD.airports.get(i).getId() + " " + BD.airports.get(i).getCode() + " " + BD.airports.get(i).getCountry().getCity() + " " + BD.airports.get(i).getCountry().getName() + " " + BD.airports.get(i).getCountry().getAbbrev() + " " + BD.airports.get(i).getCountry().getContinent().getAbbrev() + " " + BD.airports.get(i).getCountry().getContinent().getName() + " " + BD.airports.get(i).getTime_zone() + " " + BD.airports.get(i).getLatitude() + " " + BD.airports.get(i).getLongitude() + " " + BD.airports.get(i).getMax_capacity());
 		}
 		
 	}
