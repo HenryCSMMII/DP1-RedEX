@@ -21,7 +21,7 @@ public class FlightController {
                         flight.getId(),
                         flight.getCode(),
                         flight.getMax_capacity(),
-                        flight.getUsed_capacity(),
+                        flight.getUsed_capacityAlgorithm(),
                         flight.getDeparture_date_time(),
                         flight.getArrival_date_time(),
                         flight.getDeparture_airport().getId(),

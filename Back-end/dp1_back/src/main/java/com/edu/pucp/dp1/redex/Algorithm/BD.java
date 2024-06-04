@@ -28,7 +28,7 @@ public class BD {
 	public static List<Flight> flightsTemp;
 	public static List<Shipment> shipmentsTemp = new ArrayList<Shipment>();
 	public static List<Flight>[][] flights;
-	public static List<Shipment> shipments;
+	public static List<Shipment> shipmentsUnresolved;
 	public static List<Continent> continents;
 	public static List<Country> countries;
 	public static List<Shipment> shipmentsWaitingList = new ArrayList<Shipment>();

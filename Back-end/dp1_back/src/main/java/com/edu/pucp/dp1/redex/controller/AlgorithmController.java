@@ -29,7 +29,6 @@ import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.FlightSchedule;
 import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.utils.CalendarFlightPool;
-import com.edu.pucp.dp1.redex.utils.FileReader;
 import com.edu.pucp.dp1.redex.utils.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -209,11 +208,11 @@ public class AlgorithmController {
 			return null;
 		}
 		
-		System.out.println("Total de envios sin solucion "+ BD.shipments.size());
-		for (int i = 0; i < BD.shipments.size(); i++) {
-			if(BD.shipments.get(i).getPackageQuantity() >= 25) {
-				System.out.println("SALIDA: " + BD.shipments.get(i).getDepartureAirport().getCode());
-				System.out.println("LLEGADA: " + BD.shipments.get(i).getArrivalAirport().getCode());
+		System.out.println("Total de envios sin solucion "+ BD.shipmentsUnresolved.size());
+		for (int i = 0; i < BD.shipmentsUnresolved.size(); i++) {
+			if(BD.shipmentsUnresolved.get(i).getPackageQuantity() >= 25) {
+				System.out.println("SALIDA: " + BD.shipmentsUnresolved.get(i).getDepartureAirport().getCode());
+				System.out.println("LLEGADA: " + BD.shipmentsUnresolved.get(i).getArrivalAirport().getCode());
 			}
 		}
 		
@@ -296,13 +295,13 @@ public class AlgorithmController {
 	
 
 	
-	@CrossOrigin
+	/*@CrossOrigin
 	@RequestMapping(value="runPEDRO/", method = RequestMethod.GET)
-	public List<FlightSchedule> genetic_algorithm_PEDRO(/*@RequestBody long date_simulation, @RequestBody int type_simulation*/){
+	public List<FlightSchedule> genetic_algorithm_PEDRO(/*@RequestBody long date_simulation, @RequestBody int type_simulation*a/){
 		long date_simulation_start = 1659398400000L;
         long date_simulation_end = 1659484800000L;
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
+		BD.readAirports();
+		BD.readFlights();
 
 		CalendarFlightPool.generate_calendar();
 		
@@ -314,7 +313,7 @@ public class AlgorithmController {
 		int flag=1;
 
 		for(int dia=0; dia<BD.SEMANAL_DAYS; dia++){
-			FileReader.read_list_shipment_with_datePEDRO(date_simulation_start+dia*BD.ONE_DAY_MS);	//no inicializa BD.shipmentsTemp
+			BD.read_list_shipment_with_datePEDRO(date_simulation_start+dia*BD.ONE_DAY_MS);	//no inicializa BD.shipmentsTemp
 			while (!BD.shipmentsWaitingList.isEmpty()) {
 				elementsToRemove = Math.min(BD.SHIPMENTS_PER_ITERATION, BD.shipmentsWaitingList.size());
 				for(int j=0; j<BD.SHIPMENTS_PER_ITERATION; j++){
@@ -439,7 +438,7 @@ public class AlgorithmController {
 								num+=1;
 							}
 						}
-					}*/
+					}*a/
 					
 					Individual best_individual = population.getIndividuals()[0];
 					
@@ -466,7 +465,7 @@ public class AlgorithmController {
 					//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][297]);
 					//return GeneralData.list_pool_fligths[0][292];
 					
-					/********************************* DAYS OF THE YEAR - ARRAY ***************************************/
+					/********************************* DAYS OF THE YEAR - ARRAY ***************************************a/
 					DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
 					LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation_start)));
 							
@@ -535,7 +534,7 @@ public class AlgorithmController {
         
         //return BD.flights[year_of_date][day_of_year - 1];
         return population.getIndividuals()[0].getList_flight_schedule();
-    }
+    }*/
 	
 
 

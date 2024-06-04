@@ -138,7 +138,7 @@ public class Individual {
 		
 		this.list_flight_schedule = new ArrayList<FlightSchedule>();
 	
-		BD.shipments = new ArrayList<Shipment>();
+		BD.shipmentsUnresolved = new ArrayList<Shipment>();
 		int contador = 0;
 		for(int i=0;i<list_shipments.size();i++) {
 			
@@ -172,7 +172,7 @@ public class Individual {
 			
 			if(contador == 20) {
 				System.out.println(list_shipments.get(i).getRegisterDateTime().getTime());
-				BD.shipments.add(list_shipments.get(i));
+				BD.shipmentsUnresolved.add(list_shipments.get(i));
 				
 			}
 			contador=0;

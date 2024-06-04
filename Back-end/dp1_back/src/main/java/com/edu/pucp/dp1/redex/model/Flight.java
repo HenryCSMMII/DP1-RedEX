@@ -92,6 +92,11 @@ public class Flight {
 	public int[] getUsed_capacity() {
 		return used_capacity;
 	}
+
+	public int getUsed_capacityAlgorithm() {
+		return used_capacity[0];
+	}
+
 	public void setUsed_capacity(int[] used_capacity) {
 		this.used_capacity = used_capacity;
 	}
