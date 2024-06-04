@@ -57,7 +57,10 @@ public class BD {
 	public static final long ONE_DAY_MS = 86400000;
 	public static final long SEVEN_DAYS_MS = 604800000;
 
-<<<<<<< Updated upstream
+	//SEMANAL
+	public static final int SEMANAL_DAYS = 7;
+	public static final int SHIPMENTS_PER_ITERATION = 100;
+
     public static void readContinents() throws IOException {
 
         BD.continents = new ArrayList<Continent>();
@@ -265,16 +268,13 @@ public class BD {
 		
 	}
 	
-	public static void readShipments(){
+	/*public static void readShipments(){
 		BD.shipmentsTemp = new ArrayList<Shipment>();
-=======
-	//SEMANAL
-	public static final int SEMANAL_DAYS = 7;
-	public static final int SHIPMENTS_PER_ITERATION = 100;
+	
+	
 
-	/*public static void read_list_shipment(){
+	public static void read_list_shipment(){
 		shipmentsTemp = new ArrayList<Shipment>();
->>>>>>> Stashed changes
 		Calendar c = Calendar.getInstance(); 
 		try {
 			File file = new File("Back-end/dp1_back/src/main/resources/input/envios.txt");
@@ -370,7 +370,7 @@ public class BD {
 			limit_date_data = date_simulation + BD.SEVEN_DAYS_MS + BD.ONE_DAY_MS;
 		}
         
-        /*************************** READ ALL PACK FILES ****************************/
+        /*************************** READ ALL PACK FILES ****************************a/
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get("Back-end/dp1_back/src/main/resources/input/pack/"))) {
@@ -482,5 +482,5 @@ public class BD {
 			System.out.println("EXCEPTION SHIPMENTS CON PARAMETRO: " + e.getMessage());
 		}
 		System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + BD.shipmentsTemp.size());
-	}
+	}*/
 }
