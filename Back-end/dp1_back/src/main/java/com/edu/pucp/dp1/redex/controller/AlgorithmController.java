@@ -71,10 +71,10 @@ public class AlgorithmController {
 	public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation*/){
 		long date_simulation = 1659398400000L;
         int type_simulation=1;
-		int tamanio;
+		int tamanio = 0;
 		BD.readAirports();
 		BD.readFlights();
-		tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
+		BD.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		
 		Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
