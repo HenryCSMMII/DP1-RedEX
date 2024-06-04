@@ -68,22 +68,13 @@ public class AlgorithmController {
 	
 	@CrossOrigin
 	@RequestMapping(value="run/", method = RequestMethod.GET)
-<<<<<<< Updated upstream
-	public List<FlightSchedule> genetic_algorithm(/*long date_simulation,int type_simulation*/){
-		long date_simulation = 1659398400000L;
-        int type_simulation=1;
-		BD.readAirports();
-		BD.readFlights();
-		BD.read_list_shipment_with_date(date_simulation, type_simulation);
-=======
-	public List<Flight> genetic_algorithm(/*@RequestBody long date_simulation, @RequestBody int type_simulation*/){
+	public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation*/){
 		long date_simulation = 1659398400000L;
         int type_simulation=1;
 		int tamanio;
-		FileReader.read_list_airports();
-		FileReader.read_list_flights();
-		tamanio = FileReader.read_list_shipment_with_date(date_simulation, type_simulation);
->>>>>>> Stashed changes
+		BD.readAirports();
+		BD.readFlights();
+		tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
 		CalendarFlightPool.generate_calendar();
 		
 		Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
@@ -597,13 +588,8 @@ public class AlgorithmController {
 		
 	// 	System.out.println("ESTA ES LA FECHA EN MS POR PARAMETRO: " + date_simulation);
 		
-<<<<<<< Updated upstream
-	// 	return result_api;
-	// }
-=======
 		return result_api;
 	}
 	*/
->>>>>>> Stashed changes
 	
 }
