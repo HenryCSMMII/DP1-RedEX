@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Polyline, MarkerF } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -54,11 +54,6 @@ const libraries = ['places', 'marker'];
 Modal.setAppElement('#root');
 
 function App() {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBf1-gcqUmtphkPx7qe7jB-pn8sItv_xpc",
-    libraries,
-  });
-
   const [activePopup, setActivePopup] = useState('');
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
   const [data, setData] = useState({
@@ -89,7 +84,7 @@ function App() {
     ]
   });
   const [loading, setLoading] = useState(true);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);  // Añadimos el estado isMapLoaded
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const mapRef = useRef(null);
 
   const [tiempo_simulacion, setTiempoSimulacion] = useState({
@@ -126,13 +121,6 @@ function App() {
 
     fetchData();
   }, []);
-
-  useEffect(() => {
-    if (isLoaded && !loading) {
-      console.log('Map and data loaded, forcing re-render');
-      setTimeout(() => setIsMapLoaded(true), 0);
-    }
-  }, [isLoaded, loading, data]);
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -179,64 +167,66 @@ function App() {
     return null;
   };
 
-  const renderMapContent = () => (
-    <>
-      {data.airports.length > 0 && data.airports.map((airport) => (
-        <Marker
-          key={airport.id}
-          position={{ lat: airport.latitude, lng: airport.longitude }}
-          title={airport.codigoIATA}
-          icon={{
-            url: redDot,
-            scaledSize: new window.google.maps.Size(32, 32),
-          }}
-        />
-      ))}
-      {data.flights.length > 0 && data.flights.map((flight) => {
-        const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
-        const destinationAirport = data.airports.find(airport => airport.codigoIATA === flight.destination);
-        if (originAirport && destinationAirport) {
-          console.log(`Drawing line from ${originAirport.codigoIATA} to ${destinationAirport.codigoIATA}`);
-          return (
-            <Polyline
-              key={flight.id}
-              path={[
-                { lat: originAirport.latitude, lng: originAirport.longitude },
-                { lat: destinationAirport.latitude, lng: destinationAirport.longitude }
-              ]}
-              options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
-            />
-          );
-        }
-        return null;
-      })}
-      {data.flights.length > 0 && data.flights.map((flight) => {
-        const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-        if (planePosition) {
-          const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
-          return (
-            <Marker
-              key={flight.id}
-              position={planePosition}
-              icon={{
-                url: planeIcon,
-                scaledSize: new window.google.maps.Size(32, 32),
-                rotation: Math.atan2(
-                  planePosition.lat - originAirport.latitude,
-                  planePosition.lng - originAirport.longitude
-                ) * (180 / Math.PI)
-              }}
-            />
-          );
-        }
-        return null;
-      })}
-    </>
-  );
+  const renderMapContent = () => {
+    if (!window.google || !window.google.maps) {
+      return null;
+    }
 
-  if (loading) {
-    return <div>Loading....</div>;
-  }
+    return (
+      <>
+        {data.airports.length > 0 && data.airports.map((airport) => (
+          <MarkerF
+            key={airport.id}
+            position={{ lat: airport.latitude, lng: airport.longitude }}
+            title={airport.codigoIATA}
+            icon={{
+              url: redDot,
+              scaledSize: new window.google.maps.Size(32, 32),
+            }}
+          />
+        ))}
+        {data.flights.length > 0 && data.flights.map((flight) => {
+          const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
+          const destinationAirport = data.airports.find(airport => airport.codigoIATA === flight.destination);
+          if (originAirport && destinationAirport) {
+            console.log(`Drawing line from ${originAirport.codigoIATA} to ${destinationAirport.codigoIATA}`);
+            return (
+              <Polyline
+                key={flight.id}
+                path={[
+                  { lat: originAirport.latitude, lng: originAirport.longitude },
+                  { lat: destinationAirport.latitude, lng: destinationAirport.longitude }
+                ]}
+                options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
+              />
+            );
+          }
+          return null;
+        })}
+        {data.flights.length > 0 && data.flights.map((flight) => {
+          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+          if (planePosition) {
+            const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
+            return (
+              <MarkerF
+                key={flight.id}
+                position={planePosition}
+                icon={{
+                  url: planeIcon,
+                  scaledSize: new window.google.maps.Size(32, 32),
+                  rotation: Math.atan2(
+                    planePosition.lat - originAirport.latitude,
+                    planePosition.lng - originAirport.longitude
+                  ) * (180 / Math.PI)
+                }}
+              />
+            );
+          }
+          return null;
+        })}
+      </>
+    );
+  };
 
   return (
     <AppContainer>
@@ -249,20 +239,30 @@ function App() {
       />
       <Content>
         <MainContent>
-          <MapContainer>
-            {isLoaded && (
-              <GoogleMap
-                mapContainerStyle={{ width: '100%', height: '100%' }}
-                center={{ lat: -3.745, lng: -38.523 }}
-                zoom={3}
+          {loading && (
+            <div>Loading....</div>
+          )}
+          {!loading && (
+            <MapContainer>
+              <LoadScript
+                googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
+                libraries={libraries}
                 onLoad={handleMapLoad}
-                mapId="56d2948ec3b0b447"
               >
-                {isMapLoaded && renderMapContent()}
-              </GoogleMap>
-            )}
-          </MapContainer>
-          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} />}
+                {isMapLoaded && (
+                  <GoogleMap
+                    mapContainerStyle={{ width: '100%', height: '100%' }}
+                    center={{ lat: -3.745, lng: -38.523 }}
+                    zoom={3}
+                    onLoad={handleMapLoad}
+                    mapId="56d2948ec3b0b447"
+                  >
+                    {renderMapContent()}
+                  </GoogleMap>
+                )}
+              </LoadScript>
+            </MapContainer>
+          )}
         </MainContent>
         <Legend />
       </Content>

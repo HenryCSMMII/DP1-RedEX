@@ -230,10 +230,6 @@ function App() {
     </>
   );
 
-  if (loading) {
-    return <div>Loading....</div>;
-  }
-
   return (
     <AppContainer>
       <Sidebar 
@@ -247,7 +243,7 @@ function App() {
         <MainContent>
           <MapContainer>
             <LoadScript
-              googleMapsApiKey="AIzaSyBf1-gcqUmtphkPx7qe7jB-pn8sItv_xpc"
+              googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
               libraries={libraries}
               onLoad={handleMapLoad}
             >
@@ -259,8 +255,7 @@ function App() {
                   onLoad={handleMapLoad}
                   mapId="56d2948ec3b0b447"
                 >
-                  {renderMapContent()}
-
+                  {!loading && renderMapContent()}
                 </GoogleMap>
               )}
             </LoadScript>
@@ -278,4 +273,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;
