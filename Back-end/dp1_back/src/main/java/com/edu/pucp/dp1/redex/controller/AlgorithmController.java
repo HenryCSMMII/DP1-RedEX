@@ -266,7 +266,7 @@ public class AlgorithmController {
 		for(int i=0; i<tamanio; i++){
 			for (Flight  flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
 				Integer idVuelo = flight.getId();
-				System.out.println("IDVuelo: "+flight.getId());
+				//System.out.println("IDVuelo: "+flight.getId());
 				for (int j=0; j<vuelos.size();j++){
 					if(vuelos.get(j).equals(idVuelo)){
 						BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
@@ -276,7 +276,7 @@ public class AlgorithmController {
 				}
 				if(noEncontrado){
 					BD.flightsResolved.add(flight);
-					System.out.println("IDVueloNUEVO: "+flight.getId());
+					//System.out.println("IDVueloNUEVO: "+flight.getId());
 					BD.flightsResolved.get(vuelos.size()).setShipments(new ArrayList<Shipment>());
 					BD.flightsResolved.get(vuelos.size()).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
 					vuelos.add(idVuelo);
