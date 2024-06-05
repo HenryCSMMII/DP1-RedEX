@@ -78,7 +78,6 @@ function App() {
         const continents = await axios.get('http://localhost:8080/continent/');
         const countries = await axios.get('http://localhost:8080/country/');
         const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
-        
         const flights = flightsResponse.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);
           const arrivalDateTime = new Date(flight.arrival_date_time);
@@ -190,9 +189,8 @@ function App() {
     const currentDateTime = new Date(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
     const activeFlights = data.flights.filter(flight => {
-      const departureDateTime = new Date(`${flight.departure_date}T${flight.departure_time}`);
       const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
-      return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
+      return arrivalDateTime > currentDateTime;
     });
 
     return (

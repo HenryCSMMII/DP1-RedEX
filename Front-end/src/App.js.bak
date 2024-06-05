@@ -78,6 +78,7 @@ function App() {
         const continents = await axios.get('http://localhost:8080/continent/');
         const countries = await axios.get('http://localhost:8080/country/');
         const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
+        
         const flights = flightsResponse.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);
           const arrivalDateTime = new Date(flight.arrival_date_time);
@@ -185,56 +186,66 @@ function App() {
     return null;
   };
 
-  const renderMapContent = () => (
-    <>
-      {data.airports.length > 0 && data.airports.map((airport) => (
-        <MarkerF
-          key={airport.id}
-          position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
-          title={airport.code}
-          icon={{
-            url: redDot,
-            scaledSize: new window.google.maps.Size(32, 32),
-          }}
-        />
-      ))}
-      {data.flights.length > 0 && data.flights.map((flight) => {
-        const originAirport = data.airports.find(airport => airport.code === flight.origin);
-        const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
-        if (originAirport && destinationAirport) {
-          console.log(`Drawing line from ${originAirport.code} to ${destinationAirport.code}`);
-          return (
-            <Polyline
-              key={flight.id}
-              path={[
-                { lat: parseFloat(originAirport.latitude), lng: parseFloat(originAirport.longitude) },
-                { lat: parseFloat(destinationAirport.latitude), lng: parseFloat(destinationAirport.longitude) }
-              ]}
-              options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
-            />
-          );
-        }
-        return null;
-      })}
-      {data.flights.length > 0 && data.flights.map((flight) => {
-        const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-        if (planePosition) {
-          return (
-            <MarkerF
-              key={flight.id}
-              position={{ lat: planePosition.lat, lng: planePosition.lng }}
-              icon={{
-                url: planeIcon,
-                scaledSize: new window.google.maps.Size(32, 32),
-                rotation: planePosition.angle
-              }}
-            />
-          );
-        }
-        return null;
-      })}
-    </>
-  );
+  const renderMapContent = () => {
+    const currentDateTime = new Date(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
+
+    const activeFlights = data.flights.filter(flight => {
+      const departureDateTime = new Date(`${flight.departure_date}T${flight.departure_time}`);
+      const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
+      return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
+    });
+
+    return (
+      <>
+        {data.airports.length > 0 && data.airports.map((airport) => (
+          <MarkerF
+            key={airport.id}
+            position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
+            title={airport.code}
+            icon={{
+              url: redDot,
+              scaledSize: new window.google.maps.Size(32, 32),
+            }}
+          />
+        ))}
+        {activeFlights.length > 0 && activeFlights.map((flight) => {
+          const originAirport = data.airports.find(airport => airport.code === flight.origin);
+          const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
+          if (originAirport && destinationAirport) {
+            console.log(`Drawing line from ${originAirport.code} to ${destinationAirport.code}`);
+            return (
+              <Polyline
+                key={flight.id}
+                path={[
+                  { lat: parseFloat(originAirport.latitude), lng: parseFloat(originAirport.longitude) },
+                  { lat: parseFloat(destinationAirport.latitude), lng: parseFloat(destinationAirport.longitude) }
+                ]}
+                options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
+              />
+            );
+          }
+          return null;
+        })}
+        {activeFlights.length > 0 && activeFlights.map((flight) => {
+          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+          if (planePosition) {
+            return (
+              <MarkerF
+                key={flight.id}
+                position={{ lat: planePosition.lat, lng: planePosition.lng }}
+                icon={{
+                  url: planeIcon,
+                  scaledSize: new window.google.maps.Size(32, 32),
+                  rotation: planePosition.angle
+                }}
+              />
+            );
+          }
+          return null;
+        })}
+      </>
+    );
+  };
 
   return (
     <AppContainer>
@@ -270,8 +281,6 @@ function App() {
         </MainContent>
         <Legend />
       </Content>
-      
-      
     </AppContainer>
   );
 }
