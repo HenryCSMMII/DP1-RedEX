@@ -2,9 +2,12 @@ package com.edu.pucp.dp1.redex.model;
 
 public class Continent {
     private int id;
+	private static int increment = 0;
 	private String name;
 	
 	public Continent() {
+		Continent.increment += 1;
+		this.id = Continent.increment;
 	}
 	
 	public Continent(int id, String name) {

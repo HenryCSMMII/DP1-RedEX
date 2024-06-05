@@ -2,13 +2,15 @@ package com.edu.pucp.dp1.redex.model;
 
 public class Country {
     private int id;
+	private static int increment = 0;
 	private String name;
 	private String abbrev;
 	private Continent continent;
 	private String city;
 	
 	public Country() {
-
+		Country.increment += 1;
+		this.id = Country.increment;
 	}
 	
 	public Country(int id, String name, String abbrev, Continent continent, String city) {

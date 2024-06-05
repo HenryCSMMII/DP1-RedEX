@@ -29,8 +29,8 @@ public class BD {
 	public static List<Shipment> shipmentsTemp = new ArrayList<Shipment>();
 	public static List<Flight>[][] flights;
 	public static List<Shipment> shipmentsUnresolved;
-	public static List<Continent> continents;
-	public static List<Country> countries;
+	public static List<Continent> continents = new ArrayList<Continent>();
+	public static List<Country> countries = new ArrayList<Country>();
 	public static List<Shipment> shipmentsWaitingList = new ArrayList<Shipment>();
 	public static List<Shipment> shipmentsResolved = new ArrayList<Shipment>();
 	public static List<Flight> flightsResolved = new ArrayList<Flight>();
@@ -152,10 +152,10 @@ public class BD {
 		        
 		        Continent continent = new Continent();
 		        
-		        if(split[5] == "AS") {
+		        if(split[5].equals("AS")) {
 		        	airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_AMERICA);
 		        }
-		        else if(split[5] == "E") {
+		        else if(split[5].equals("E")) {
 	        		airport.setMax_capacity(BD.MAX_CAPACITY_STORAGE_EUROPE);
 	        	}
 		       
@@ -168,7 +168,9 @@ public class BD {
 		        airport.setLongitude(split[9]);
 		        airport.setStorage(new ArrayList<StorageCapacity>());
 		        BD.airports.add(airport);
-		        
+				BD.countries.add(country);
+				BD.continents.add(continent);
+		        System.out.println(airport.getMax_capacity());
 			}
 			scannerObj.close();
 		}catch(Exception e) {
