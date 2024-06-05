@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/airport")
+@RequestMapping("/api/airports")
 public class AirportController {
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public List<AirportDTO> getAllAirports() {
                 return BD.airports.stream()
                 .map(airport -> new AirportDTO(
