@@ -169,7 +169,7 @@ public class BD {
 		        BD.airports.add(airport);
 				BD.countries.add(country);
 				BD.continents.add(continent);
-		        System.out.println(airport.getMax_capacity());
+		        //System.out.println(airport.getMax_capacity());
 			}
 			scannerObj.close();
 		}catch(Exception e) {
