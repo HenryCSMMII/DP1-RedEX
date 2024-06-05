@@ -31,7 +31,21 @@ public class FlightController {
                 .collect(Collectors.toList());
     }
 
-    
+    @GetMapping(value = "/{id}")
+    FlightDTO get(@PathVariable int id){
+        return BD.flightsTemp.stream()
+                .map(flight -> new FlightDTO(
+                        flight.getId(),
+                        flight.getCode(),
+                        flight.getMax_capacity(),
+                        flight.getUsed_capacityAlgorithm(),
+                        flight.getDeparture_date_time(),
+                        flight.getArrival_date_time(),
+                        flight.getDeparture_airport().getId(),
+                        flight.getArrival_airport().getId(),
+                        flight.getEstimated_time()))
+                .collect(Collectors.toList()).get(id-1);
+    }
 
     @GetMapping("/read")
     public String readFlights() {
