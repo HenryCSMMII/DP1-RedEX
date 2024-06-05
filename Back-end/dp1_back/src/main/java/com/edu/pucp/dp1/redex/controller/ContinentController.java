@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/continent")
+@RequestMapping("/api/continents")
 public class ContinentController {
 
     @GetMapping("/all")
