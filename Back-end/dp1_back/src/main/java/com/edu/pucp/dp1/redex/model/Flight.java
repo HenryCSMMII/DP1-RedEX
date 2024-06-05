@@ -20,6 +20,7 @@ public class Flight {
 	private long estimated_time;
 	private long difference_system;//diferencia de peru con aeropuerto de salida
 	private List<Shipment> shipments;
+	private FlightState state;
 
 	public List<Shipment> getShipments() {
 		return shipments;
@@ -29,11 +30,19 @@ public class Flight {
 		this.shipments = shipments;
 	}
 
+	public FlightState getState() {
+		return state;
+	}
+
+	public void setState(FlightState state) {
+		this.state = state;
+	}
+
 	public Flight() {
 		this.used_capacity = new int[BD.POPULATION_NUM_INDIVIDUALS*2];
 		this.id = increment + 1; 
 		Flight.increment += 1;
-		
+		this.state = FlightState.En_Espera;
 		for(int i=0;i<used_capacity.length;i++) {
 			used_capacity[i] = 0;
 		}

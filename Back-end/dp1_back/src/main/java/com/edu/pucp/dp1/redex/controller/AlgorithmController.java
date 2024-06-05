@@ -163,11 +163,6 @@ public class AlgorithmController {
 				j+=1;
 			}
 			
-			//Population population_selected = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
-			//for(int i=0;i<10;i++) {
-			//	population_selected.getIndividuals() = population_temp.getIndividuals()
-			//}
-
 			population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
 			for(int i=0;i<BD.POPULATION_NUM_INDIVIDUALS;i++) {
 				population.getIndividuals()[i] = population_temp.getIndividuals()[list_index[i]];
@@ -190,17 +185,6 @@ public class AlgorithmController {
 			num_generations+=1;
 
 		}
-		/*
-		int num=0;
-		
-		for(int i=0;i<population.getIndividuals().length;i++) {
-			for(int k=0;k<population.getIndividuals()[i].getList_flight_schedule().size();k++) {
-				if(population.getIndividuals()[i].getList_flight_schedule().get(k).getFlights().size() > 1) {
-					System.out.println("SI TIENE ESCALASSSSSSS: " + population.getIndividuals()[i].getList_flight_schedule().get(k).getFlights().size());
-					num+=1;
-				}
-			}
-		}*/
 		
 		Individual best_individual = population.getIndividuals()[0];
 		
@@ -218,14 +202,7 @@ public class AlgorithmController {
 		}
 		
 		System.out.println("EL FITNESS MEJOR ES: " +  population.getIndividuals()[0].getFitness(0));
-		//return population.getIndividuals()[0];
-		//292-297
-		//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][293]);
-		//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][294]);
-		//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][295]);
-		//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][296]);
-		//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][297]);
-		//return GeneralData.list_pool_fligths[0][292];
+		
 		
 		/********************************* DAYS OF THE YEAR - ARRAY ***************************************/
 		DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
@@ -289,16 +266,12 @@ public class AlgorithmController {
 
         return BD.flightsResolved;
 
-
-        
-        //return null;
 	}
-	
 
-	
-	/*@CrossOrigin
-	@RequestMapping(value="runPEDRO/", method = RequestMethod.GET)
-	public List<FlightSchedule> genetic_algorithm_PEDRO(/*@RequestBody long date_simulation, @RequestBody int type_simulation*a/){
+	@CrossOrigin
+	@RequestMapping(value="runReplanificacion/", method = RequestMethod.GET)
+	public List<FlightSchedule> genetic_algorithm_REPLANIFICACION(/*@RequestBody long date_simulation, @RequestBody int type_simulation*/){
+
 		long date_simulation_start = 1659398400000L;
         long date_simulation_end = 1659484800000L;
 		BD.readAirports();
@@ -314,7 +287,7 @@ public class AlgorithmController {
 		int flag=1;
 
 		for(int dia=0; dia<BD.SEMANAL_DAYS; dia++){
-			BD.read_list_shipment_with_datePEDRO(date_simulation_start+dia*BD.ONE_DAY_MS);	//no inicializa BD.shipmentsTemp
+			BD.read_list_shipment_with_date_REPLANIFICACION(date_simulation_start+dia*BD.ONE_DAY_MS);	//no inicializa BD.shipmentsTemp
 			while (!BD.shipmentsWaitingList.isEmpty()) {
 				elementsToRemove = Math.min(BD.SHIPMENTS_PER_ITERATION, BD.shipmentsWaitingList.size());
 				for(int j=0; j<BD.SHIPMENTS_PER_ITERATION; j++){
@@ -388,7 +361,7 @@ public class AlgorithmController {
 								if(list_fitness[k] == list_fitness_temp[i]) {
 									for(int m=0;m<list_index.length;m++) {
 										if(list_index[m] == k) {
-											flag_exist = 1; //significa que este indice ya existe uwu
+											flag_exist = 1; //significa que este indice ya existe
 										}							
 									}
 									if(flag_exist == 1) {
@@ -402,10 +375,6 @@ public class AlgorithmController {
 							j+=1;
 						}
 						
-						//Population population_selected = new Population(geneticParameters.POPULATION_NUM_INDIVIDUALS);
-						//for(int i=0;i<10;i++) {
-						//	population_selected.getIndividuals() = population_temp.getIndividuals()
-						//}
 			
 						population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
 						for(int i=0;i<BD.POPULATION_NUM_INDIVIDUALS;i++) {
@@ -429,17 +398,7 @@ public class AlgorithmController {
 						num_generations+=1;
 			
 					}
-					/*
-					int num=0;
 					
-					for(int i=0;i<population.getIndividuals().length;i++) {
-						for(int k=0;k<population.getIndividuals()[i].getList_flight_schedule().size();k++) {
-							if(population.getIndividuals()[i].getList_flight_schedule().get(k).getFlights().size() > 1) {
-								System.out.println("SI TIENE ESCALASSSSSSS: " + population.getIndividuals()[i].getList_flight_schedule().get(k).getFlights().size());
-								num+=1;
-							}
-						}
-					}*a/
 					
 					Individual best_individual = population.getIndividuals()[0];
 					
@@ -448,25 +407,17 @@ public class AlgorithmController {
 						return null;
 					}
 					
-					System.out.println("Total de envios sin solucion "+ BD.shipments.size());
-					for (int i = 0; i < BD.shipments.size(); i++) {
-						if(BD.shipments.get(i).getPackageQuantity() >= 25) {
-							System.out.println("SALIDA: " + BD.shipments.get(i).getDepartureAirport().getCode());
-							System.out.println("LLEGADA: " + BD.shipments.get(i).getArrivalAirport().getCode());
+					System.out.println("Total de envios sin solucion "+ BD.shipmentsUnresolved.size());
+					for (int i = 0; i < BD.shipmentsUnresolved.size(); i++) {
+						if(BD.shipmentsUnresolved.get(i).getPackageQuantity() >= 25) {
+							System.out.println("SALIDA: " + BD.shipmentsUnresolved.get(i).getDepartureAirport().getCode());
+							System.out.println("LLEGADA: " + BD.shipmentsUnresolved.get(i).getArrivalAirport().getCode());
 						}
 					}
 					
 					System.out.println("EL FITNESS MEJOR ES: " +  population.getIndividuals()[0].getFitness(0));
-					//return population.getIndividuals()[0];
-					//292-297
-					//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][293]);
-					//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][294]);
-					//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][295]);
-					//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][296]);
-					//GeneralData.list_pool_fligths[0][292].addAll(GeneralData.list_pool_fligths[0][297]);
-					//return GeneralData.list_pool_fligths[0][292];
 					
-					/********************************* DAYS OF THE YEAR - ARRAY ***************************************a/
+					/********************************* DAYS OF THE YEAR - ARRAY ***************************************/
 					DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
 					LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation_start)));
 							
@@ -535,7 +486,7 @@ public class AlgorithmController {
         
         //return BD.flights[year_of_date][day_of_year - 1];
         return population.getIndividuals()[0].getList_flight_schedule();
-    }*/
+    }
 	
 
 
