@@ -78,7 +78,7 @@ public class AlgorithmController {
 		
 		Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
 		
-		population.initialize(BD.shipmentsUnresolved);
+		population.initialize(BD.shipmentsTemp);
 		population.evaluate();
 
 		int num_generations=0;
@@ -126,9 +126,12 @@ public class AlgorithmController {
 			//Seleccionar los 10 mejores
 			double[] list_fitness = population_temp.evaluate();
 			
+			System.out.println("==========================");
 			for(int i=0;i<list_fitness.length;i++) {
 				System.out.println(list_fitness[i]);
 			}
+			System.out.println("==========================");
+			
 			
 			double[] list_fitness_temp = Arrays.copyOf(list_fitness, list_fitness.length);
 
@@ -145,7 +148,7 @@ public class AlgorithmController {
 					if(list_fitness[k] == list_fitness_temp[i]) {
 						for(int m=0;m<list_index.length;m++) {
 							if(list_index[m] == k) {
-								flag_exist = 1;
+								flag_exist = 1; //significa que este indice ya existe uwu
 							}							
 						}
 						if(flag_exist == 1) {

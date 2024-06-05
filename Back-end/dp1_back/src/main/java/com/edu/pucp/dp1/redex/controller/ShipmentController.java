@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.dto.ShipmentDTO;
+import com.edu.pucp.dp1.redex.model.Shipment;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ public class ShipmentController {
 
     @GetMapping("/all")
     public List<ShipmentDTO> getAllShipments() {
-        return BD.shipmentsUnresolved.stream()
+        return BD.shipmentsTemp.stream()
                 .map(shipment -> new ShipmentDTO(
                         shipment.getId(),
                         shipment.getPackageQuantity(),
