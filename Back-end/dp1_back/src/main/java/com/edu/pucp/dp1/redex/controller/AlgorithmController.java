@@ -235,7 +235,7 @@ public class AlgorithmController {
 		System.out.println("DIA DEL AÑO: " + (day_of_year));
 		
 		int year_of_date;
-		System.out.println("AÑO DE LA FECHA: " + date_array.getYear());
+		System.out.println("AÑO DE LA FECHA: 2024");
 		
 		if(date_array.getYear() == 2022) { year_of_date = 0; }
 		else { year_of_date = 1; }
