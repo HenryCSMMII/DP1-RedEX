@@ -61,84 +61,14 @@ function App() {
     continents: [],
     countries: [],
     estadoVuelo: [],
-    flights: [
-      {
-        id: 1693,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "SKBO",
-        duration: 480,
-        flight_number: "AA100",
-        origin: "SABE",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
-      },
-      {
-        id: 1694,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "SUAA",
-        duration: 480,
-        flight_number: "AA101",
-        origin: "BIKF",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
-      },
-      {
-        id: 1695,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "LBSF",
-        duration: 480,
-        flight_number: "AA102",
-        origin: "LJLJ",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
-      },
-      {
-        id: 1696,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "EIDW",
-        duration: 480,
-        flight_number: "AA103",
-        origin: "LMML",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
-      }
-    ]
+    flights: [],
   });
   const [loading, setLoading] = useState(true);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const mapRef = useRef(null);
-
   const [tiempo_simulacion, setTiempoSimulacion] = useState({
-    dia_actual: "2024-06-02",
-    tiempo_actual: "06:00:00"
+    dia_actual: "",
+    tiempo_actual: ""
   });
 
   useEffect(() => {
@@ -147,14 +77,45 @@ function App() {
         const airports = await axios.get('http://localhost:8080/airport/');
         const continents = await axios.get('http://localhost:8080/continent/');
         const countries = await axios.get('http://localhost:8080/country/');
+        const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
+        const flights = flightsResponse.data.map(flight => {
+          const departureDateTime = new Date(flight.departure_date_time);
+          const arrivalDateTime = new Date(flight.arrival_date_time);
+          return {
+            id: flight.id,
+            activo: 1,
+            fecha_creacion: flight.fecha_creacion,
+            fecha_modificacion: flight.fecha_modificacion,
+            arrival_time: arrivalDateTime.toTimeString().split(' ')[0],
+            capacity: flight.max_capacity,
+            current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
+            departure_time: departureDateTime.toTimeString().split(' ')[0],
+            destination: flight.arrival_airport.code,
+            duration: (arrivalDateTime - departureDateTime) / 60000, // duration in minutes
+            flight_number: flight.code,
+            origin: flight.departure_airport.code,
+            estado_vuelo_id: 1,
+            arrival_date: arrivalDateTime.toISOString().split('T')[0],
+            departure_date: departureDateTime.toISOString().split('T')[0],
+          };
+        });
+
+        // Obtener el departure_date_time del último vuelo
+        const lastFlightDepartureDateTime = new Date(flightsResponse.data.slice(-1)[0].departure_date_time);
+        
+        setTiempoSimulacion({
+          dia_actual: lastFlightDepartureDateTime.toISOString().split('T')[0],
+          tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
+        });
 
         setData((prevData) => ({
           ...prevData,
           airports: airports.data,
           continents: continents.data,
           countries: countries.data,
+          flights: flights,
         }));
-        console.log('Airports data fetched:', airports.data);
+        console.log('Data fetched:', flights);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -224,56 +185,65 @@ function App() {
     return null;
   };
 
-  const renderMapContent = () => (
-    <>
-      {data.airports.length > 0 && data.airports.map((airport) => (
-        <MarkerF
-          key={airport.id}
-          position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
-          title={airport.code}
-          icon={{
-            url: redDot,
-            scaledSize: new window.google.maps.Size(32, 32),
-          }}
-        />
-      ))}
-      {data.flights.length > 0 && data.flights.map((flight) => {
-        const originAirport = data.airports.find(airport => airport.code === flight.origin);
-        const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
-        if (originAirport && destinationAirport) {
-          console.log(`Drawing line from ${originAirport.code} to ${destinationAirport.code}`);
-          return (
-            <Polyline
-              key={flight.id}
-              path={[
-                { lat: parseFloat(originAirport.latitude), lng: parseFloat(originAirport.longitude) },
-                { lat: parseFloat(destinationAirport.latitude), lng: parseFloat(destinationAirport.longitude) }
-              ]}
-              options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
-            />
-          );
-        }
-        return null;
-      })}
-      {data.flights.length > 0 && data.flights.map((flight) => {
-        const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-        if (planePosition) {
-          return (
-            <MarkerF
-              key={flight.id}
-              position={{ lat: planePosition.lat, lng: planePosition.lng }}
-              icon={{
-                url: planeIcon,
-                scaledSize: new window.google.maps.Size(32, 32),
-                rotation: planePosition.angle
-              }}
-            />
-          );
-        }
-        return null;
-      })}
-    </>
-  );
+  const renderMapContent = () => {
+    const currentDateTime = new Date(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
+
+    const activeFlights = data.flights.filter(flight => {
+      const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
+      return arrivalDateTime > currentDateTime;
+    });
+
+    return (
+      <>
+        {data.airports.length > 0 && data.airports.map((airport) => (
+          <MarkerF
+            key={airport.id}
+            position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
+            title={airport.code}
+            icon={{
+              url: redDot,
+              scaledSize: new window.google.maps.Size(32, 32),
+            }}
+          />
+        ))}
+        {activeFlights.length > 0 && activeFlights.map((flight) => {
+          const originAirport = data.airports.find(airport => airport.code === flight.origin);
+          const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
+          if (originAirport && destinationAirport) {
+            console.log(`Drawing line from ${originAirport.code} to ${destinationAirport.code}`);
+            return (
+              <Polyline
+                key={flight.id}
+                path={[
+                  { lat: parseFloat(originAirport.latitude), lng: parseFloat(originAirport.longitude) },
+                  { lat: parseFloat(destinationAirport.latitude), lng: parseFloat(destinationAirport.longitude) }
+                ]}
+                options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
+              />
+            );
+          }
+          return null;
+        })}
+        {activeFlights.length > 0 && activeFlights.map((flight) => {
+          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+          if (planePosition) {
+            return (
+              <MarkerF
+                key={flight.id}
+                position={{ lat: planePosition.lat, lng: planePosition.lng }}
+                icon={{
+                  url: planeIcon,
+                  scaledSize: new window.google.maps.Size(32, 32),
+                  rotation: planePosition.angle
+                }}
+              />
+            );
+          }
+          return null;
+        })}
+      </>
+    );
+  };
 
   return (
     <AppContainer>
@@ -309,8 +279,6 @@ function App() {
         </MainContent>
         <Legend />
       </Content>
-      
-      
     </AppContainer>
   );
 }
