@@ -53,6 +53,17 @@ const libraries = ['places', 'marker'];
 
 Modal.setAppElement('#root');
 
+const InputContainer = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+`;
+
 function App() {
   const [activePopup, setActivePopup] = useState('');
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
@@ -74,9 +85,13 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const airports = await axios.get('http://localhost:8080/airport/');
-        const continents = await axios.get('http://localhost:8080/continent/');
-        const countries = await axios.get('http://localhost:8080/country/');
+        const [airports, continents, countries] = await Promise.all([
+          axios.get('http://localhost:8080/airport/'),
+          axios.get('http://localhost:8080/continent/'),
+          axios.get('http://localhost:8080/country/')
+        ]);
+
+        // Esperar explícitamente a que el algoritmo termine antes de continuar
         const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
         
         const flights = flightsResponse.data.map(flight => {
@@ -109,13 +124,13 @@ function App() {
           tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
         });
 
-        setData((prevData) => ({
-          ...prevData,
+        setData({
           airports: airports.data,
           continents: continents.data,
           countries: countries.data,
           flights: flights,
-        }));
+        });
+
         console.log('Data fetched:', flights);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -155,6 +170,14 @@ function App() {
 
   const handleCloseNuevoEnvio = () => {
     setIsNuevoEnvioOpen(false);
+  };
+
+  const handleSimulacionChange = (event) => {
+    const { name, value } = event.target;
+    setTiempoSimulacion((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const calculatePlanePosition = (flight, dia_actual, tiempo_actual) => {
@@ -281,6 +304,26 @@ function App() {
         </MainContent>
         <Legend />
       </Content>
+      <InputContainer>
+        <label>
+          Fecha:
+          <input
+            type="date"
+            name="dia_actual"
+            value={tiempo_simulacion.dia_actual}
+            onChange={handleSimulacionChange}
+          />
+        </label>
+        <label>
+          Hora:
+          <input
+            type="time"
+            name="tiempo_actual"
+            value={tiempo_simulacion.tiempo_actual}
+            onChange={handleSimulacionChange}
+          />
+        </label>
+      </InputContainer>
     </AppContainer>
   );
 }

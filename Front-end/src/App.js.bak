@@ -74,9 +74,13 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const airports = await axios.get('http://localhost:8080/airport/');
-        const continents = await axios.get('http://localhost:8080/continent/');
-        const countries = await axios.get('http://localhost:8080/country/');
+        const [airports, continents, countries] = await Promise.all([
+          axios.get('http://localhost:8080/airport/'),
+          axios.get('http://localhost:8080/continent/'),
+          axios.get('http://localhost:8080/country/')
+        ]);
+
+        // Esperar explícitamente a que el algoritmo termine antes de continuar
         const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
         
         const flights = flightsResponse.data.map(flight => {
@@ -109,13 +113,13 @@ function App() {
           tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
         });
 
-        setData((prevData) => ({
-          ...prevData,
+        setData({
           airports: airports.data,
           continents: continents.data,
           countries: countries.data,
           flights: flights,
-        }));
+        });
+
         console.log('Data fetched:', flights);
       } catch (error) {
         console.error('Error fetching data:', error);
