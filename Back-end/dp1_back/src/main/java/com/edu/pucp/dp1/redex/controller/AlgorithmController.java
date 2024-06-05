@@ -39,8 +39,9 @@ public class AlgorithmController {
 
 	@RequestMapping(value="read/", method = RequestMethod.GET)
 	public String read() throws IOException{
-		BD.readAirports();
-		System.out.println("Acabo de leer lista de aeropuertos");
+		BD.readContinents();
+		BD.readCountries();
+		System.out.println("Acabo de leer continentes y paises");
 		return null;
 	}
 	

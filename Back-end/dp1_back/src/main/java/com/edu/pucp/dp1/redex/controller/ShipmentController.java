@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/shipments")
+@RequestMapping("/shipments")
 public class ShipmentController {
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public List<ShipmentDTO> getAllShipments() {
         return BD.shipmentsTemp.stream()
                 .map(shipment -> new ShipmentDTO(

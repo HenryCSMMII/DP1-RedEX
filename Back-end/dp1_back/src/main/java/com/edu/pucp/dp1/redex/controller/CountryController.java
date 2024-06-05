@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/countries")
+@RequestMapping("/country")
 public class CountryController {
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public List<CountryDTO> getAllCountries() {
         return BD.countries.stream()
                 .map(country -> new CountryDTO(

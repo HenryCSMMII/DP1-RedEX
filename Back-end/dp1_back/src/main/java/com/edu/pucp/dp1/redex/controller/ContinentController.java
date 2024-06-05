@@ -11,10 +11,10 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/continents")
+@RequestMapping("/continent")
 public class ContinentController {
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public List<Continent> getAllContinents() {
         return BD.continents;
     }
