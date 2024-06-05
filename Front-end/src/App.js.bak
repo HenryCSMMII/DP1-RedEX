@@ -58,10 +58,8 @@ function App() {
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
   const [data, setData] = useState({
     airports: [],
-    cities: [],
     continents: [],
     countries: [],
-    estadoPaquete: [],
     estadoVuelo: [],
     flights: [
       {
@@ -77,6 +75,57 @@ function App() {
         duration: 480,
         flight_number: "AA100",
         origin: "SABE",
+        estado_vuelo_id: 1,
+        arrival_date: "2024-06-02",
+        departure_date: "2024-06-01"
+      },
+      {
+        id: 1694,
+        activo: 1,
+        fecha_creacion: "2024-05-31 15:40:56",
+        fecha_modificacion: "2024-05-31 15:40:56",
+        arrival_time: "16:00:00",
+        capacity: 180,
+        current_load: 150,
+        departure_time: "08:00:00",
+        destination: "SUAA",
+        duration: 480,
+        flight_number: "AA101",
+        origin: "BIKF",
+        estado_vuelo_id: 1,
+        arrival_date: "2024-06-02",
+        departure_date: "2024-06-01"
+      },
+      {
+        id: 1695,
+        activo: 1,
+        fecha_creacion: "2024-05-31 15:40:56",
+        fecha_modificacion: "2024-05-31 15:40:56",
+        arrival_time: "16:00:00",
+        capacity: 180,
+        current_load: 150,
+        departure_time: "08:00:00",
+        destination: "LBSF",
+        duration: 480,
+        flight_number: "AA102",
+        origin: "LJLJ",
+        estado_vuelo_id: 1,
+        arrival_date: "2024-06-02",
+        departure_date: "2024-06-01"
+      },
+      {
+        id: 1696,
+        activo: 1,
+        fecha_creacion: "2024-05-31 15:40:56",
+        fecha_modificacion: "2024-05-31 15:40:56",
+        arrival_time: "16:00:00",
+        capacity: 180,
+        current_load: 150,
+        departure_time: "08:00:00",
+        destination: "EIDW",
+        duration: 480,
+        flight_number: "AA103",
+        origin: "LMML",
         estado_vuelo_id: 1,
         arrival_date: "2024-06-02",
         departure_date: "2024-06-01"
@@ -96,20 +145,14 @@ function App() {
     const fetchData = async () => {
       try {
         const airports = await axios.get('http://localhost:8080/airport/');
-        const cities = await axios.get('http://localhost:8080/city/');
         const continents = await axios.get('http://localhost:8080/continent/');
         const countries = await axios.get('http://localhost:8080/country/');
-        const estadoPaquete = await axios.get('http://localhost:8080/estadoPaquete/');
-        const estadoVuelo = await axios.get('http://localhost:8080/estadoVuelo/');
 
         setData((prevData) => ({
           ...prevData,
           airports: airports.data,
-          cities: cities.data,
           continents: continents.data,
           countries: countries.data,
-          estadoPaquete: estadoPaquete.data,
-          estadoVuelo: estadoVuelo.data,
         }));
         console.log('Airports data fetched:', airports.data);
       } catch (error) {
@@ -121,6 +164,14 @@ function App() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isMapLoaded && !loading) {
+      console.log('Map and data loaded, forcing re-render');
+      setIsMapLoaded(false);
+      setTimeout(() => setIsMapLoaded(true), 0);
+    }
+  }, [loading, data]);
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -154,79 +205,75 @@ function App() {
       const elapsedDuration = currentDateTime - departureDateTime;
       const progress = elapsedDuration / totalDuration;
 
-      const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
-      const destinationAirport = data.airports.find(airport => airport.codigoIATA === flight.destination);
+      const originAirport = data.airports.find(airport => airport.code === flight.origin);
+      const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
 
       if (originAirport && destinationAirport) {
-        const currentLat = originAirport.latitude + progress * (destinationAirport.latitude - originAirport.latitude);
-        const currentLng = originAirport.longitude + progress * (destinationAirport.longitude - originAirport.longitude);
+        const currentLat = parseFloat(originAirport.latitude) + progress * (parseFloat(destinationAirport.latitude) - parseFloat(originAirport.latitude));
+        const currentLng = parseFloat(originAirport.longitude) + progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
         console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
-        return { lat: currentLat, lng: currentLng };
+        
+        const angle = Math.atan2(
+          destinationAirport.latitude - originAirport.latitude,
+          destinationAirport.longitude - originAirport.longitude
+        ) * (180 / Math.PI);
+
+        return { lat: currentLat, lng: currentLng, angle };
       }
     }
     return null;
   };
 
-  const renderMapContent = () => {
-    if (!window.google || !window.google.maps) {
-      return null;
-    }
-
-    return (
-      <>
-        {data.airports.length > 0 && data.airports.map((airport) => (
-          <MarkerF
-            key={airport.id}
-            position={{ lat: airport.latitude, lng: airport.longitude }}
-            title={airport.codigoIATA}
-            icon={{
-              url: redDot,
-              scaledSize: new window.google.maps.Size(32, 32),
-            }}
-          />
-        ))}
-        {data.flights.length > 0 && data.flights.map((flight) => {
-          const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
-          const destinationAirport = data.airports.find(airport => airport.codigoIATA === flight.destination);
-          if (originAirport && destinationAirport) {
-            console.log(`Drawing line from ${originAirport.codigoIATA} to ${destinationAirport.codigoIATA}`);
-            return (
-              <Polyline
-                key={flight.id}
-                path={[
-                  { lat: originAirport.latitude, lng: originAirport.longitude },
-                  { lat: destinationAirport.latitude, lng: destinationAirport.longitude }
-                ]}
-                options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
-              />
-            );
-          }
-          return null;
-        })}
-        {data.flights.length > 0 && data.flights.map((flight) => {
-          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-          if (planePosition) {
-            const originAirport = data.airports.find(airport => airport.codigoIATA === flight.origin);
-            return (
-              <MarkerF
-                key={flight.id}
-                position={planePosition}
-                icon={{
-                  url: planeIcon,
-                  scaledSize: new window.google.maps.Size(32, 32),
-                  rotation: Math.atan2(
-                    planePosition.lat - originAirport.latitude,
-                    planePosition.lng - originAirport.longitude
-                  ) * (180 / Math.PI)
-                }}
-              />
-            );
-          }
-          return null;
-        })}
-      </>
-    );
-  };
+  const renderMapContent = () => (
+    <>
+      {data.airports.length > 0 && data.airports.map((airport) => (
+        <MarkerF
+          key={airport.id}
+          position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
+          title={airport.code}
+          icon={{
+            url: redDot,
+            scaledSize: new window.google.maps.Size(32, 32),
+          }}
+        />
+      ))}
+      {data.flights.length > 0 && data.flights.map((flight) => {
+        const originAirport = data.airports.find(airport => airport.code === flight.origin);
+        const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
+        if (originAirport && destinationAirport) {
+          console.log(`Drawing line from ${originAirport.code} to ${destinationAirport.code}`);
+          return (
+            <Polyline
+              key={flight.id}
+              path={[
+                { lat: parseFloat(originAirport.latitude), lng: parseFloat(originAirport.longitude) },
+                { lat: parseFloat(destinationAirport.latitude), lng: parseFloat(destinationAirport.longitude) }
+              ]}
+              options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
+            />
+          );
+        }
+        return null;
+      })}
+      {data.flights.length > 0 && data.flights.map((flight) => {
+        const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+        if (planePosition) {
+          return (
+            <MarkerF
+              key={flight.id}
+              position={{ lat: planePosition.lat, lng: planePosition.lng }}
+              icon={{
+                url: planeIcon,
+                scaledSize: new window.google.maps.Size(32, 32),
+                rotation: planePosition.angle
+              }}
+            />
+          );
+        }
+        return null;
+      })}
+    </>
+  );
 
   return (
     <AppContainer>
@@ -239,38 +286,30 @@ function App() {
       />
       <Content>
         <MainContent>
-          {loading && (
-            <div>Loading....</div>
-          )}
-          {!loading && (
-            <MapContainer>
-              <LoadScript
-                googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
-                libraries={libraries}
-                onLoad={handleMapLoad}
-              >
-                {isMapLoaded && (
-                  <GoogleMap
-                    mapContainerStyle={{ width: '100%', height: '100%' }}
-                    center={{ lat: -3.745, lng: -38.523 }}
-                    zoom={3}
-                    onLoad={handleMapLoad}
-                    mapId="56d2948ec3b0b447"
-                  >
-                    {renderMapContent()}
-                  </GoogleMap>
-                )}
-              </LoadScript>
-            </MapContainer>
-          )}
+          <MapContainer>
+            <LoadScript
+              googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
+              libraries={libraries}
+              onLoad={handleMapLoad}
+            >
+              {isMapLoaded && (
+                <GoogleMap
+                  mapContainerStyle={{ width: '100%', height: '100%' }}
+                  center={{ lat: -3.745, lng: -38.523 }}
+                  zoom={3}
+                  onLoad={handleMapLoad}
+                  mapId="56d2948ec3b0b447"
+                >
+                  {!loading && renderMapContent()}
+                </GoogleMap>
+              )}
+            </LoadScript>
+          </MapContainer>
+          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} />}
         </MainContent>
         <Legend />
       </Content>
-      <EnviosPopup isOpen={activePopup === 'Envios'} onRequestClose={handleClosePopup} onAddEnvio={handleOpenNuevoEnvio} data={data} />
-      <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
-      <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
-      <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
-      <NuevoEnvioPopup isOpen={isNuevoEnvioOpen} onRequestClose={handleCloseNuevoEnvio} data={data} />
+   
     </AppContainer>
   );
 }
