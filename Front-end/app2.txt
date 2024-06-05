@@ -78,57 +78,6 @@ function App() {
         estado_vuelo_id: 1,
         arrival_date: "2024-06-02",
         departure_date: "2024-06-01"
-      },
-      {
-        id: 1694,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "SUAA",
-        duration: 480,
-        flight_number: "AA101",
-        origin: "BIKF",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
-      },
-      {
-        id: 1695,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "LBSF",
-        duration: 480,
-        flight_number: "AA102",
-        origin: "LJLJ",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
-      },
-      {
-        id: 1696,
-        activo: 1,
-        fecha_creacion: "2024-05-31 15:40:56",
-        fecha_modificacion: "2024-05-31 15:40:56",
-        arrival_time: "16:00:00",
-        capacity: 180,
-        current_load: 150,
-        departure_time: "08:00:00",
-        destination: "EIDW",
-        duration: 480,
-        flight_number: "AA103",
-        origin: "LMML",
-        estado_vuelo_id: 1,
-        arrival_date: "2024-06-02",
-        departure_date: "2024-06-01"
       }
     ]
   });
@@ -147,12 +96,14 @@ function App() {
         const airports = await axios.get('http://localhost:8080/airport/');
         const continents = await axios.get('http://localhost:8080/continent/');
         const countries = await axios.get('http://localhost:8080/country/');
+        const estadoVuelo = await axios.get('http://localhost:8080/estadoVuelo/');
 
         setData((prevData) => ({
           ...prevData,
           airports: airports.data,
           continents: continents.data,
           countries: countries.data,
+          estadoVuelo: estadoVuelo.data,
         }));
         console.log('Airports data fetched:', airports.data);
       } catch (error) {
@@ -212,13 +163,7 @@ function App() {
         const currentLat = parseFloat(originAirport.latitude) + progress * (parseFloat(destinationAirport.latitude) - parseFloat(originAirport.latitude));
         const currentLng = parseFloat(originAirport.longitude) + progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
         console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
-        
-        const angle = Math.atan2(
-          destinationAirport.latitude - originAirport.latitude,
-          destinationAirport.longitude - originAirport.longitude
-        ) * (180 / Math.PI);
-
-        return { lat: currentLat, lng: currentLng, angle };
+        return { lat: currentLat, lng: currentLng };
       }
     }
     return null;
@@ -258,14 +203,18 @@ function App() {
       {data.flights.length > 0 && data.flights.map((flight) => {
         const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
         if (planePosition) {
+          const originAirport = data.airports.find(airport => airport.code === flight.origin);
           return (
             <MarkerF
               key={flight.id}
-              position={{ lat: planePosition.lat, lng: planePosition.lng }}
+              position={planePosition}
               icon={{
                 url: planeIcon,
                 scaledSize: new window.google.maps.Size(32, 32),
-                rotation: planePosition.angle
+                rotation: Math.atan2(
+                  planePosition.lat - parseFloat(originAirport.latitude),
+                  planePosition.lng - parseFloat(originAirport.longitude)
+                ) * (180 / Math.PI)
               }}
             />
           );
@@ -309,8 +258,11 @@ function App() {
         </MainContent>
         <Legend />
       </Content>
-      
-      
+      <EnviosPopup isOpen={activePopup === 'Envios'} onRequestClose={handleClosePopup} onAddEnvio={handleOpenNuevoEnvio} data={data} />
+      <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
+      <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
+      <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
+      <NuevoEnvioPopup isOpen={isNuevoEnvioOpen} onRequestClose={handleCloseNuevoEnvio} data={data} />
     </AppContainer>
   );
 }
