@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/flights")
+@RequestMapping("/flight")
 public class FlightController {
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public List<FlightDTO> getAllFlights() {
         return BD.flightsTemp.stream()
                 .map(flight -> new FlightDTO(
