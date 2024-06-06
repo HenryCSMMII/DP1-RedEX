@@ -486,7 +486,6 @@ public class BD {
 	public static int read_list_shipment_with_date_REPLANIFICACION(long date_simulation){
 		long limit_date_data = 0;
 		
-		//BD.shipmentsTemp = new ArrayList<Shipment>();
 		Calendar c = Calendar.getInstance();
         SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         SimpleDateFormat formatter_date_limit = new SimpleDateFormat("dd/MM/yyyy");
@@ -516,14 +515,8 @@ public class BD {
 				
 				while(scannerObj.hasNextLine()) {
 					String data = scannerObj.nextLine();
-					//System.out.println(data);
 					String[] split = data.split("-");
-					//System.out.println(split.length);
-			        //for (int i=0; i<split.length; i++)
-			            //System.out.println(split[i]);
-			        
 			        String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
-			        //System.out.println(dateTime);
 			        
 			        Date register_date_time = formatter_date.parse(dateTime);
 			        //System.out.println("FECHA REGISTRO EN MS: " + register_date_time.getTime());
@@ -536,7 +529,7 @@ public class BD {
 					}
 		        
 			        if(register_date_time.getTime() >= date_simulation && register_date_time.getTime() <= limit_date_data) {
-			        	//System.out.println("entro ps4");
+			        	
 			        	Shipment shipment = new Shipment();
 				        shipment.setCode(split[0]);
 				        
@@ -552,22 +545,9 @@ public class BD {
 				        		departure.setLongitude(BD.airports.get(i).getLongitude());
 				        	}
 				        }
-				        //System.out.println("entro ps5");
 				        shipment.setDeparturAirport(departure);
-				        
-				        //String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
-				        //System.out.println(dateTime);
-				        
-				        //SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-				        //Date register_date_time = formatter_date.parse(dateTime);
-				        
-				        //c.setTime(register_date_time);
-				        //c.add(Calendar.HOUR_OF_DAY, -5);
-				        //register_date_time = c.getTime();
+
 				        shipment.setRegisterDateTime(register_date_time);
-				        
-				        
-				        //System.out.println("entro ps6");
 				        
 				        Airport arrival = new Airport();
 				        arrival.setCode(split[3].substring(0, 4));

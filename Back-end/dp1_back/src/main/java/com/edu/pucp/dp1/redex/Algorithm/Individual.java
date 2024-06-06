@@ -150,22 +150,10 @@ public class Individual {
 			long max_time = list_shipments.get(i).calc_max_possible_time();
 			long max_additional_days = list_shipments.get(i).calc_max_additional_days();
 			
-			
-			/*System.out.println("===================================");
-			System.out.println("ENVIO");
-			System.out.println("==================================");
-			System.out.println(list_shipments.get(i).getDepartureAirport().getCode() +" - " +list_shipments.get(i).getArrivalAirport().getCode());*/
-			
-			
 			while(generateReverseSolution(list_shipments.get(i).getDepartureAirport(),
 					list_shipments.get(i).getArrivalAirport(), flight_schedule, 0, max_time,0, list_shipments.get(i), max_additional_days)!=1 && contador!=20) {
 				flight_schedule = null;
 				flight_schedule = new FlightSchedule();
-				
-				
-				/*System.out.println("===================================");
-				System.out.println("TOY BUSCANDO OTRA SOLUCION");
-				System.out.println("==================================");*/
 				
 				contador +=1;
 			};
@@ -180,7 +168,6 @@ public class Individual {
 			Collections.reverse(flight_schedule.getFlights());
 			
 			this.list_flight_schedule.add(flight_schedule);
-			//System.out.println("VA UN VUELO MÁS");
 		}
 		
 	}
@@ -193,11 +180,7 @@ public class Individual {
 			return 0;
 		}
 		if(departure_airport.getCode().equals(arrival_airport.getCode())) {
-			/*
-			System.out.println("==========ENCONTROOOOOOOOOOOOOOOOOOOOO=====================");
-			System.out.println(departure_airport.getCode());
-			System.out.println(arrival_airport.getCode());
-			*/
+			
 			estimated_time +=  flight_schedule.getFlights().get(flight_schedule.getFlights().size()-1).getDeparture_date_time().getTime() - shipment.getRegisterDateTime().getTime();
 			if(estimated_time > max_time) {
 				return 0;
@@ -206,12 +189,7 @@ public class Individual {
 			flight_schedule.setEstimated_time(estimated_time);
 			return 1; //Ver la restricción de escalas y el tiempo
 		}
-		/*
-		System.out.println("================================");
-		System.out.println(departure_airport.getCode());
-		System.out.println(arrival_airport.getCode());
-		System.out.println("================================");
-		*/
+		
 		List<Flight> list_of_selected_flights = new ArrayList<Flight>();
 		List<Flight> list_of_selected_flights_without_stopovers = new ArrayList<Flight>();
 		
@@ -252,11 +230,9 @@ public class Individual {
 		if(max_days==3) {
 			list_mini_pool_flights_last_day = list_mini_pool_flights_day3;
 		}
-		else{ //En este caso es 2 ja
+		else{ //En este caso es 2
 			list_mini_pool_flights_last_day = list_mini_pool_flights_day2;
 		}
-		//for(int k=0;k<max_days;k++) { //max_days - revisar
-			//shipment.getRegisterDateTime().get
 			//No debe escoger si es que el avion ya está lleno
 			for(int i=0;i<list_mini_pool_flights_last_day.size();i++) {
 				Flight selected_flight_of_pool_last_day = list_mini_pool_flights_last_day.get(i);
@@ -345,9 +321,6 @@ public class Individual {
 				}
 			
 		
-		//System.out.println(list_of_selected_flights_without_stopovers.size());
-		//System.out.println(list_of_selected_flights.size());
-		
 		Flight flight = null;
 		
 		if(list_of_selected_flights.size() == 0) return 0;
@@ -380,10 +353,6 @@ public class Individual {
 				+ TimeZoneAirport.calc_wait_time(flight_schedule) - 1*60*60*1000;//En ms //No se considera el tiempo de descarga de paquetes (1 hora) por eso se resta 1 
 				//+ desfase  + 1 + tiempo_inicio_vuelo - tiempo_ultimo_vuelo_intinerio -1 ; 
 		
-	
-		//tiempo de registro
-		
-		//System.out.println("LAS raaaaaaaaaaaaaaaaaaaaaa: " + TimeZoneAirport.calc_wait_time(flight_schedule));
 		
 		list_of_selected_flights = null;
 		list_of_selected_flights_without_stopovers = null;
@@ -428,28 +397,17 @@ public class Individual {
 		
 		for (int i = 0; i < this.list_shipments.size(); i++) {
 			selector = random.nextFloat();
-			if (selector < 0.5) {
-				//child1.list_flight_schedule.add(new FlightSchedule(this.list_flight_schedule.get(i)));
-				//child1.list_shipments.add(this.list_shipments.get(i));
-				
+			if (selector < 0.5) {				
 				child1.list_flight_schedule.add(this.list_flight_schedule.get(i));
 				child1.list_shipments.add(this.list_shipments.get(i));
-				
-				//child2.list_flight_schedule.add(new FlightSchedule(other.list_flight_schedule.get(i)));
-				//child2.list_shipments.add(new Shipment(other.list_shipments.get(i)));
 				
 				child2.list_flight_schedule.add(other.list_flight_schedule.get(i));
 				child2.list_shipments.add(other.list_shipments.get(i));
 			}
 			else {
-				//child1.list_flight_schedule.add(new FlightSchedule(other.list_flight_schedule.get(i)));
-				//child1.list_shipments.add(new Shipment(other.list_shipments.get(i)));
 				
 				child1.list_flight_schedule.add(other.list_flight_schedule.get(i));
 				child1.list_shipments.add(other.list_shipments.get(i));
-				
-				//child2.list_flight_schedule.add(new FlightSchedule(this.list_flight_schedule.get(i)));
-				//child2.list_shipments.add(new Shipment(this.list_shipments.get(i)));
 				
 				child2.list_flight_schedule.add(this.list_flight_schedule.get(i));
 				child2.list_shipments.add(this.list_shipments.get(i));
