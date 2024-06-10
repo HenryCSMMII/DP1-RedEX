@@ -181,27 +181,24 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
     }
     if (filters.origen) {
       filtered = filtered.filter(envio => {
-        const origen = data.airports.find(airport => airport.id === envio.origenId)?.codigoIATA || '';
+        const origen = data.airports.find(airport => airport.id === envio.departureAirportId)?.code || '';
         return origen.toLowerCase().includes(filters.origen.toLowerCase());
       });
     }
     if (filters.destino) {
       filtered = filtered.filter(envio => {
-        const destino = data.airports.find(airport => airport.id === envio.destinoId)?.codigoIATA || '';
+        const destino = data.airports.find(airport => airport.id === envio.arrivalAirportId)?.code || '';
         return destino.toLowerCase().includes(filters.destino.toLowerCase());
       });
     }
     if (filters.estado) {
-      filtered = filtered.filter(envio => {
-        const estado = data.estadoPaquete.find(estado => estado.id === envio.tipo)?.estado || '';
-        return estado.toLowerCase().includes(filters.estado.toLowerCase());
-      });
+      filtered = filtered.filter(envio => envio.state?.toLowerCase().includes(filters.estado.toLowerCase()));
     }
     if (filters.desde) {
-      filtered = filtered.filter(envio => new Date(envio.fechaInicio) >= new Date(filters.desde));
+      filtered = filtered.filter(envio => new Date(envio.departureTime) >= new Date(filters.desde));
     }
     if (filters.hasta) {
-      filtered = filtered.filter(envio => new Date(envio.fechaFin) <= new Date(filters.hasta));
+      filtered = filtered.filter(envio => new Date(envio.arrivalTime) <= new Date(filters.hasta));
     }
 
     setFilteredEnvios(filtered);
@@ -268,12 +265,12 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
             {filteredEnvios.map((envio) => (
               <tr key={envio.id} onClick={() => handleRowClick(envio)}>
                 <td>{envio.id}</td>
-                <td>{data.airports.find(airport => airport.id === envio.origenId)?.codigoIATA || 'Desconocido'}</td>
-                <td>{data.airports.find(airport => airport.id === envio.destinoId)?.codigoIATA || 'Desconocido'}</td>
-                <td>{new Date(envio.fechaInicio).toLocaleDateString()}</td>
-                <td>{new Date(envio.fechaFin).toLocaleDateString()}</td>
-                <td>{envio.cantidad}</td>
-                <td>{data.estadoPaquete.find(estado => estado.id === envio.tipo)?.estado || 'Desconocido'}</td>
+                <td>{data.airports.find(airport => airport.id === envio.departureAirportId)?.code || 'Desconocido'}</td>
+                <td>{data.airports.find(airport => airport.id === envio.arrivalAirportId)?.code || 'Desconocido'}</td>
+                <td>{envio.departureTime ? new Date(envio.departureTime).toLocaleDateString() : 'N/A'}</td>
+                <td>{envio.arrivalTime ? new Date(envio.arrivalTime).toLocaleDateString() : 'N/A'}</td>
+                <td>{envio.packageQuantity}</td>
+                <td>{envio.state || 'Desconocido'}</td>
                 <td onClick={(e) => handleEditClick(e, envio)}>
                   <EditButton>Editar</EditButton>
                 </td>
