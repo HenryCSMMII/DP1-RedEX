@@ -41,28 +41,8 @@ public class AlgorithmController {
 	public String read() throws IOException{
 		BD.readContinents();
 		BD.readCountries();
+		BD.readCities();
 		System.out.println("Acabo de leer continentes y paises");
-		return null;
-	}
-	
-	@RequestMapping(value="run2/", method = RequestMethod.GET)
-	public List<Flight> run2() throws IOException{
-		BD.readAirports();
-		BD.readFlights();
-		return BD.flightsTemp;
-	}
-	
-	@RequestMapping(value="read2/", method = RequestMethod.GET)
-	public String read2() throws IOException{
-		BD.readFlights();
-		System.out.println("Acabo de leer los vuelos");
-		return null;
-	}
-	
-	@RequestMapping(value="read3/", method = RequestMethod.GET)
-	public String read3() throws IOException{
-		BD.readShipments();
-		System.out.println("Acabo de leer los envíos");
 		return null;
 	}
 	
