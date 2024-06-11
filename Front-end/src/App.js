@@ -86,13 +86,13 @@ function App() {
     const fetchData = async () => {
       try {
         const [airports, continents, countries] = await Promise.all([
-          axios.get('http://localhost:8080/airport/'),
-          axios.get('http://localhost:8080/continent/'),
-          axios.get('http://localhost:8080/country/')
+          axios.get('http://localhost:5000/airport/'),
+          axios.get('http://localhost:5000/continent/'),
+          axios.get('http://localhost:5000/country/')
         ]);
 
         // Esperar explícitamente a que el algoritmo termine antes de continuar
-        const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
+        const flightsResponse = await axios.get('http://localhost:5000/api/algorithm/run/');
         
         const flights = flightsResponse.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);

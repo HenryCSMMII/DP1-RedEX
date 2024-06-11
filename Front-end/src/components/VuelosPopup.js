@@ -163,7 +163,7 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
     const fetchVuelos = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:8080/vuelo/');
+        const response = await axios.get('http://localhost:5000/vuelo/');
         setVuelos(response.data);
         setFilteredVuelos(response.data);
       } catch (error) {

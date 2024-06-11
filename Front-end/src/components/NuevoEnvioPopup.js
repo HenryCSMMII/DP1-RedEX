@@ -136,7 +136,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
       // Verificar el payload de envío
       console.log("Shipment payload:", shipmentPayload);
 
-      const shipmentResponse = await axios.post('http://localhost:8080/shipment/', shipmentPayload);
+      const shipmentResponse = await axios.post('http://localhost:5000/shipment/', shipmentPayload);
       const newShipmentId = shipmentResponse.data.id;
 
       // Crear múltiples paquetes según la cantidad de paquetes
@@ -153,7 +153,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
         // Verificar el payload de paquete
         console.log("Package payload:", packagePayload);
 
-        await axios.post('http://localhost:8080/package/', packagePayload);
+        await axios.post('http://localhost:5000/package/', packagePayload);
       }
 
       alert('Envio creado exitosamente');

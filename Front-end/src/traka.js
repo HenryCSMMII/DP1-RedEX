@@ -74,10 +74,10 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const airports = await axios.get('http://localhost:8080/airport/');
-        const continents = await axios.get('http://localhost:8080/continent/');
-        const countries = await axios.get('http://localhost:8080/country/');
-        const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
+        const airports = await axios.get('http://localhost:5000/airport/');
+        const continents = await axios.get('http://localhost:5000/continent/');
+        const countries = await axios.get('http://localhost:5000/country/');
+        const flightsResponse = await axios.get('http://localhost:5000/api/algorithm/run/');
         const flights = flightsResponse.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);
           const arrivalDateTime = new Date(flight.arrival_date_time);
