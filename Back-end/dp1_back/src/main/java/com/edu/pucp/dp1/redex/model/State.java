@@ -5,5 +5,5 @@ public enum State {
 	Asignado,
 	En_camino,
 	Por_recoger,
-	Entregado
+	Entregado,
 }

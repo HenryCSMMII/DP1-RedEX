@@ -27,12 +27,13 @@ public class FlightController {
                         flight.getArrival_date_time(),
                         flight.getDeparture_airport().getId(),
                         flight.getArrival_airport().getId(),
-                        flight.getEstimated_time()))
+                        flight.getEstimated_time(),
+                        flight.getState().name()))
                 .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/{id}")
-    FlightDTO get(@PathVariable int id){
+    public FlightDTO get(@PathVariable int id) {
         return BD.flightsTemp.stream()
                 .map(flight -> new FlightDTO(
                         flight.getId(),
@@ -43,8 +44,9 @@ public class FlightController {
                         flight.getArrival_date_time(),
                         flight.getDeparture_airport().getId(),
                         flight.getArrival_airport().getId(),
-                        flight.getEstimated_time()))
-                .collect(Collectors.toList()).get(id-1);
+                        flight.getEstimated_time(),
+                        flight.getState().name()))
+                .collect(Collectors.toList()).get(id - 1);
     }
 
     @GetMapping("/read")
@@ -60,13 +62,11 @@ public class FlightController {
 
     @GetMapping(value = "/{idInicio}/{idFinal}")
     public List<FlightDTO> listarFlightsByIds(@PathVariable int idInicio, @PathVariable int idFinal) {
-        // Verificar y ajustar los índices
-        if (idInicio < 1)idInicio = 1;
-        if (idFinal > BD.flightsTemp.size())idFinal = BD.flightsTemp.size();
+        if (idInicio < 1) idInicio = 1;
+        if (idFinal > BD.flightsTemp.size()) idFinal = BD.flightsTemp.size();
         if (idInicio > idFinal) return List.of();
 
-        // Crear sublista y mapear a DTOs
-        return BD.flightsTemp.subList(idInicio-1, idFinal).stream()
+        return BD.flightsTemp.subList(idInicio - 1, idFinal).stream()
                 .map(flight -> new FlightDTO(
                         flight.getId(),
                         flight.getCode(),
@@ -76,8 +76,8 @@ public class FlightController {
                         flight.getArrival_date_time(),
                         flight.getDeparture_airport().getId(),
                         flight.getArrival_airport().getId(),
-                        flight.getEstimated_time()))
+                        flight.getEstimated_time(),
+                        flight.getState().name()))
                 .collect(Collectors.toList());
     }
-
 }
