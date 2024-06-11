@@ -53,17 +53,6 @@ const libraries = ['places', 'marker'];
 
 Modal.setAppElement('#root');
 
-const InputContainer = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
-  background: white;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
-`;
-
 function App() {
   const [activePopup, setActivePopup] = useState('');
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
@@ -170,14 +159,6 @@ function App() {
 
   const handleCloseNuevoEnvio = () => {
     setIsNuevoEnvioOpen(false);
-  };
-
-  const handleSimulacionChange = (event) => {
-    const { name, value } = event.target;
-    setTiempoSimulacion((prev) => ({
-      ...prev,
-      [name]: value
-    }));
   };
 
   const calculatePlanePosition = (flight, dia_actual, tiempo_actual) => {
@@ -304,29 +285,6 @@ function App() {
         </MainContent>
         <Legend />
       </Content>
-      <InputContainer>
-        <label>
-          Fecha:
-          <input
-            type="date"
-            name="dia_actual"
-            value={tiempo_simulacion.dia_actual}
-            onChange={handleSimulacionChange}
-          />
-        </label>
-        <label>
-          Hora:
-          <input
-            type="time"
-            name="tiempo_actual"
-            value={tiempo_simulacion.tiempo_actual}
-            onChange={handleSimulacionChange}
-          />
-        </label>
-      </InputContainer>
-	  <EnviosPopup isOpen={activePopup === 'Envios'} onRequestClose={handleClosePopup} onAddEnvio={handleOpenNuevoEnvio} data={data} />
-	  <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
-      <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
     </AppContainer>
   );
 }

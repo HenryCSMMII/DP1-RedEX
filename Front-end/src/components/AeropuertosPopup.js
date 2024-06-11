@@ -132,7 +132,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
   const itemsPerPage = 5;
 
   useEffect(() => {
-    if (data.airports.length > 0 && data.countries.length > 0 && data.continents.length > 0) {
+    if (data.airports.length > 0 && data.cities.length > 0 && data.countries.length > 0 && data.continents.length > 0) {
       filterAeropuertos();
     }
   }, [filters, data]);
@@ -147,18 +147,20 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
 
   const filterAeropuertos = () => {
     let filtered = data.airports.map(airport => {
-      const country = data.countries.find(country => country.id === airport.countryId);
+      const city = data.cities.find(city => city.id === airport.cityId);
+      const country = data.countries.find(country => country.id === city.countryId);
       const continent = data.continents.find(continent => continent.id === country.continentId);
 
       return {
         ...airport,
+        city,
         country,
         continent
       };
     });
 
     if (filters.nombre) {
-      filtered = filtered.filter(aeropuerto => aeropuerto.code?.toLowerCase().includes(filters.nombre.toLowerCase()));
+      filtered = filtered.filter(aeropuerto => aeropuerto.codigoIATA?.toLowerCase().includes(filters.nombre.toLowerCase()));
     }
     if (filters.continente) {
       filtered = filtered.filter(aeropuerto => aeropuerto.continent.name?.toLowerCase().includes(filters.continente.toLowerCase()));
@@ -166,7 +168,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
     if (filters.capacidad) {
       filtered = filtered.filter(aeropuerto => {
         const used = aeropuerto.currentLoad || 0;
-        const total = aeropuerto.max_capacity || 1; // default value to avoid division by zero
+        const total = aeropuerto.capacity || 1; // default value to avoid division by zero
         switch (filters.capacidad) {
           case 'Baja':
             return used / total < 0.33;
@@ -257,15 +259,17 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
                 <tr>
                   <th>Aeropuerto</th>
                   <th>País</th>
+                  <th>Ciudad</th>
                   <th>Capacidad</th>
                 </tr>
               </thead>
               <tbody>
                 {currentItems.map((aeropuerto) => (
                   <tr key={aeropuerto.id}>
-                    <td>{aeropuerto.code}</td>
+                    <td>{aeropuerto.codigoIATA}</td>
                     <td>{aeropuerto.country.name}</td>
-                    <td>{aeropuerto.currentLoad}/{aeropuerto.max_capacity}</td>
+                    <td>{aeropuerto.city.nombre}</td>
+                    <td>{aeropuerto.currentLoad}/{aeropuerto.capacity}</td>
                   </tr>
                 ))}
               </tbody>

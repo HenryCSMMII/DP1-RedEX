@@ -89,7 +89,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
 
   useEffect(() => {
     if (data && selectedCountryRemitente) {
-      const filteredCities = data.airports.filter(airport => airport.countryId === parseInt(selectedCountryRemitente));
+      const filteredCities = data.cities.filter(city => city.countryId === parseInt(selectedCountryRemitente));
       setCitiesRemitente(filteredCities);
     } else {
       setCitiesRemitente([]);
@@ -98,7 +98,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
 
   useEffect(() => {
     if (data && selectedCountryDestinatario) {
-      const filteredCities = data.airports.filter(airport => airport.countryId === parseInt(selectedCountryDestinatario));
+      const filteredCities = data.cities.filter(city => city.countryId === parseInt(selectedCountryDestinatario));
       setCitiesDestinatario(filteredCities);
     } else {
       setCitiesDestinatario([]);
@@ -124,13 +124,13 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
   const handleSubmit = async () => {
     try {
       const shipmentPayload = {
-        packageQuantity: cantidadPaquetes,
-        departureAirportId: remitente.ciudad,
-        arrivalAirportId: destinatario.ciudad,
-        state: null,
-        departureTime: fechaEnvio,
-        arrivalTime: fechaEnvio,
-        clientSenderId: null,
+        cantidad: cantidadPaquetes,
+        origenId: remitente.ciudad,
+        destinoId: destinatario.ciudad,
+        tipo: 1,
+        fechaInicio: fechaEnvio,
+        fechaFin: fechaEnvio,
+        tiempoActivo: 0,
       };
 
       // Verificar el payload de envío
@@ -142,11 +142,16 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
       // Crear múltiples paquetes según la cantidad de paquetes
       for (let i = 0; i < cantidadPaquetes; i++) {
         const packagePayload = {
-          departureAirportId: remitente.ciudad,
-          arrivalAirportId: destinatario.ciudad,
+          originId: remitente.ciudad,
+          destinationId: destinatario.ciudad,
           departureTime: '08:00:00',
-          arrivalTime: fechaEnvio,
-          clientSenderId: null,
+          shipmentDateTime: fechaEnvio,
+          packageId: `PKG${Math.floor(Math.random() * 100000)}`,
+          quantity: 1,
+          assignedFlightId: 1,
+          tiempoTotal: 0,
+          airportId: remitente.ciudad,
+          estadoPaqueteId: 1,
           shipmentId: newShipmentId,
         };
 
@@ -225,9 +230,9 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           </Select>
           <Select name="ciudad" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
             <option value="">Seleccione una ciudad</option>
-            {citiesRemitente.map((airport) => (
-              <option key={airport.id} value={airport.id}>
-                {airport.code}
+            {citiesRemitente.map((city) => (
+              <option key={city.id} value={city.id}>
+                {city.nombre}
               </option>
             ))}
           </Select>
@@ -275,9 +280,9 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           </Select>
           <Select name="ciudad" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
             <option value="">Seleccione una ciudad</option>
-            {citiesDestinatario.map((airport) => (
-              <option key={airport.id} value={airport.id}>
-                {airport.code}
+            {citiesDestinatario.map((city) => (
+              <option key={city.id} value={city.id}>
+                {city.nombre}
               </option>
             ))}
           </Select>
