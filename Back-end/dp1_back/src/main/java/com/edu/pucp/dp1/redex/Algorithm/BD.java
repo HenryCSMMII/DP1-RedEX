@@ -315,9 +315,7 @@ public class BD {
 				}
 				shipment.setDeparturAirport(departure);
 	
-				String date = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4);
-				String time = split[2];
-				String dateTime = date + " " + time;
+				String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
 	
 				SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				Date register_date_time = formatter_date.parse(dateTime);
@@ -336,7 +334,7 @@ public class BD {
 	
 				shipment.setPackageQuantity(Integer.parseInt(split[3].substring(5)));
 	
-				shipment.setDepartureTime(register_date_time);  // Set departure time
+				shipment.setDepartureTime(null);
 				shipment.setArrivalTime(null);
 				shipment.setFlightSchedule(null);
 				shipment.setClient(null);
