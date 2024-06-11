@@ -24,7 +24,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class BD {
-    public static List<Airport> airports;
+    public static List<Airport> airports= new ArrayList<Airport>();
 	public static List<Flight> flightsTemp;
 	public static List<Shipment> shipmentsTemp = new ArrayList<Shipment>();
 	public static List<Flight>[][] flights;
