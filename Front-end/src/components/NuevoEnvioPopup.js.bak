@@ -133,11 +133,13 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
         tiempoActivo: 0,
       };
 
+      // Verificar el payload de envío
       console.log("Shipment payload:", shipmentPayload);
 
       const shipmentResponse = await axios.post('http://localhost:8080/shipment/', shipmentPayload);
       const newShipmentId = shipmentResponse.data.id;
 
+      // Crear múltiples paquetes según la cantidad de paquetes
       for (let i = 0; i < cantidadPaquetes; i++) {
         const packagePayload = {
           originId: remitente.ciudad,
@@ -153,6 +155,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           shipmentId: newShipmentId,
         };
 
+        // Verificar el payload de paquete
         console.log("Package payload:", packagePayload);
 
         await axios.post('http://localhost:8080/package/', packagePayload);
@@ -165,7 +168,6 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
       if (error.response) {
         console.error('Error response data:', error.response.data);
         console.error('Error response status:', error.response.status);
-        console.error('Error response headers:', error.response.headers);
       }
       alert('Error creando el envio');
     }
@@ -198,33 +200,27 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           <h2>Nuevo envío</h2>
         </Header>
         <FormGroup>
-          <Label htmlFor="nombreRemitente">Nombre</Label>
+          <Label>Remitente</Label>
           <Input
             type="text"
             name="nombre"
-            id="nombreRemitente"
             placeholder="Nombre completo"
             onChange={(e) => handleInputChange(e, setRemitente, remitente)}
           />
-          <Label htmlFor="emailRemitente">Correo electrónico</Label>
           <Input
             type="email"
             name="email"
-            id="emailRemitente"
             placeholder="Correo electrónico"
             onChange={(e) => handleInputChange(e, setRemitente, remitente)}
           />
-          <Label htmlFor="telefonoRemitente">Número de teléfono</Label>
           <Input
             type="tel"
             name="telefono"
-            id="telefonoRemitente"
             placeholder="Número de teléfono"
             inputMode="numeric"
             onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
           />
-          <Label htmlFor="paisRemitente">País</Label>
-          <Select name="pais" id="paisRemitente" onChange={(e) => setSelectedCountryRemitente(e.target.value)}>
+          <Select name="pais" onChange={(e) => setSelectedCountryRemitente(e.target.value)}>
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -232,8 +228,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
               </option>
             ))}
           </Select>
-          <Label htmlFor="ciudadRemitente">Ciudad</Label>
-          <Select name="ciudad" id="ciudadRemitente" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
+          <Select name="ciudad" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
             <option value="">Seleccione una ciudad</option>
             {citiesRemitente.map((city) => (
               <option key={city.id} value={city.id}>
@@ -241,50 +236,41 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
               </option>
             ))}
           </Select>
-          <Label htmlFor="tipoDocumentoRemitente">Tipo de documento</Label>
-          <Select name="tipoDocumento" id="tipoDocumentoRemitente" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
-            <option value="">Tipo de documento</option>
+          <Select name="tipoDocumento" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
+            <option>Tipo de documento</option>
             <option value="DNI">DNI</option>
             <option value="Pasaporte">Pasaporte</option>
           </Select>
-          <Label htmlFor="numeroDocumentoRemitente">Número de documento</Label>
           <Input
             type="text"
             name="numeroDocumento"
-            id="numeroDocumentoRemitente"
             placeholder="Número de documento"
             inputMode="numeric"
             onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
           />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="nombreDestinatario">Nombre</Label>
+          <Label>Destinatario</Label>
           <Input
             type="text"
             name="nombre"
-            id="nombreDestinatario"
             placeholder="Nombre completo"
             onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
           />
-          <Label htmlFor="emailDestinatario">Correo electrónico</Label>
           <Input
             type="email"
             name="email"
-            id="emailDestinatario"
             placeholder="Correo electrónico"
             onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
           />
-          <Label htmlFor="telefonoDestinatario">Número de teléfono</Label>
           <Input
             type="tel"
             name="telefono"
-            id="telefonoDestinatario"
             placeholder="Número de teléfono"
             inputMode="numeric"
             onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
           />
-          <Label htmlFor="paisDestinatario">País</Label>
-          <Select name="pais" id="paisDestinatario" onChange={(e) => setSelectedCountryDestinatario(e.target.value)}>
+          <Select name="pais" onChange={(e) => setSelectedCountryDestinatario(e.target.value)}>
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -292,8 +278,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
               </option>
             ))}
           </Select>
-          <Label htmlFor="ciudadDestinatario">Ciudad</Label>
-          <Select name="ciudad" id="ciudadDestinatario" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
+          <Select name="ciudad" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
             <option value="">Seleccione una ciudad</option>
             {citiesDestinatario.map((city) => (
               <option key={city.id} value={city.id}>
@@ -301,17 +286,14 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
               </option>
             ))}
           </Select>
-          <Label htmlFor="tipoDocumentoDestinatario">Tipo de documento</Label>
-          <Select name="tipoDocumento" id="tipoDocumentoDestinatario" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
-            <option value="">Tipo de documento</option>
+          <Select name="tipoDocumento" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
+            <option>Tipo de documento</option>
             <option value="DNI">DNI</option>
             <option value="Pasaporte">Pasaporte</option>
           </Select>
-          <Label htmlFor="numeroDocumentoDestinatario">Número de documento</Label>
           <Input
             type="text"
             name="numeroDocumento"
-            id="numeroDocumentoDestinatario"
             placeholder="Número de documento"
             inputMode="numeric"
             onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
@@ -327,9 +309,8 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           />
         </FormGroup>
         <FormGroup>
-          <Label htmlFor="cantidadPaquetes">Cantidad de paquetes</Label>
+          <Label>Cantidad de paquetes</Label>
           <Input
-            id="cantidadPaquetes"
             type="number"
             placeholder="Cantidad de paquetes"
             value={cantidadPaquetes}
@@ -338,7 +319,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
         </FormGroup>
         <ButtonGroup>
           <Button onClick={onRequestClose}>Cancelar</Button>
-          <Button primary="true" onClick={handleSubmit}>Crear envío</Button>
+          <Button primary onClick={handleSubmit}>Crear envío</Button>
         </ButtonGroup>
       </ModalContent>
     </Modal>

@@ -191,22 +191,28 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
     let filtered = vuelos;
 
     if (filters.vuelo) {
-      filtered = filtered.filter(vuelo => vuelo.id.toString().includes(filters.vuelo));
+      filtered = filtered.filter(vuelo => vuelo.code.toString().includes(filters.vuelo));
     }
     if (filters.origen) {
-      filtered = filtered.filter(vuelo => vuelo.origin.toLowerCase().includes(filters.origen.toLowerCase()));
+      filtered = filtered.filter(vuelo => {
+        const origin = data.airports.find(airport => airport.id === vuelo.departure_airport.id)?.code || '';
+        return origin.toLowerCase().includes(filters.origen.toLowerCase());
+      });
     }
     if (filters.destino) {
-      filtered = filtered.filter(vuelo => vuelo.destination.toLowerCase().includes(filters.destino.toLowerCase()));
+      filtered = filtered.filter(vuelo => {
+        const destination = data.airports.find(airport => airport.id === vuelo.arrival_airport.id)?.code || '';
+        return destination.toLowerCase().includes(filters.destino.toLowerCase());
+      });
     }
     if (filters.estado) {
-      filtered = filtered.filter(vuelo => data.estadoVuelo.find(estado => estado.id === vuelo.estadoVueloId)?.estado.toLowerCase().includes(filters.estado.toLowerCase()));
+      filtered = filtered.filter(vuelo => vuelo.state?.toLowerCase().includes(filters.estado.toLowerCase()));
     }
     if (filters.fechaDesde) {
-      filtered = filtered.filter(vuelo => new Date(`1970-01-01T${vuelo.departureTime}Z`) >= new Date(filters.fechaDesde));
+      filtered = filtered.filter(vuelo => new Date(vuelo.departure_date_time) >= new Date(filters.fechaDesde));
     }
     if (filters.fechaHasta) {
-      filtered = filtered.filter(vuelo => new Date(`1970-01-01T${vuelo.departureTime}Z`) <= new Date(filters.fechaHasta));
+      filtered = filtered.filter(vuelo => new Date(vuelo.departure_date_time) <= new Date(filters.fechaHasta));
     }
 
     setFilteredVuelos(filtered);
@@ -264,7 +270,7 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
             <FilterInput type="text" placeholder="Destino" name="destino" value={filters.destino} onChange={handleFilterChange} />
             <FilterInput type="text" placeholder="Estado" name="estado" value={filters.estado} onChange={handleFilterChange} />
             <DateInput type="date" placeholder="Desde" name="fechaDesde" value={filters.fechaDesde} onChange={handleFilterChange} />
-            <DateInput type="date" placeholder="Hasta" name="fechaHasta" onChange={handleFilterChange} />
+            <DateInput type="date" placeholder="Hasta" name="fechaHasta" value={filters.fechaHasta} onChange={handleFilterChange} />
           </FiltersRow>
         </FiltersContainer>
         {loading ? (
@@ -284,17 +290,21 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((vuelo) => (
-                  <tr key={vuelo.id} onClick={() => handleRowClick(vuelo)}>
-                    <td>{vuelo.id}</td>
-                    <td>{vuelo.origin}</td>
-                    <td>{vuelo.destination}</td>
-                    <td>{new Date(`1970-01-01T${vuelo.departureTime}Z`).toLocaleDateString()}</td>
-                    <td>{vuelo.departureTime}</td>
-                    <td>{data.estadoVuelo.find(estado => estado.id === vuelo.estadoVueloId)?.estado || 'Desconocido'}</td>
-                    <td>{vuelo.currentLoad}/{vuelo.capacity}</td>
-                  </tr>
-                ))}
+                {currentItems.map((vuelo) => {
+                  const departureAirport = data.airports.find(airport => airport.id === vuelo.departure_airport_id);
+                  const arrivalAirport = data.airports.find(airport => airport.id === vuelo.arrival_airport_id);
+                  return (
+                    <tr key={vuelo.id} onClick={() => handleRowClick(vuelo)}>
+                      <td>{vuelo.code}</td>
+                      <td>{departureAirport?.code || 'Desconocido'}</td>
+                      <td>{arrivalAirport?.code || 'Desconocido'}</td>
+                      <td>{new Date(vuelo.departure_date_time).toLocaleDateString()}</td>
+                      <td>{new Date(vuelo.departure_date_time).toLocaleTimeString()}</td>
+                      <td>{vuelo.state || 'Desconocido'}</td>
+                      <td>{vuelo.max_capacity}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </Table>
             <PaginationContainer>
