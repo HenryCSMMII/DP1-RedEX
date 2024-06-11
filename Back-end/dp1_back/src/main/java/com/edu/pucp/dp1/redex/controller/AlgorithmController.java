@@ -46,6 +46,27 @@ public class AlgorithmController {
 		return null;
 	}
 	
+	@RequestMapping(value="run2/", method = RequestMethod.GET)
+	public List<Flight> run2() throws IOException{
+		BD.readAirports();
+		BD.readFlights();
+		return BD.flightsTemp;
+	}
+	
+	@RequestMapping(value="read2/", method = RequestMethod.GET)
+	public String read2() throws IOException{
+		BD.readFlights();
+		System.out.println("Acabo de leer los vuelos");
+		return null;
+	}
+	
+	@RequestMapping(value="read3/", method = RequestMethod.GET)
+	public String read3() throws IOException{
+		BD.readShipments();
+		System.out.println("Acabo de leer los envíos");
+		return null;
+	}
+
 	@CrossOrigin
 	@RequestMapping(value="run/", method = RequestMethod.GET)
 	public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation*/){
