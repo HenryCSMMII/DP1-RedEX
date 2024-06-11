@@ -1,6 +1,7 @@
 package com.edu.pucp.dp1.redex.Algorithm;
 
 import com.edu.pucp.dp1.redex.model.Airport;
+import com.edu.pucp.dp1.redex.model.City;
 import com.edu.pucp.dp1.redex.model.Continent;
 import com.edu.pucp.dp1.redex.model.Country;
 import com.edu.pucp.dp1.redex.model.Flight;
@@ -33,6 +34,7 @@ public class BD {
 	public static List<Shipment> shipmentsUnresolved = new ArrayList<Shipment>();;
 	public static List<Continent> continents = new ArrayList<Continent>();
 	public static List<Country> countries = new ArrayList<Country>();
+	public static List<City> cities = new ArrayList<City>();
 	public static List<Shipment> shipmentsWaitingList = new ArrayList<Shipment>();
 	public static List<Shipment> shipmentsResolved = new ArrayList<Shipment>();
 	public static List<Flight> flightsResolved = new ArrayList<Flight>();
@@ -126,6 +128,31 @@ public class BD {
             throw e;
         }
     }	
+
+	public static void readCities() throws IOException {
+
+		BD.cities = new ArrayList<City>();
+
+        try {
+            File file = new File("Back-end/dp1_back/src/main/resources/input/ciudades.txt");
+            Scanner scannerObj = new Scanner(file);
+
+            while (scannerObj.hasNextLine()) {
+                String data = scannerObj.nextLine();
+                String[] parts = data.split(",");
+
+                int id = Integer.parseInt(parts[0]);
+                int countryId = Integer.parseInt(parts[1]);
+                String name = parts[2];
+
+                cities.add(new City(id, countryId, name));
+            }
+            scannerObj.close();
+        } catch (IOException e) {
+            System.out.println("EXCEPTION CITIES: " + e.getMessage());
+            throw e;
+        }
+    }
 
 	public static void readAirports()  {
 		
