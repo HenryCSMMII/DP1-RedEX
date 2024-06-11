@@ -4,11 +4,9 @@ import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Continent;
 import com.edu.pucp.dp1.redex.model.Country;
 import com.edu.pucp.dp1.redex.model.Flight;
-import com.edu.pucp.dp1.redex.model.FlightState;
 import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.model.StorageCapacity;
 import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
-import com.edu.pucp.dp1.redex.model.State;
 
 import java.io.File;
 import java.io.IOException;
@@ -181,86 +179,94 @@ public class BD {
 		
 	}
 	
-	public static void readFlights() {
-		BD.flightsTemp = new ArrayList<>();
+	public static void readFlights()  {
+		
+		BD.flightsTemp = new ArrayList<Flight>();
 		try {
 			File file = new File("Back-end/dp1_back/src/main/resources/input/itinerario.txt");
 			Scanner scannerObj = new Scanner(file);
-	
-			while (scannerObj.hasNextLine()) {
+
+			while(scannerObj.hasNextLine()) {
 				String data = scannerObj.nextLine();
 				String[] split = data.split("-");
-	
-				Flight flight = new Flight();
-				flight.setCode(data);
-	
-				Airport airport_1 = new Airport();
-				airport_1.setCode(split[0]);
-				int index_system = 0;
-	
-				for (int i = 0; i < BD.airports.size(); i++) {
-					if (BD.airports.get(i).getCode().equals(split[0])) {
-						airport_1.setCountry(BD.airports.get(i).getCountry());
-						airport_1.setTime_zone(BD.airports.get(i).getTime_zone());
-						airport_1.setLatitude(BD.airports.get(i).getLatitude());
-						airport_1.setLongitude(BD.airports.get(i).getLongitude());
+		        
+		        Flight flight = new Flight();
+		        flight.setCode(data);
+		        
+		        Airport airport_1 = new Airport();
+		        airport_1.setCode(split[0]);
+		        int index_system=0;
+
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[0])) {
+		        		airport_1.setCountry(BD.airports.get(i).getCountry());
+		        		airport_1.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		airport_1.setLatitude(BD.airports.get(i).getLatitude());
+		        		airport_1.setLongitude(BD.airports.get(i).getLongitude());
+		        	}
+		        	if(BD.airports.get(i).getCode().equals("SPIM")) {
+		        		index_system=i;
 					}
-					if (BD.airports.get(i).getCode().equals("SPIM")) {
-						index_system = i;
-					}
-				}
-	
-				flight.setDeparture_airport(airport_1);
-	
-				Airport airport_2 = new Airport();
-				airport_2.setCode(split[1]);
-	
-				for (int i = 0; i < BD.airports.size(); i++) {
-					if (BD.airports.get(i).getCode().equals(split[1])) {
-						airport_2.setCountry(BD.airports.get(i).getCountry());
-						airport_2.setTime_zone(BD.airports.get(i).getTime_zone());
-						airport_2.setLatitude(BD.airports.get(i).getLatitude());
-						airport_2.setLongitude(BD.airports.get(i).getLongitude());
-					}
-				}
-	
-				flight.setArrival_airport(airport_2);
-	
-				// ---------- Max capacity same continent ---------- //
-				if (airport_1.getCountry().getContinent().getName().equals(airport_2.getCountry().getContinent().getName())) {
-					if (airport_1.getCountry().getContinent().getName().equals("America")) {
-						flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_AMERICA);
-					} else if (airport_1.getCountry().getContinent().getName().equals("Europe")) {
-						flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_EUROPE);
-					}
-				}
-				// ---------- Max capacity different continent ---------- //
-				else {
-					flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
-				}
-	
-				SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-				Date departure_time = formatter.parse(split[2]);
-				Date arrival_time = formatter.parse(split[3]);
-	
-				if (Integer.parseInt(split[2].substring(0, 2)) > Integer.parseInt(split[3].substring(0, 2))) {
-					Calendar c = Calendar.getInstance();
-					c.setTime(arrival_time);
-					c.add(Calendar.DATE, 1);
-					arrival_time = c.getTime();
-				}
-	
-				flight.setDeparture_date_time(departure_time);
-				flight.setArrival_date_time(arrival_time);
-				flight.calcEstimatedTime();
-				flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), BD.airports.get(index_system)) * 60 * 1000);
-				flight.setState(FlightState.En_Espera);  // Set state to Creado when the flight is read
-				BD.flightsTemp.add(flight);
+		        }
+		        
+		        flight.setDeparture_airport(airport_1);
+		        
+		        Airport airport_2 = new Airport();
+		        airport_2.setCode(split[1]);
+		        
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[1])) {
+		        		airport_2.setCountry(BD.airports.get(i).getCountry());
+		        		airport_2.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		airport_2.setLatitude(BD.airports.get(i).getLatitude());
+		        		airport_2.setLongitude(BD.airports.get(i).getLongitude());
+		        	}
+		        }
+		        
+		        flight.setArrival_airport(airport_2);
+		        
+		        // ---------- Max capacity same continent ---------- //
+		        if(airport_1.getCountry().getContinent().getName().equals(airport_2.getCountry().getContinent().getName())) {
+		        	if(airport_1.getCountry().getContinent().getName().equals("America")) {
+		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_AMERICA);
+		        	}
+		        	else if(airport_1.getCountry().getContinent().getName().equals("Europe")) {
+		        		flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_EUROPE);
+		        	}
+		        }
+		        // ---------- Max capacity different continent ---------- //
+		        else {
+		        	flight.setMax_capacity(BD.MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
+		        }
+		        
+		        SimpleDateFormat formatter=new SimpleDateFormat("HH:mm");
+		        Date departure_time = formatter.parse(split[2]);
+		        Date arrival_time = formatter.parse(split[3]);
+		   
+		        
+		        if( Integer.valueOf(split[2].substring(0, 2)) > Integer.valueOf(split[3].substring(0, 2))) {
+		        	//System.out.println("========= ES OTRO DIA =========");
+		        	//Date dt = new Date();
+		        	Calendar c = Calendar.getInstance(); 
+		        	c.setTime(arrival_time); 
+		        	c.add(Calendar.DATE, 1);
+		        	arrival_time = c.getTime();
+		        	//arrival_time.setTime(arrival_time.getTime() + 1*24*60*60*1000);
+		        }
+		        
+		        flight.setDeparture_date_time(departure_time);
+		        flight.setArrival_date_time(arrival_time);
+		        //System.out.println("hola");
+		        flight.calcEstimatedTime();
+		        flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), BD.airports.get(index_system))*60*1000);
+		        BD.flightsTemp.add(flight);
+		        
 			}
 			scannerObj.close();
-		} catch (Exception e) {
+		}catch(Exception e) {
 			System.out.println("EXCEPTION FLIGHTS: " + e.getMessage());
 		}
+		
 	}
 	
 	public static void readShipments(){
@@ -269,59 +275,81 @@ public class BD {
 		try {
 			File file = new File("Back-end/dp1_back/src/main/resources/input/envios.txt");
 			Scanner scannerObj = new Scanner(file);
-	
+			//System.out.println("entro ps");
+			
 			while(scannerObj.hasNextLine()) {
 				String data = scannerObj.nextLine();
+				//System.out.println("entro ps2");
+				//System.out.println(data);
 				String[] split = data.split("-");
-	
-				Shipment shipment = new Shipment();
-				shipment.setCode(split[0]);
-	
-				Airport departure = new Airport();
-				departure.setCode(split[0].substring(0, 4));
-	
-				for(int i=0;i<BD.airports.size();i++) {
-					if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
-						departure.setCountry(BD.airports.get(i).getCountry());
-						departure.setId(BD.airports.get(i).getId());
-					}
-				}
-				shipment.setDeparturAirport(departure);
-	
-				String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
-	
-				SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-				Date register_date_time = formatter_date.parse(dateTime);
-				shipment.setRegisterDateTime(register_date_time);
-	
-				Airport arrival = new Airport();
-				arrival.setCode(split[3].substring(0, 4));
-	
-				for(int i=0;i<BD.airports.size();i++) {
-					if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
-						arrival.setCountry(BD.airports.get(i).getCountry());
-						arrival.setId(BD.airports.get(i).getId());
-					}
-				}
-				shipment.setArrivalAirport(arrival);
-	
-				shipment.setPackageQuantity(Integer.parseInt(split[3].substring(5)));
-	
-				shipment.setDepartureTime(null);
-				shipment.setArrivalTime(null);
-				shipment.setFlightSchedule(null);
-				shipment.setClient(null);
-				shipment.setOperator(null);
-				shipment.setState(State.Creado);  // Set state to Creado when the shipment is read
-	
-				BD.shipmentsTemp.add(shipment);
+				//System.out.println(split.length);
+		        //for (int i=0; i<split.length; i++)
+		            //System.out.print(split[i]);
+		        //System.out.println("entro ps3");
+		        Shipment shipment = new Shipment();
+		        shipment.setCode(split[0]);
+		        
+		        Airport departure = new Airport();
+		        departure.setCode(split[0].substring(0, 4));
+		        //System.out.println("entro ps4");
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[0].substring(0, 4))) {
+		        		departure.setCountry(BD.airports.get(i).getCountry());
+		        		//departure.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		departure.setId(BD.airports.get(i).getId());
+		        		//departure.setLatitude(BD.airports.get(i).getLatitude());
+		        		//departure.setLongitude(BD.airports.get(i).getLongitude());
+		        	}
+		        }
+		        //System.out.println("entro ps5");
+		        shipment.setDeparturAirport(departure);
+		        
+		        String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
+		        //System.out.println(dateTime);
+		        
+		        SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		        Date register_date_time = formatter_date.parse(dateTime);
+		        
+		        //c.setTime(register_date_time);
+		        //c.add(Calendar.HOUR_OF_DAY, -5);
+		        //register_date_time = c.getTime();
+		        shipment.setRegisterDateTime(register_date_time);
+		        
+		        
+		        //System.out.println("entro ps6");
+		        
+		        Airport arrival = new Airport();
+		        arrival.setCode(split[3].substring(0, 4));
+		        
+		        for(int i=0;i<BD.airports.size();i++) {
+		        	if(BD.airports.get(i).getCode().equals(split[3].substring(0, 4))) {
+		        		arrival.setCountry(BD.airports.get(i).getCountry());
+		        		//arrival.setTime_zone(BD.airports.get(i).getTime_zone());
+		        		arrival.setId(BD.airports.get(i).getId());
+		        		//arrival.setLatitude(BD.airports.get(i).getLatitude());
+		        		//arrival.setLongitude(BD.airports.get(i).getLongitude());
+		        	}
+		        }
+		        //System.out.println("entro ps2");
+		        shipment.setArrivalAirport(arrival);
+		        
+		        shipment.setPackageQuantity(Integer.parseInt(split[3].substring(5)));
+		        
+		        shipment.setDepartureTime(null);
+		        shipment.setArrivalTime(null);
+		        shipment.setFlightSchedule(null);
+		        shipment.setClient(null);
+		        shipment.setOperator(null);
+		        shipment.setState(null);
+		        
+		        //System.out.println("hola");
+		        BD.shipmentsTemp.add(shipment);
 			}
 			scannerObj.close();
 		}catch(Exception e) {
 			System.out.println("EXCEPTION SHIPMENTS SIN PARAMETRO: " + e.getMessage());
 		}
 	}
-	
 	
 	public static int read_list_shipment_with_date(long date_simulation, int type_simulation){
 		long limit_date_data = 0;

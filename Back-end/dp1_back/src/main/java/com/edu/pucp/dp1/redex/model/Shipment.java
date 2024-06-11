@@ -22,7 +22,6 @@ public class Shipment {
 	
 	public Shipment() {
         this.id = ++increment;
-        this.state = State.Creado; // Estado inicial
 	}
 	
 	public Shipment(Shipment shipment) {
@@ -176,11 +175,16 @@ public class Shipment {
     	}
     	
     	LocalDateTime dateOfInterest = LocalDateTime.now();
+        /*System.out.println("ARRIVAL: " + this.arrivalAirport.getTime_zone() + "ZONEID: "+ZoneId.of(this.arrivalAirport.getTime_zone()));
+        System.out.println(this.arrivalAirport.getName() + " " + this.arrivalAirport.getCode());
+        System.out.println("DEPARTURE: " + this.getDepartureAirport().getTime_zone() + "ZONEID: "+ZoneId.of(this.getDepartureAirport().getTime_zone()));
+        System.out.println(this.getDepartureAirport().getName() + " " + this.getDepartureAirport().getCode());*/
         
     	long difference = ChronoUnit.MINUTES.between(dateOfInterest.atZone(ZoneId.of(this.arrivalAirport.getTime_zone())),dateOfInterest.atZone(ZoneId.of(this.getDepartureAirport().getTime_zone())));
 
     	max_time -= difference*60*1000;
     	
+        
     	return max_time; 
     }
     
@@ -197,4 +201,5 @@ public class Shipment {
     	
     	return max_time; 
     }
+
 }
