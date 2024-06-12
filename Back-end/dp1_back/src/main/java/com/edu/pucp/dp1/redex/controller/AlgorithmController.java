@@ -76,6 +76,10 @@ public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation
     BD.readAirports();
     BD.readFlights();
     tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
+	if(tamanio==0){
+		System.out.println("No se encontraron nuevos envíos");
+		return BD.flightsResolved;
+	}
     CalendarFlightPool.generate_calendar();
 
     Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
