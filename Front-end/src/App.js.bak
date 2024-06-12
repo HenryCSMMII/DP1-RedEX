@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript, Polyline, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -13,6 +13,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import redDot from './images/red-dot.png';
 import planeIcon from './images/plane.png';
+import planeRotado from './images/planeRotado.png';
 
 const AppContainer = styled.div`
   display: flex;
@@ -63,6 +64,7 @@ const InputContainer = styled.div`
   border-radius: 5px; 
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
+
 let globalCounter = 0;
 
 function App() {
@@ -134,29 +136,25 @@ function App() {
 
         const lastFlightDepartureDateTime = new Date(flightsResponse.data.slice(-1)[0].departure_date_time);
 
-     
-          setTiempoSimulacion(prev => ({
-            ...prev,
-            dia_actual: lastFlightDepartureDateTime.toISOString().split('T')[0],
-            tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
-          }));
-  
-        
+        setTiempoSimulacion(prev => ({
+          ...prev,
+          dia_actual: lastFlightDepartureDateTime.toISOString().split('T')[0],
+          tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
+        }));
 
         setData(prevData => ({
           ...prevData,
           flights: flights
         }));
-		startSimulationInterval();
+        startSimulationInterval();
         console.log('Data fetched:', flights);
       } else {
-		
         console.error('Internal Server Error', flightsResponse);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
-      setRetryTimer(setTimeout(runAlgorithm, 10000));
+      setRetryTimer(setTimeout(runAlgorithm, 999990000));
     }
   };
 
@@ -191,23 +189,12 @@ function App() {
   }, [loading]);
 
   useEffect(() => {
-    return () => {
-      if (retryTimer) {
-        clearTimeout(retryTimer);
-      }
-      if (simulationIntervalRef.current) {
-        clearInterval(simulationIntervalRef.current);
-      }
-    };
-  }, [retryTimer]);
-
-  useEffect(() => {
     if (isMapLoaded && !loading) {
       console.log('Map and data loaded, forcing re-render');
       setIsMapLoaded(false);
       setTimeout(() => setIsMapLoaded(true), 0);
     }
-  }, [loading, data]);
+  }, [loading, data.flights]);
 
   useEffect(() => {
     if (tiempo_simulacion.dia_actual && tiempo_simulacion.tiempo_actual) {
@@ -268,12 +255,15 @@ function App() {
         const currentLng = parseFloat(originAirport.longitude) + progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
         console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
         
-        const angle = Math.atan2(
+        let angle = Math.atan2(
           destinationAirport.latitude - originAirport.latitude,
           destinationAirport.longitude - originAirport.longitude
         ) * (180 / Math.PI);
 
-        return { lat: currentLat, lng: currentLng, angle };
+        // Ajustar el ángulo si el avión se mueve de derecha a izquierda
+        const movingLeft = originAirport.longitude > destinationAirport.longitude;
+
+        return { lat: currentLat, lng: currentLng, angle, movingLeft };
       }
     }
     return null;
@@ -302,24 +292,6 @@ function App() {
           />
         ))}
         {activeFlights.length > 0 && activeFlights.map((flight) => {
-          const originAirport = data.airports.find(airport => airport.code === flight.origin);
-          const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
-          if (originAirport && destinationAirport) {
-            console.log(`Drawing line from ${originAirport.code} to ${destinationAirport.code}`);
-            return (
-              <Polyline
-                key={flight.id}
-                path={[
-                  { lat: parseFloat(originAirport.latitude), lng: parseFloat(originAirport.longitude) },
-                  { lat: parseFloat(destinationAirport.latitude), lng: parseFloat(destinationAirport.longitude) }
-                ]}
-                options={{ strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 }}
-              />
-            );
-          }
-          return null;
-        })}
-        {activeFlights.length > 0 && activeFlights.map((flight) => {
           const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
           if (planePosition) {
             return (
@@ -327,7 +299,7 @@ function App() {
                 key={flight.id}
                 position={{ lat: planePosition.lat, lng: planePosition.lng }}
                 icon={{
-                  url: planeIcon,
+                  url: planePosition.movingLeft ? planeRotado : planeIcon,
                   scaledSize: new window.google.maps.Size(32, 32),
                   rotation: planePosition.angle
                 }}
