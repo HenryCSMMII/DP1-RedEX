@@ -15,8 +15,13 @@ import org.springframework.web.filter.CorsFilter;
 public class RedExApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RedExApplication.class, args);
-        System.out.println("Ejecutanding...");
+		try {
+			SpringApplication.run(RedExApplication.class, args);
+        	System.out.println("Ejecutanding...");
+		} catch(Exception ex) {
+
+		}
+		
 	}
 
 	@Bean

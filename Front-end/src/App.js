@@ -54,15 +54,16 @@ const libraries = ['places', 'marker'];
 Modal.setAppElement('#root');
 
 const InputContainer = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
-  background: white;
-  padding: 10px;
-  border-radius: 5px;
+  position: absolute; 
+  top: 10px; 
+  left: 10px; 
+  z-index: 1; 
+  background: white; 
+  padding: 10px; 
+  border-radius: 5px; 
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
+let globalCounter = 0;
 
 function App() {
   const [activePopup, setActivePopup] = useState('');
@@ -81,74 +82,124 @@ function App() {
     dia_actual: "",
     tiempo_actual: ""
   });
+  const [retryTimer, setRetryTimer] = useState(null);
+  const simulationIntervalRef = useRef(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [airports, continents, countries] = await Promise.all([
-          axios.get('http://localhost:5000/airport/'),
-          axios.get('http://localhost:5000/continent/'),
-          axios.get('http://localhost:5000/country/')
-        ]);
+  const fetchData = async () => {
+    try {
+      const [airports, continents, countries] = await Promise.all([
+        axios.get('http://localhost:8080/airport/'),
+        axios.get('http://localhost:8080/continent/'),
+        axios.get('http://localhost:8080/country/')
+      ]);
 
-        setData(prevData => ({
-          ...prevData,
-          airports: airports.data,
-          continents: continents.data,
-          countries: countries.data
-        }));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+      setData(prevData => ({
+        ...prevData,
+        airports: airports.data,
+        continents: continents.data,
+        countries: countries.data
+      }));
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const runAlgorithm = async () => {
     try {
       const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
-      const flights = flightsResponse.data.map(flight => {
-        const departureDateTime = new Date(flight.departure_date_time);
-        const arrivalDateTime = new Date(flight.arrival_date_time);
-        return {
-          id: flight.id,
-          activo: 1,
-          fecha_creacion: flight.fecha_creacion,
-          fecha_modificacion: flight.fecha_modificacion,
-          arrival_time: arrivalDateTime.toTimeString().split(' ')[0],
-          capacity: flight.max_capacity,
-          current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
-          departure_time: departureDateTime.toTimeString().split(' ')[0],
-          destination: flight.arrival_airport.code,
-          duration: (arrivalDateTime - departureDateTime) / 60000, // duration in minutes
-          flight_number: flight.code,
-          origin: flight.departure_airport.code,
-          estado_vuelo_id: 1,
-          arrival_date: arrivalDateTime.toISOString().split('T')[0],
-          departure_date: departureDateTime.toISOString().split('T')[0],
-        };
-      });
+      if (flightsResponse.status !== 500) {
+        const flights = flightsResponse.data.map(flight => {
+          const departureDateTime = new Date(flight.departure_date_time);
+          const arrivalDateTime = new Date(flight.arrival_date_time);
+          return {
+            id: flight.id,
+            activo: 1,
+            fecha_creacion: flight.fecha_creacion,
+            fecha_modificacion: flight.fecha_modificacion,
+            arrival_time: arrivalDateTime.toTimeString().split(' ')[0],
+            capacity: flight.max_capacity,
+            current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
+            departure_time: departureDateTime.toTimeString().split(' ')[0],
+            destination: flight.arrival_airport.code,
+            duration: (arrivalDateTime - departureDateTime) / 60000, // duration in minutes
+            flight_number: flight.code,
+            origin: flight.departure_airport.code,
+            estado_vuelo_id: 1,
+            arrival_date: arrivalDateTime.toISOString().split('T')[0],
+            departure_date: departureDateTime.toISOString().split('T')[0],
+          };
+        });
 
-      const lastFlightDepartureDateTime = new Date(flightsResponse.data.slice(-1)[0].departure_date_time);
+        const lastFlightDepartureDateTime = new Date(flightsResponse.data.slice(-1)[0].departure_date_time);
 
-      setTiempoSimulacion({
-        dia_actual: lastFlightDepartureDateTime.toISOString().split('T')[0],
-        tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
-      });
+     
+          setTiempoSimulacion(prev => ({
+            ...prev,
+            dia_actual: lastFlightDepartureDateTime.toISOString().split('T')[0],
+            tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
+          }));
+  
+        
 
-      setData(prevData => ({
-        ...prevData,
-        flights: flights
-      }));
-
-      console.log('Data fetched:', flights);
+        setData(prevData => ({
+          ...prevData,
+          flights: flights
+        }));
+		startSimulationInterval();
+        console.log('Data fetched:', flights);
+      } else {
+		
+        console.error('Internal Server Error', flightsResponse);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      setRetryTimer(setTimeout(runAlgorithm, 20000));
     }
   };
+
+  const startSimulationInterval = () => {
+    if (simulationIntervalRef.current) {
+      clearInterval(simulationIntervalRef.current);
+    }
+    simulationIntervalRef.current = setInterval(() => {
+      setTiempoSimulacion(prev => {
+        const currentDateTime = new Date(`${prev.dia_actual}T${prev.tiempo_actual}`);
+        const newDateTime = new Date(currentDateTime.getTime() + 30 * 60 * 1000); // Increment by 30 minutes
+
+        const newDate = newDateTime.toISOString().split('T')[0];
+        const newTime = newDateTime.toTimeString().split(' ')[0];
+
+        return {
+          dia_actual: newDate,
+          tiempo_actual: newTime
+        };
+      });
+    }, 1000);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      runAlgorithm();
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    return () => {
+      if (retryTimer) {
+        clearTimeout(retryTimer);
+      }
+      if (simulationIntervalRef.current) {
+        clearInterval(simulationIntervalRef.current);
+      }
+    };
+  }, [retryTimer]);
 
   useEffect(() => {
     if (isMapLoaded && !loading) {
@@ -157,6 +208,17 @@ function App() {
       setTimeout(() => setIsMapLoaded(true), 0);
     }
   }, [loading, data]);
+
+  useEffect(() => {
+    if (tiempo_simulacion.dia_actual && tiempo_simulacion.tiempo_actual) {
+      startSimulationInterval();
+    }
+    return () => {
+      if (simulationIntervalRef.current) {
+        clearInterval(simulationIntervalRef.current);
+      }
+    };
+  }, [tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual]);
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -278,6 +340,13 @@ function App() {
     );
   };
 
+  const clearMap = () => {
+    setData(prevData => ({
+      ...prevData,
+      flights: []
+    }));
+  };
+
   return (
     <AppContainer>
       <Sidebar 
@@ -331,13 +400,7 @@ function App() {
             onChange={handleSimulacionChange}
           />
         </label>
-        <button onClick={runAlgorithm}>Ejecutar Algoritmo</button>
       </InputContainer>
-      <EnviosPopup isOpen={activePopup === 'Envios'} onRequestClose={handleClosePopup} onAddEnvio={handleOpenNuevoEnvio} data={data} />
-      <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
-      <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
-      <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
-      <NuevoEnvioPopup isOpen={isNuevoEnvioOpen} onRequestClose={handleCloseNuevoEnvio} data={data} />
     </AppContainer>
   );
 }

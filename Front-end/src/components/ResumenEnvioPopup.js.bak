@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const ModalContent = styled.div`
   background: #fff;
@@ -93,8 +94,37 @@ const Table = styled.table`
   }
 `;
 
-const ResumenEnvioPopup = ({ isOpen, onRequestClose, envio }) => {
-  const progreso = (envio.tiempoTranscurrido / envio.tiempoEstimadoLlegada) * 100;
+const ResumenEnvioPopup = ({ isOpen, onRequestClose, envioId, data }) => {
+  const [envio, setEnvio] = useState(null);
+  const progreso = envio ? (envio.tiempoActivo / envio.tiempoEstimadoLlegada) * 100 : 0;
+
+  useEffect(() => {
+    const fetchEnvio = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/shipment/${envioId}`);
+        const envioData = response.data;
+
+        const origen = data.airports.find(airport => airport.id === envioData.origenId)?.codigoIATA || 'Desconocido';
+        const destino = data.airports.find(airport => airport.id === envioData.destinoId)?.codigoIATA || 'Desconocido';
+        const estado = data.estadoPaquete.find(estado => estado.id === envioData.tipo)?.estado || 'Desconocido';
+
+        setEnvio({
+          ...envioData,
+          origen,
+          destino,
+          estado,
+        });
+      } catch (error) {
+        console.error('Error fetching envio:', error);
+      }
+    };
+
+    if (isOpen) {
+      fetchEnvio();
+    }
+  }, [envioId, isOpen, data]);
+
+  if (!envio) return null;
 
   return (
     <Modal
@@ -128,21 +158,20 @@ const ResumenEnvioPopup = ({ isOpen, onRequestClose, envio }) => {
             <FlightInfo>
               <FlightDetails>
                 <h4>{envio.origen}</h4>
-                <p>Colombia</p>
-                <p>EST(UTC -05:00)</p>
-                <p>PROGRAMADO para {envio.fechaPartida} a las {envio.horaPartida}</p>
+                <p>{data.cities.find(city => city.id === envio.origenId)?.nombre || 'Desconocido'}</p>
+                <p>{data.countries.find(country => country.id === envio.origenId)?.shortname || 'Desconocido'}</p>
+                <p>PROGRAMADO para {new Date(envio.fechaInicio).toLocaleDateString()}</p>
               </FlightDetails>
               <FlightDetails>
                 <h4>{envio.destino}</h4>
-                <p>Estados Unidos</p>
-                <p>EST(UTC -05:00)</p>
-                <p>PROGRAMADO para {envio.fechaLlegada} a las {envio.horaLlegada}</p>
+                <p>{data.cities.find(city => city.id === envio.destinoId)?.nombre || 'Desconocido'}</p>
+                <p>{data.countries.find(country => country.id === envio.destinoId)?.shortname || 'Desconocido'}</p>
+                <p>PROGRAMADO para {new Date(envio.fechaFin).toLocaleDateString()}</p>
               </FlightDetails>
             </FlightInfo>
             <TimeInfo>
               <TimeBox>
-                <p>Tiempo transcurrido: {envio.tiempoTranscurrido} min</p>
-                <p>Tiempo estimado de llegada: {envio.tiempoEstimadoLlegada} min</p>
+                <p>Tiempo activo: {envio.tiempoActivo} min</p>
               </TimeBox>
               <ProgressBarContainer>
                 <ProgressBar progress={progreso} />
@@ -159,7 +188,7 @@ const ResumenEnvioPopup = ({ isOpen, onRequestClose, envio }) => {
                 </tr>
               </thead>
               <tbody>
-                {envio.itinerario.map((item, index) => (
+                {envio.itinerario?.map((item, index) => (
                   <tr key={index}>
                     <td>{item.partida}</td>
                     <td>{item.destino}</td>
@@ -167,32 +196,12 @@ const ResumenEnvioPopup = ({ isOpen, onRequestClose, envio }) => {
                     <td>{item.horaLlegada}</td>
                     <td>{item.estado}</td>
                   </tr>
-                ))}
+                )) || <tr><td colSpan="5">No hay itinerarios disponibles.</td></tr>}
               </tbody>
             </Table>
           </div>
           <InfoBlock>
-            <InfoTitle>Cantidad de paquetes: {envio.cantidadPaquetes} paquetes</InfoTitle>
-            <InfoTitle>Información del remitente:</InfoTitle>
-            {envio.remitente && (
-              <>
-                <p>Nombre: {envio.remitente.nombre}</p>
-                <p>Correo electrónico: {envio.remitente.email}</p>
-                <p>Teléfono: {envio.remitente.telefono}</p>
-                <p>Tipo de documento: {envio.remitente.tipoDocumento}</p>
-                <p>Número de documento: {envio.remitente.numeroDocumento}</p>
-              </>
-            )}
-            <InfoTitle>Información del destinatario:</InfoTitle>
-            {envio.destinatario && (
-              <>
-                <p>Nombre: {envio.destinatario.nombre}</p>
-                <p>Correo electrónico: {envio.destinatario.email}</p>
-                <p>Teléfono: {envio.destinatario.telefono}</p>
-                <p>Tipo de documento: {envio.destinatario.tipoDocumento}</p>
-                <p>Número de documento: {envio.destinatario.numeroDocumento}</p>
-              </>
-            )}
+            <InfoTitle>Cantidad de paquetes: {envio.cantidad}</InfoTitle>
           </InfoBlock>
         </Content>
       </ModalContent>

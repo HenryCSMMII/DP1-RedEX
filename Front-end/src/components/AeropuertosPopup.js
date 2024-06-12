@@ -264,7 +264,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
                 {currentItems.map((aeropuerto) => (
                   <tr key={aeropuerto.id}>
                     <td>{aeropuerto.code}</td>
-                    <td>{aeropuerto.country.name}</td>
+                    <td>{aeropuerto.country?.name}</td>
                     <td>{aeropuerto.currentLoad}/{aeropuerto.max_capacity}</td>
                   </tr>
                 ))}
