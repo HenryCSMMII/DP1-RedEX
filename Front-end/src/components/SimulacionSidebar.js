@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const SidebarContainer = styled.div`
@@ -80,7 +80,13 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const SimulacionSidebar = ({ onClose }) => {
+const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
+  const [tipoSimulacion, setTipoSimulacion] = useState('diario');
+
+  const handleStartSimulation = () => {
+    onStartSimulation(tipoSimulacion);
+  };
+
   return (
     <SidebarContainer>
       <Title>Simulación</Title>
@@ -89,15 +95,37 @@ const SimulacionSidebar = ({ onClose }) => {
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
-          <Input type="radio" name="tipoSimulacion" value="semanal" />
+          <Input 
+            type="radio" 
+            name="tipoSimulacion" 
+            value="diario" 
+            checked={tipoSimulacion === 'diario'} 
+            onChange={() => setTipoSimulacion('diario')} 
+          />
+          Diario
+        </Label>
+        <Label>
+          <Input 
+            type="radio" 
+            name="tipoSimulacion" 
+            value="semanal" 
+            checked={tipoSimulacion === 'semanal'} 
+            onChange={() => setTipoSimulacion('semanal')} 
+          />
           Semanal
         </Label>
         <Label>
-          <Input type="radio" name="tipoSimulacion" value="colapso" />
+          <Input 
+            type="radio" 
+            name="tipoSimulacion" 
+            value="colapso" 
+            checked={tipoSimulacion === 'colapso'} 
+            onChange={() => setTipoSimulacion('colapso')} 
+          />
           Al colapso
         </Label>
       </RadioGroup>
-      <Button primary>Iniciar simulación</Button>
+      <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
       <Button danger>Detener simulación</Button>
       <Label>Consola de sucesos</Label>
       <TextArea readOnly />

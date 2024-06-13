@@ -71,6 +71,13 @@ const TextArea = styled.textarea`
   height: 100px;
   resize: none;
   margin-bottom: 20px;
+  box-sizing: border-box; /* Asegura que no se corte el contenido */
+`;
+
+const RadioGroup = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 `;
 
 const SimulacionSidebar = ({ onClose }) => {
@@ -80,7 +87,7 @@ const SimulacionSidebar = ({ onClose }) => {
       <Label>Fecha de inicio</Label>
       <Input type="date" />
       <Label>Tipo de simulación</Label>
-      <div>
+      <RadioGroup>
         <Label>
           <Input type="radio" name="tipoSimulacion" value="semanal" />
           Semanal
@@ -89,7 +96,7 @@ const SimulacionSidebar = ({ onClose }) => {
           <Input type="radio" name="tipoSimulacion" value="colapso" />
           Al colapso
         </Label>
-      </div>
+      </RadioGroup>
       <Button primary>Iniciar simulación</Button>
       <Button danger>Detener simulación</Button>
       <Label>Consola de sucesos</Label>
