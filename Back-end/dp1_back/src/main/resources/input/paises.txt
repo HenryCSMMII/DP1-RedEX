@@ -17,24 +17,14 @@
 17;Checa;CZ;Europe;Praga
 18;Croacia;HR;Europe;Zagreb
 19;Dinamarca;DK;Europe;Copenhague
-20;Eslovaquia;SK;Europe;Bratislava
-21;Eslovenia;SI;Europe;Liubliana
-22;España;ES;Europe;Madrid
-23;Estonia;EE;Europe;Tallin
-24;Finlandia;FI;Europe;Helsinki
-25;Francia;FR;Europe;Paris
-26;Grecia;GR;Europe;Atenas
-27;Holanda;NL;Europe;Amsterdam
-28;Hungría;HU;Europe;Budapest
-29;Irlanda;IE;Europe;Dublin
-30;Islandia;IS;Europe;Reykjavik
-31;Italia;IT;Europe;Roma
-32;Letonia;LV;Europe;Riga
-33;Luxemburgo;LU;Europe;Luxemburgo
-34;Malta;MT;Europe;La Valeta
-35;Noruega;NO;Europe;Oslo
-36;Polonia;PL;Europe;Varsovia
-37;Portugal;PT;Europe;Lisboa
-38;Reino Unido;GB;Europe;Londres
-39;Suecia;SE;Europe;Estocolmo
-40;Suiza;CH;Europe;Berna
+20;Holanda;NL;Europe;Amsterdam
+21;India;IN;Asia;Delhi
+22;Corea del Sur;KR;Asia;Seul
+23;Tailandia;TH;Asia;Bangkok
+24;Emiratos A.U;AE;Asia;Dubai
+25;China;CN;Asia;Beijing
+26;Japon;JP;Asia;Tokyio
+27;Malasia;MY;Asia;Kuala
+28;Singapure;SG;Asia;Singapure
+29;Indonesia;ID;Asia;Jakarta
+30;Filipinas;PH;Asia;Manila
