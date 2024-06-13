@@ -108,9 +108,9 @@ function App() {
     }
   };
 
-  const runAlgorithm = async () => {
+  const runAlgorithm = async (url) => {
     try {
-      const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
+      const flightsResponse = await axios.get(url);
       if (flightsResponse.status !== 500) {
         const flights = flightsResponse.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);
@@ -154,7 +154,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
-      setRetryTimer(setTimeout(runAlgorithm, 999990000));
+      setRetryTimer(setTimeout(() => runAlgorithm(url), 999990000));
     }
   };
 
@@ -319,6 +319,24 @@ function App() {
     }));
   };
 
+  const handleStartSimulation = (tipoSimulacion) => {
+    let url = '';
+    if (tipoSimulacion === 'diario') {
+      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
+    } else if (tipoSimulacion === 'semanal') {
+      url = 'http://localhost:8080/api/algorithm/runSemanal/';
+    } else if (tipoSimulacion === 'colapso') {
+      url = 'http://localhost:8080/api/algorithm/run/';
+    }
+
+    setTiempoSimulacion({
+      dia_actual: new Date().toISOString().split('T')[0],
+      tiempo_actual: '00:00:00'
+    });
+
+    runAlgorithm(url);
+  };
+
   return (
     <AppContainer>
       <Sidebar 
@@ -349,7 +367,7 @@ function App() {
               )}
             </LoadScript>
           </MapContainer>
-          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} />}
+          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
         </MainContent>
         <Legend />
       </Content>

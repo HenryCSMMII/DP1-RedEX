@@ -261,7 +261,7 @@ function App() {
         ) * (180 / Math.PI);
 
         // Ajustar el ángulo si el avión se mueve de derecha a izquierda
-        const movingLeft = originAirport.longitude > destinationAirport.longitude;
+        const movingLeft = parseFloat(originAirport.longitude) > parseFloat(destinationAirport.longitude);
 
         return { lat: currentLat, lng: currentLng, angle, movingLeft };
       }
