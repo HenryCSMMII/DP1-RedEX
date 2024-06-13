@@ -12,7 +12,7 @@ public class CalendarFlightPool {
     public static void generate_calendar() {
 		
 		BD.flights = new ArrayList[2][366];
-		int year=52;
+		int year=54;
 		int day=0;
 		
 		List<Flight> list_flight_temp;
@@ -32,8 +32,8 @@ public class CalendarFlightPool {
 					Flight flight = new Flight(BD.flightsTemp.get(n));
 					
 					c.setTime(date_temp);
-					//if(i==0) c.set(2022, 0, 0);
-					//else c.set(2023, 0, 0);
+					
+					
 					c.add(Calendar.YEAR, year);
 		        	c.add(Calendar.DATE, day);
 		        	//c.add(Calendar.HOUR_OF_DAY, -5);

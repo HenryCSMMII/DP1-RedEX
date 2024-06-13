@@ -70,7 +70,7 @@ public class AlgorithmController {
 	@CrossOrigin
 @RequestMapping(value="runDiaDia/", method = RequestMethod.GET)
 public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation*/){
-    long date_simulation = 1659398400000L;
+    long date_simulation = 1722470400000L;
     int type_simulation = 1;
     int tamanio = 0;
     BD.readAirports();
@@ -204,7 +204,7 @@ public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation
     int year_of_date;
     System.out.println("AÑO DE LA FECHA: 2024");
 
-    if (date_array.getYear() == 2022) {
+    if (date_array.getYear() == 2024) {
         year_of_date = 0;
     } else {
         year_of_date = 1;
@@ -257,7 +257,7 @@ public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation
 @CrossOrigin
 @RequestMapping(value="runSemanal/", method = RequestMethod.GET)
 public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_simulation*/){
-    long date_simulation = 1659398400000L;
+    long date_simulation = 1722470400000L;
     int type_simulation = 7;
     int tamanio = 0;
     BD.readAirports();
@@ -391,7 +391,7 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
     int year_of_date;
     System.out.println("AÑO DE LA FECHA: 2024");
 
-    if (date_array.getYear() == 2022) {
+    if (date_array.getYear() == 2024) {
         year_of_date = 0;
     } else {
         year_of_date = 1;
@@ -603,7 +603,7 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 					int year_of_date;
 					System.out.println("AÑO DE LA FECHA: " + date_array.getYear());
 					
-					if(date_array.getYear() == 2022) { year_of_date = 0; }
+					if(date_array.getYear() == 2024) { year_of_date = 0; }
 					else { year_of_date = 1; }
 					
 
