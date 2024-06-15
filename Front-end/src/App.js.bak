@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, MarkerF, InfoWindow } from '@react-google-maps/api';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -14,6 +14,12 @@ import Modal from 'react-modal';
 import redDot from './images/red-dot.png';
 import planeIcon from './images/plane.png';
 import planeRotado from './images/planeRotado.png';
+import planeRed from './images/planeRed.png';
+import planeRedRotado from './images/planeRedRotado.png';
+import planeYellow from './images/planeYellow.png';
+import planeYellowRotado from './images/planeYellowRotado.png';
+import planeGreen from './images/planeGreen.png';
+import planeGreenRotado from './images/planeGreenRotado.png';
 
 const AppContainer = styled.div`
   display: flex;
@@ -86,6 +92,7 @@ function App() {
   });
   const [retryTimer, setRetryTimer] = useState(null);
   const simulationIntervalRef = useRef(null);
+  const [selectedFlight, setSelectedFlight] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -108,9 +115,9 @@ function App() {
     }
   };
 
-  const runAlgorithm = async () => {
+  const runAlgorithm = async (url) => {
     try {
-      const flightsResponse = await axios.get('http://localhost:8080/api/algorithm/run/');
+      const flightsResponse = await axios.get(url);
       if (flightsResponse.status !== 500) {
         const flights = flightsResponse.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);
@@ -154,7 +161,7 @@ function App() {
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
-      setRetryTimer(setTimeout(runAlgorithm, 999990000));
+      setRetryTimer(setTimeout(() => runAlgorithm(url), 999990000));
     }
   };
 
@@ -269,6 +276,16 @@ function App() {
     return null;
   };
 
+  const getPlaneIcon = (capacityUsed) => {
+    if (capacityUsed >= 0.8) {
+      return { icon: planeRed, rotatedIcon: planeRedRotado };
+    } else if (capacityUsed >= 0.3) {
+      return { icon: planeYellow, rotatedIcon: planeYellowRotado };
+    } else {
+      return { icon: planeGreen, rotatedIcon: planeGreenRotado };
+    }
+  };
+
   const renderMapContent = () => {
     const currentDateTime = new Date(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
@@ -293,21 +310,44 @@ function App() {
         ))}
         {activeFlights.length > 0 && activeFlights.map((flight) => {
           const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+          const capacityUsed = flight.current_load / flight.capacity;
+          const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
+          
           if (planePosition) {
             return (
               <MarkerF
                 key={flight.id}
                 position={{ lat: planePosition.lat, lng: planePosition.lng }}
                 icon={{
-                  url: planePosition.movingLeft ? planeRotado : planeIcon,
-                  scaledSize: new window.google.maps.Size(32, 32),
+                  url: planePosition.movingLeft ? rotatedIcon : icon,
+                  scaledSize: new window.google.maps.Size(10, 10),
                   rotation: planePosition.angle
                 }}
+                onMouseOver={() => setSelectedFlight(flight)}
+                onMouseOut={() => setSelectedFlight(null)}
               />
             );
           }
           return null;
         })}
+        {selectedFlight && selectedFlight.departure_airport && selectedFlight.arrival_airport && (
+          <InfoWindow
+            position={calculatePlanePosition(selectedFlight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual)}
+            onCloseClick={() => setSelectedFlight(null)}
+          >
+            <div>
+              <p>ID: {selectedFlight.id}</p>
+              <p>Departure Date: {selectedFlight.departure_date_time.split('T')[0]}</p>
+              <p>Departure Time: {selectedFlight.departure_date_time.split('T')[1]}</p>
+              <p>Arrival Date: {selectedFlight.arrival_date_time.split('T')[0]}</p>
+              <p>Arrival Time: {selectedFlight.arrival_date_time.split('T')[1]}</p>
+              <p>Departure Airport: {selectedFlight.departure_airport.code}</p>
+              <p>Arrival Airport: {selectedFlight.arrival_airport.code}</p>
+              <p>Max Capacity: {selectedFlight.max_capacity}</p>
+              <p>Used Capacity: {selectedFlight.used_capacity[0]}</p>
+            </div>
+          </InfoWindow>
+        )}
       </>
     );
   };
@@ -317,6 +357,24 @@ function App() {
       ...prevData,
       flights: []
     }));
+  };
+
+  const handleStartSimulation = (tipoSimulacion) => {
+    let url = '';
+    if (tipoSimulacion === 'diario') {
+      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
+    } else if (tipoSimulacion === 'semanal') {
+      url = 'http://localhost:8080/api/algorithm/runSemanal/';
+    } else if (tipoSimulacion === 'colapso') {
+      url = 'http://localhost:8080/api/algorithm/run/';
+    }
+
+    setTiempoSimulacion({
+      dia_actual: new Date().toISOString().split('T')[0],
+      tiempo_actual: '00:00:00'
+    });
+
+    runAlgorithm(url);
   };
 
   return (
@@ -349,7 +407,7 @@ function App() {
               )}
             </LoadScript>
           </MapContainer>
-          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} />}
+          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
         </MainContent>
         <Legend />
       </Content>
