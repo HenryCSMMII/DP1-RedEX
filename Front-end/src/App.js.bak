@@ -431,10 +431,6 @@ function App() {
           />
         </label>
       </InputContainer>
-	  <EnviosPopup isOpen={isEnviosPopupOpen} onRequestClose={handleCloseEnviosPopup} />
-	  <VuelosPopup isOpen={isVuelosPopupOpen} onRequestClose={handleCloseVuelosPopup} />
-      <AeropuertosPopup isOpen={isAeropuertosPopupOpen} onRequestClose={handleCloseAeropuertosPopup} />
-      <ReportesPopup isOpen={isReportesPopupOpen} onRequestClose={handleCloseReportesPopup} />
     </AppContainer>
   );
 }
