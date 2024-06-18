@@ -12,12 +12,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+
+
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONObject;
 //import org.json;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.yaml.snakeyaml.util.ArrayUtils;
 
@@ -28,6 +34,7 @@ import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.FlightSchedule;
 import com.edu.pucp.dp1.redex.model.Shipment;
+import com.edu.pucp.dp1.redex.model.YourRequestData;
 import com.edu.pucp.dp1.redex.utils.CalendarFlightPool;
 import com.edu.pucp.dp1.redex.utils.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -447,8 +454,14 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 
 @CrossOrigin
 @RequestMapping(value="runSemanalv2/", method = RequestMethod.GET)
-public List<Flight> weekly_genetic_algorithm_V2(/*long date_simulation,int type_simulation*/){
+public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData requestData){
     
+    int nHoras = requestData.getnHoras();
+    Date fecha_inicio = requestData.getFecha_inicio();
+      
+
+    int type_simulation = 7;
+
     CalendarFlightPool.generate_calendar();
 
     Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);

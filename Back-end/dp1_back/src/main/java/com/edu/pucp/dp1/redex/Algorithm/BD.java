@@ -27,6 +27,8 @@ public class BD {
     public static Set<String> processedShipments = new HashSet<>();
     public static Set<Integer> processedFlights = new HashSet<>();
 
+    public static int numero_Run_Semanal = 0;
+
     // Constants
     public static final int MIN_INITIAL_CHROMOSOME_LENGTH = 2;
     public static final int MAX_INITIAL_CHROMOSOME_LENGTH = 5;
