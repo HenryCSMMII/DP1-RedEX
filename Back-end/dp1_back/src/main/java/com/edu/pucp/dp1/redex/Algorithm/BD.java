@@ -47,7 +47,7 @@ public class BD {
 
     public static void readContinents() throws IOException {
         continents = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/continentes.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/continentes.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] parts = data.split(";");
@@ -64,7 +64,7 @@ public class BD {
 
     public static void readCountries() throws IOException {
         countries = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/paises.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/paises.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] parts = data.split(";");
@@ -92,7 +92,7 @@ public class BD {
 
     public static void readCities() throws IOException {
         cities = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/ciudades.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/ciudades.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] parts = data.split(",");
@@ -109,7 +109,7 @@ public class BD {
 
     public static void readAirports() {
         airports = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/aeropuertos.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/aeropuertos.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split(",");
@@ -148,7 +148,7 @@ public class BD {
 
     public static void readFlights() {
         flightsTemp = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/itinerario.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/itinerario.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split("-");
@@ -227,7 +227,7 @@ public class BD {
 
     public static void readShipments() {
         shipmentsTemp = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/pack/envios.txt"))) {
+        try (Scanner scanner = new Scanner(new File("Back-end/dp1_back/src/main/resources/input/envios.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split("-");
@@ -299,7 +299,7 @@ public class BD {
         }
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "src/main/resources/input/pack/"))) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "Back-end/dp1_back/src/main/resources/input/pack/"))) {
             for (Path path : stream) {
                 if (!Files.isDirectory(path)) {
                     fileSet.add(path.getFileName().toString());
@@ -311,7 +311,7 @@ public class BD {
         }
         try {
             for (int j = 0; j < pack_files.size(); j++) {
-                File file = new File("src/main/resources/input/pack/" + pack_files.get(j));
+                File file = new File("Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
                 try (Scanner scanner = new Scanner(file)) {
                     while (scanner.hasNextLine()) {
                         String data = scanner.nextLine();
@@ -398,7 +398,7 @@ public class BD {
         limit_date_data = date_simulation + ONE_DAY_MS + ONE_DAY_MS;
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "src/main/resources/input/pack/"))) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "Back-end/dp1_back/src/main/resources/input/pack/"))) {
             for (Path path : stream) {
                 if (!Files.isDirectory(path)) {
                     fileSet.add(path.getFileName().toString());
@@ -410,7 +410,7 @@ public class BD {
         }
         try {
             for (int j = 0; j < pack_files.size(); j++) {
-                File file = new File("src/main/resources/input/pack/" + pack_files.get(j));
+                File file = new File("Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
                 try (Scanner scanner = new Scanner(file)) {
                     while (scanner.hasNextLine()) {
                         String data = scanner.nextLine();
