@@ -68,7 +68,7 @@ public class AlgorithmController {
 	
 	@RequestMapping(value="read3/", method = RequestMethod.GET)
 	public String read3() throws IOException{
-		BD.readShipments();
+		//BD.readShipments();
 		System.out.println("Acabo de leer los envíos");
 		return null;
 	}
