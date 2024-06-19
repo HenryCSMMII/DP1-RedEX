@@ -85,10 +85,13 @@ public class AlgorithmController {
 	}
 
 
+
+
+
 	@CrossOrigin
-@RequestMapping(value="runDiaDia/", method = RequestMethod.GET)
-public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation*/){
-    long date_simulation = 1722470400000L;
+@RequestMapping(value="runDiaDia/", method = RequestMethod.POST)
+public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
+    long date_simulation = requestData.getFecha_inicio().getTime();
     int type_simulation = 1;
     int tamanio = 0;
     BD.readAirports();
@@ -273,10 +276,12 @@ public List<Flight> genetic_algorithm(/*long date_simulation,int type_simulation
     return BD.flightsResolved;
 }
 
+
+
 @CrossOrigin
-@RequestMapping(value="runSemanal/", method = RequestMethod.GET)
-public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_simulation*/){
-    long date_simulation = 1722470400000L;
+@RequestMapping(value="runSemanal/", method = RequestMethod.POST)
+public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData requestData){
+    long date_simulation = requestData.getFecha_inicio().getTime();
     int type_simulation = 7;
     int tamanio = 0;
     BD.readAirports();
