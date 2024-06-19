@@ -84,6 +84,8 @@ const FlightInfoContainer = styled.div`
 
 let globalCounter = 0;
 
+const FETCH_INTERVAL = 60000; // Intervalo de 1 minuto para las llamadas a la API
+
 function App() {
   const [activePopup, setActivePopup] = useState('');
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
@@ -97,6 +99,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const mapRef = useRef(null);
+  const markersRef = useRef([]);
   const [tiempo_simulacion, setTiempoSimulacion] = useState({
     dia_actual: "",
     tiempo_actual: ""
@@ -127,11 +130,17 @@ function App() {
     }
   };
 
-  const runAlgorithm = async (url) => {
+  const runAlgorithm = async (url, payload = null) => {
     try {
-      const flightsResponse = await axios.get(url);
-      if (flightsResponse.status !== 500) {
-        const flights = flightsResponse.data.map(flight => {
+      let response;
+      if (payload) {
+        response = await axios.post(url, payload);
+      } else {
+        response = await axios.get(url);
+      }
+
+      if (response.status !== 500) {
+        const newFlights = response.data.map(flight => {
           const departureDateTime = new Date(flight.departure_date_time);
           const arrivalDateTime = new Date(flight.arrival_date_time);
           return {
@@ -153,7 +162,7 @@ function App() {
           };
         });
 
-        const lastFlightDepartureDateTime = new Date(flightsResponse.data.slice(-1)[0].departure_date_time);
+        const lastFlightDepartureDateTime = new Date(response.data.slice(-1)[0].departure_date_time);
 
         setTiempoSimulacion(prev => ({
           ...prev,
@@ -163,17 +172,17 @@ function App() {
 
         setData(prevData => ({
           ...prevData,
-          flights: flights
+          flights: [...prevData.flights, ...newFlights.filter(flight => !prevData.flights.some(f => f.id === flight.id))]
         }));
-        startSimulationInterval();
-        console.log('Data fetched:', flights);
+        console.log('Data fetched:', newFlights);
+        return newFlights;
       } else {
-        console.error('Internal Server Error', flightsResponse);
+        console.error('Internal Server Error', response);
+        return null;
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setRetryTimer(setTimeout(() => runAlgorithm(url), 999990000));
+      return null;
     }
   };
 
@@ -184,7 +193,7 @@ function App() {
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion(prev => {
         const currentDateTime = new Date(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        const newDateTime = new Date(currentDateTime.getTime() + 30 * 60 * 1000); // Increment by 30 minutes
+        const newDateTime = new Date(currentDateTime.getTime() + 5 * 60 * 1000); // Increment by 5 minutes
 
         const newDate = newDateTime.toISOString().split('T')[0];
         const newTime = newDateTime.toTimeString().split(' ')[0];
@@ -210,10 +219,9 @@ function App() {
   useEffect(() => {
     if (isMapLoaded && !loading) {
       console.log('Map and data loaded, forcing re-render');
-      setIsMapLoaded(false);
-      setTimeout(() => setIsMapLoaded(true), 0);
+      renderMapContent();
     }
-  }, [loading, data.flights]);
+  }, [loading, data.flights, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual]);
 
   useEffect(() => {
     if (tiempo_simulacion.dia_actual && tiempo_simulacion.tiempo_actual) {
@@ -230,6 +238,7 @@ function App() {
     mapRef.current = map;
     setIsMapLoaded(true);
     console.log('Map loaded');
+    renderMapContent(); // Llama a renderMapContent cuando el mapa se carga
   };
 
   const handleOpenPopup = (popupName) => {
@@ -258,9 +267,9 @@ function App() {
 
   const calculatePlanePosition = (flight, dia_actual, tiempo_actual) => {
     const departureDateTime = new Date(`${flight.departure_date}T${flight.departure_time}`);
-    const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
+	    const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
     const currentDateTime = new Date(`${dia_actual}T${tiempo_actual}`);
-    
+
     if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
       const totalDuration = arrivalDateTime - departureDateTime;
       const elapsedDuration = currentDateTime - departureDateTime;
@@ -273,7 +282,7 @@ function App() {
         const currentLat = parseFloat(originAirport.latitude) + progress * (parseFloat(destinationAirport.latitude) - parseFloat(originAirport.latitude));
         const currentLng = parseFloat(originAirport.longitude) + progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
         console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
-        
+
         let angle = Math.atan2(
           destinationAirport.latitude - originAirport.latitude,
           destinationAirport.longitude - originAirport.longitude
@@ -315,42 +324,52 @@ function App() {
       return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
     });
 
-    return (
-      <>
-        {data.airports.length > 0 && data.airports.map((airport) => (
-          <MarkerF
-            key={airport.id}
-            position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
-            title={airport.code}
-            icon={{
-              url: redDot,
-              scaledSize: new window.google.maps.Size(32, 32),
-            }}
-          />
-        ))}
-        {activeFlights.length > 0 && activeFlights.map((flight) => {
-          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-          const capacityUsed = flight.current_load / flight.capacity;
-          const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
-          
-          if (planePosition) {
-            return (
-              <MarkerF
-                key={flight.id}
-                position={{ lat: planePosition.lat, lng: planePosition.lng }}
-                icon={{
-                  url: planePosition.movingLeft ? rotatedIcon : icon,
-                  scaledSize: new window.google.maps.Size(10, 10),
-                  rotation: planePosition.angle
-                }}
-                onClick={() => handleFlightClick(flight)}
-              />
-            );
-          }
-          return null;
-        })}
-      </>
-    );
+    // Clear previous markers
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    // Create new markers
+    const newMarkers = [];
+
+    if (data.airports.length > 0) {
+      data.airports.forEach((airport) => {
+        const marker = new window.google.maps.Marker({
+          position: { lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) },
+          title: airport.code,
+          icon: {
+            url: redDot,
+            scaledSize: new window.google.maps.Size(32, 32),
+          },
+          map: mapRef.current,
+        });
+        newMarkers.push(marker);
+      });
+    }
+
+    if (activeFlights.length > 0) {
+      activeFlights.forEach((flight) => {
+        const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+        const capacityUsed = flight.current_load / flight.capacity;
+        const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
+
+        if (planePosition) {
+          const marker = new window.google.maps.Marker({
+            position: { lat: planePosition.lat, lng: planePosition.lng },
+            icon: {
+              url: planePosition.movingLeft ? rotatedIcon : icon,
+              scaledSize: new window.google.maps.Size(10, 10),
+              rotation: planePosition.angle,
+            },
+            map: mapRef.current,
+          });
+          marker.addListener('click', () => handleFlightClick(flight));
+          newMarkers.push(marker);
+        }
+      });
+    }
+
+    // Update markers reference
+    markersRef.current = newMarkers;
   };
 
   const clearMap = () => {
@@ -360,22 +379,35 @@ function App() {
     }));
   };
 
-  const handleStartSimulation = (tipoSimulacion) => {
+  const handleStartSimulation = (tipoSimulacion, payload = null) => {
     let url = '';
     if (tipoSimulacion === 'diario') {
       url = 'http://localhost:8080/api/algorithm/runDiaDia/';
     } else if (tipoSimulacion === 'semanal') {
-      url = 'http://localhost:8080/api/algorithm/runSemanal/';
+      url = 'http://localhost:8080/api/algorithm/runSemanalv2/';
     } else if (tipoSimulacion === 'colapso') {
       url = 'http://localhost:8080/api/algorithm/run/';
     }
 
+    const fetchAndUpdate = async (initialPayload) => {
+      let continueFetching = true;
+      let currentPayload = initialPayload;
+      while (continueFetching) {
+        const newFlights = await runAlgorithm(url, currentPayload);
+        if (!newFlights || newFlights.length === 0) {
+          continueFetching = false;
+        } else {
+          await new Promise(resolve => setTimeout(resolve, FETCH_INTERVAL)); // Wait for the specified interval
+        }
+      }
+    };
+
     setTiempoSimulacion({
-      dia_actual: new Date().toISOString().split('T')[0],
+      dia_actual: payload ? payload.fecha_inicio : new Date().toISOString().split('T')[0],
       tiempo_actual: '00:00:00'
     });
 
-    runAlgorithm(url);
+    fetchAndUpdate(payload);
   };
 
   return (
@@ -410,25 +442,18 @@ function App() {
           </MapContainer>
           {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
           {flightInfo && (
-			  <FlightInfoContainer>
-				<button onClick={handleCloseFlightInfo}>Cerrar</button>
-				<div>
-				  {flightInfo.id && <p><strong>ID del vuelo:</strong> {flightInfo.id}</p>}
-				 
-				  {flightInfo.origin && <p><strong>Aeropuerto de salida:</strong> {flightInfo.origin}</p>}
-				  {flightInfo.destination && <p><strong>Aeropuerto de llegada:</strong> {flightInfo.destination}</p>}
-				  {(
-					<p><strong>Fecha y hora de salida:</strong> {new Date(flightInfo.departure_date).toLocaleString()}</p>
-				  )}
-				  {(
-					<p><strong>Fecha y hora de llegada:</strong> {new Date(flightInfo.arrival_date).toLocaleString()}</p>
-				  )}
-				  {<p><strong>Capacidad máxima:</strong> {flightInfo.capacity}</p>}
-				 
-				  
-				</div>
-			  </FlightInfoContainer>
-			)}
+            <FlightInfoContainer>
+              <button onClick={handleCloseFlightInfo}>Cerrar</button>
+              <div>
+                {flightInfo.id && <p><strong>ID del vuelo:</strong> {flightInfo.id}</p>}
+                {flightInfo.origin && <p><strong>Aeropuerto de salida:</strong> {flightInfo.origin}</p>}
+                {flightInfo.destination && <p><strong>Aeropuerto de llegada:</strong> {flightInfo.destination}</p>}
+                {<p><strong>Fecha y hora de salida:</strong> {new Date(flightInfo.departure_date + 'T' + flightInfo.departure_time).toLocaleString()}</p>}
+                {<p><strong>Fecha y hora de llegada:</strong> {new Date(flightInfo.arrival_date + 'T' + flightInfo.arrival_time).toLocaleString()}</p>}
+                {<p><strong>Capacidad máxima:</strong> {flightInfo.capacity}</p>}
+              </div>
+            </FlightInfoContainer>
+          )}
         </MainContent>
         <Legend />
       </Content>
