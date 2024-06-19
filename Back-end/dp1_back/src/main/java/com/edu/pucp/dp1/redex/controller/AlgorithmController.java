@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -450,13 +451,26 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
     return BD.flightsResolved;
 }
 
+<<<<<<< Updated upstream
 // @CrossOrigin
 // @RequestMapping(value="runSemanalv2/", method = RequestMethod.GET)
 // public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData requestData){
+=======
+@CrossOrigin
+@RequestMapping(value="runSemanalv2/", method = RequestMethod.POST)
+public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData requestData){
+>>>>>>> Stashed changes
     
 //     int nHoras = requestData.getnHoras();
 //     Date fecha_inicio = requestData.getFecha_inicio();
       
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(fecha_inicio);
+    calendar.add(Calendar.HOUR_OF_DAY, nHoras*BD.numero_Run_Semanal);
+    Date fecha_inicio_intervalo = calendar.getTime();
+    BD.numero_Run_Semanal++;
+    calendar.add(Calendar.HOUR_OF_DAY, nHoras*BD.numero_Run_Semanal);
+    Date fecha_fin_intervalo = calendar.getTime();
 
 //     int type_simulation = 7;
 
@@ -464,9 +478,18 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 
 //     Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
 
+<<<<<<< Updated upstream
 //     for(int i=0; i<100; i++){
 //         BD.shipmentsResolved.add(BD.shipmentsTemp.get(i));
 //     }
+=======
+    for (Shipment shipment : BD.shipmentsTemp) {
+        if (!shipment.getRegisterDateTime().before(fecha_inicio_intervalo) && shipment.getRegisterDateTime().before(fecha_fin_intervalo)) {
+            BD.shipmentsResolved.add(shipment);
+        }
+    }
+    
+>>>>>>> Stashed changes
 
 //     population.initialize(BD.shipmentsResolved);
 //     population.evaluate();
@@ -579,8 +602,14 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 
 //     System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
+<<<<<<< Updated upstream
 //     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
 //     LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation)));
+=======
+    DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
+    LocalDate date_array = LocalDate.parse(formater_date.format(fecha_inicio_intervalo));
+
+>>>>>>> Stashed changes
 
 //     int day_of_year = date_array.getDayOfYear();
 //     System.out.println("DIA DEL AÑO: " + (day_of_year));
@@ -610,6 +639,7 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 //     System.out.println("NUMERO DE ITINERARIOS: " + population.getIndividuals()[0].getList_flight_schedule().size());
 //     System.out.println("NUMERO DE PAQUETES: " + population.getIndividuals()[0].getList_shipments().size());
 
+<<<<<<< Updated upstream
 //     List<Integer> vuelos = new ArrayList<>();
 //     boolean noEncontrado = true;
 //     System.out.println("Tamaño: " + tamanio);
@@ -634,6 +664,32 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 //         }
 //     }
 //     System.out.println("ARREGLO VUELOS\n" + vuelos);
+=======
+    List<Integer> vuelos = new ArrayList<>();
+    boolean noEncontrado = true;
+    System.out.println("Tamaño: " +  BD.shipmentsResolved.size());
+    for (int i = 0; i < BD.shipmentsResolved.size(); i++) {
+        for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
+            Integer idVuelo = flight.getId();
+            for (int j = 0; j < vuelos.size(); j++) {
+                if (vuelos.get(j).equals(idVuelo)) {
+                    BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
+                    noEncontrado = false;
+                    break;
+                }
+            }
+            if (noEncontrado) {
+                BD.flightsResolved.add(flight);
+                BD.flightsResolved.get(vuelos.size()).setShipments(new ArrayList<>());
+                BD.flightsResolved.get(vuelos.size()).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
+                vuelos.add(idVuelo);
+            } else {
+                noEncontrado = true;
+            }
+        }
+    }
+    System.out.println("ARREGLO VUELOS\n" + vuelos);
+>>>>>>> Stashed changes
 
 //     return BD.flightsResolved;
 // }
