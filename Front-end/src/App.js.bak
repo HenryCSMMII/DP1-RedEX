@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { GoogleMap, LoadScript, MarkerF, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
+import { format, addMinutes, parseISO } from 'date-fns';
 import Sidebar from './components/Sidebar';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
@@ -12,8 +13,6 @@ import SimulacionSidebar from './components/SimulacionSidebar';
 import axios from 'axios';
 import Modal from 'react-modal';
 import redDot from './images/red-dot.png';
-import planeIcon from './images/plane.png';
-import planeRotado from './images/planeRotado.png';
 import planeRed from './images/planeRed.png';
 import planeRedRotado from './images/planeRedRotado.png';
 import planeYellow from './images/planeYellow.png';
@@ -61,13 +60,13 @@ const libraries = ['places', 'marker'];
 Modal.setAppElement('#root');
 
 const InputContainer = styled.div`
-  position: absolute; 
-  top: 10px; 
-  left: 10px; 
-  z-index: 1; 
-  background: white; 
-  padding: 10px; 
-  border-radius: 5px; 
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
 
@@ -81,8 +80,6 @@ const FlightInfoContainer = styled.div`
   border-radius: 5px;
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
-
-let globalCounter = 0;
 
 function App() {
   const [activePopup, setActivePopup] = useState('');
@@ -98,10 +95,9 @@ function App() {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const mapRef = useRef(null);
   const [tiempo_simulacion, setTiempoSimulacion] = useState({
-    dia_actual: "",
-    tiempo_actual: ""
+    dia_actual: '',
+    tiempo_actual: '',
   });
-  const [retryTimer, setRetryTimer] = useState(null);
   const simulationIntervalRef = useRef(null);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [flightInfo, setFlightInfo] = useState(null);
@@ -111,14 +107,14 @@ function App() {
       const [airports, continents, countries] = await Promise.all([
         axios.get('http://localhost:8080/airport/'),
         axios.get('http://localhost:8080/continent/'),
-        axios.get('http://localhost:8080/country/')
+        axios.get('http://localhost:8080/country/'),
       ]);
 
-      setData(prevData => ({
+      setData((prevData) => ({
         ...prevData,
         airports: airports.data,
         continents: continents.data,
-        countries: countries.data
+        countries: countries.data,
       }));
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -127,53 +123,49 @@ function App() {
     }
   };
 
-  const runAlgorithm = async (url) => {
+  const runAlgorithm = async (url, fechaInicio) => {
     try {
-      const flightsResponse = await axios.get(url);
-      if (flightsResponse.status !== 500) {
-        const flights = flightsResponse.data.map(flight => {
-          const departureDateTime = new Date(flight.departure_date_time);
-          const arrivalDateTime = new Date(flight.arrival_date_time);
+      const response = await axios.post(url, { fecha_inicio: fechaInicio });
+      const flightsResponse = response.data;
+      if (response.status !== 500) {
+        const flights = flightsResponse.map((flight) => {
+          const departureDateTime = parseISO(flight.departure_date_time);
+          const arrivalDateTime = parseISO(flight.arrival_date_time);
           return {
             id: flight.id,
             activo: 1,
             fecha_creacion: flight.fecha_creacion,
             fecha_modificacion: flight.fecha_modificacion,
-            arrival_time: arrivalDateTime.toTimeString().split(' ')[0],
+            arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
             capacity: flight.max_capacity,
             current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
-            departure_time: departureDateTime.toTimeString().split(' ')[0],
+            departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
             duration: (arrivalDateTime - departureDateTime) / 60000, // duration in minutes
             flight_number: flight.code,
             origin: flight.departure_airport.code,
             estado_vuelo_id: 1,
-            arrival_date: arrivalDateTime.toISOString().split('T')[0],
-            departure_date: departureDateTime.toISOString().split('T')[0],
+            arrival_date: format(arrivalDateTime, 'yyyy-MM-dd'),
+            departure_date: format(departureDateTime, 'yyyy-MM-dd'),
           };
         });
 
-        const lastFlightDepartureDateTime = new Date(flightsResponse.data.slice(-1)[0].departure_date_time);
+        setTiempoSimulacion({
+          dia_actual: fechaInicio,
+          tiempo_actual: '00:00:00',
+        });
 
-        setTiempoSimulacion(prev => ({
-          ...prev,
-          dia_actual: lastFlightDepartureDateTime.toISOString().split('T')[0],
-          tiempo_actual: lastFlightDepartureDateTime.toTimeString().split(' ')[0]
-        }));
-
-        setData(prevData => ({
+        setData((prevData) => ({
           ...prevData,
-          flights: flights
+          flights: flights,
         }));
         startSimulationInterval();
         console.log('Data fetched:', flights);
       } else {
-        console.error('Internal Server Error', flightsResponse);
+        console.error('Internal Server Error', response);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-    } finally {
-      setRetryTimer(setTimeout(() => runAlgorithm(url), 999990000));
     }
   };
 
@@ -182,16 +174,21 @@ function App() {
       clearInterval(simulationIntervalRef.current);
     }
     simulationIntervalRef.current = setInterval(() => {
-      setTiempoSimulacion(prev => {
-        const currentDateTime = new Date(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        const newDateTime = new Date(currentDateTime.getTime() + 30 * 60 * 1000); // Increment by 30 minutes
+      setTiempoSimulacion((prev) => {
+        const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
+        console.log('Current DateTime before increment:', currentDateTime);
+        const newDateTime = addMinutes(currentDateTime, 30);
+        console.log('Current DateTime after increment:', newDateTime);
 
-        const newDate = newDateTime.toISOString().split('T')[0];
-        const newTime = newDateTime.toTimeString().split(' ')[0];
+        const newDate = format(newDateTime, 'yyyy-MM-dd');
+        const newTime = format(newDateTime, 'HH:mm:ss');
+
+        console.log('New Date:', newDate);
+        console.log('New Time:', newTime);
 
         return {
           dia_actual: newDate,
-          tiempo_actual: newTime
+          tiempo_actual: newTime,
         };
       });
     }, 1000);
@@ -252,32 +249,38 @@ function App() {
     const { name, value } = event.target;
     setTiempoSimulacion((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const calculatePlanePosition = (flight, dia_actual, tiempo_actual) => {
-    const departureDateTime = new Date(`${flight.departure_date}T${flight.departure_time}`);
-    const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
-    const currentDateTime = new Date(`${dia_actual}T${tiempo_actual}`);
-    
+    const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+    const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+    const currentDateTime = parseISO(`${dia_actual}T${tiempo_actual}`);
+
     if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
       const totalDuration = arrivalDateTime - departureDateTime;
       const elapsedDuration = currentDateTime - departureDateTime;
       const progress = elapsedDuration / totalDuration;
 
-      const originAirport = data.airports.find(airport => airport.code === flight.origin);
-      const destinationAirport = data.airports.find(airport => airport.code === flight.destination);
+      const originAirport = data.airports.find((airport) => airport.code === flight.origin);
+      const destinationAirport = data.airports.find((airport) => airport.code === flight.destination);
 
       if (originAirport && destinationAirport) {
-        const currentLat = parseFloat(originAirport.latitude) + progress * (parseFloat(destinationAirport.latitude) - parseFloat(originAirport.latitude));
-        const currentLng = parseFloat(originAirport.longitude) + progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
+        const currentLat =
+          parseFloat(originAirport.latitude) +
+          progress * (parseFloat(destinationAirport.latitude) - parseFloat(originAirport.latitude));
+        const currentLng =
+          parseFloat(originAirport.longitude) +
+          progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
         console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
-        
-        let angle = Math.atan2(
-          destinationAirport.latitude - originAirport.latitude,
-          destinationAirport.longitude - originAirport.longitude
-        ) * (180 / Math.PI);
+
+        let angle =
+          Math.atan2(
+            destinationAirport.latitude - originAirport.latitude,
+            destinationAirport.longitude - originAirport.longitude
+          ) *
+          (180 / Math.PI);
 
         // Ajustar el ángulo si el avión se mueve de derecha a izquierda
         const movingLeft = parseFloat(originAirport.longitude) > parseFloat(destinationAirport.longitude);
@@ -307,60 +310,62 @@ function App() {
   };
 
   const renderMapContent = () => {
-    const currentDateTime = new Date(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
+    const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
-    const activeFlights = data.flights.filter(flight => {
-      const departureDateTime = new Date(`${flight.departure_date}T${flight.departure_time}`);
-      const arrivalDateTime = new Date(`${flight.arrival_date}T${flight.arrival_time}`);
+    const activeFlights = data.flights.filter((flight) => {
+      const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+      const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
       return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
     });
 
     return (
       <>
-        {data.airports.length > 0 && data.airports.map((airport) => (
-          <MarkerF
-            key={airport.id}
-            position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
-            title={airport.code}
-            icon={{
-              url: redDot,
-              scaledSize: new window.google.maps.Size(32, 32),
-            }}
-          />
-        ))}
-        {activeFlights.length > 0 && activeFlights.map((flight) => {
-          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-          const capacityUsed = flight.current_load / flight.capacity;
-          const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
-          
-          if (planePosition) {
-            return (
-              <MarkerF
-                key={flight.id}
-                position={{ lat: planePosition.lat, lng: planePosition.lng }}
-                icon={{
-                  url: planePosition.movingLeft ? rotatedIcon : icon,
-                  scaledSize: new window.google.maps.Size(10, 10),
-                  rotation: planePosition.angle
-                }}
-                onClick={() => handleFlightClick(flight)}
-              />
-            );
-          }
-          return null;
-        })}
+        {data.airports.length > 0 &&
+          data.airports.map((airport) => (
+            <MarkerF
+              key={airport.id}
+              position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
+              title={airport.code}
+              icon={{
+                url: redDot,
+                scaledSize: new window.google.maps.Size(32, 32),
+              }}
+            />
+          ))}
+        {activeFlights.length > 0 &&
+          activeFlights.map((flight) => {
+            const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+            const capacityUsed = flight.current_load / flight.capacity;
+            const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
+
+            if (planePosition) {
+              return (
+                <MarkerF
+                  key={flight.id}
+                  position={{ lat: planePosition.lat, lng: planePosition.lng }}
+                  icon={{
+                    url: planePosition.movingLeft ? rotatedIcon : icon,
+                    scaledSize: new window.google.maps.Size(10, 10),
+                    rotation: planePosition.angle,
+                  }}
+                  onClick={() => handleFlightClick(flight)}
+                />
+              );
+            }
+            return null;
+          })}
       </>
     );
   };
 
   const clearMap = () => {
-    setData(prevData => ({
+    setData((prevData) => ({
       ...prevData,
-      flights: []
+      flights: [],
     }));
   };
 
-  const handleStartSimulation = (tipoSimulacion) => {
+  const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
     let url = '';
     if (tipoSimulacion === 'diario') {
       url = 'http://localhost:8080/api/algorithm/runDiaDia/';
@@ -370,18 +375,13 @@ function App() {
       url = 'http://localhost:8080/api/algorithm/run/';
     }
 
-    setTiempoSimulacion({
-      dia_actual: new Date().toISOString().split('T')[0],
-      tiempo_actual: '00:00:00'
-    });
-
-    runAlgorithm(url);
+    runAlgorithm(url, fechaInicio);
   };
 
   return (
     <AppContainer>
-      <Sidebar 
-        onEnviosClick={() => handleOpenPopup('Envios')}
+      <Sidebar
+        onNuevoEnvioClick={handleOpenNuevoEnvio}
         onVuelosClick={() => handleOpenPopup('Vuelos')}
         onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
         onReportesClick={() => handleOpenPopup('Reportes')}
@@ -410,53 +410,43 @@ function App() {
           </MapContainer>
           {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
           {flightInfo && (
-			  <FlightInfoContainer>
-				<button onClick={handleCloseFlightInfo}>Cerrar</button>
-				<div>
-				  {flightInfo.id && <p><strong>ID del vuelo:</strong> {flightInfo.id}</p>}
-				 
-				  {flightInfo.origin && <p><strong>Aeropuerto de salida:</strong> {flightInfo.origin}</p>}
-				  {flightInfo.destination && <p><strong>Aeropuerto de llegada:</strong> {flightInfo.destination}</p>}
-				  {(
-					<p><strong>Fecha y hora de salida:</strong> {new Date(flightInfo.departure_date_time).toLocaleString()}</p>
-				  )}
-				  {(
-					<p><strong>Fecha y hora de llegada:</strong> {new Date(flightInfo.arrival_date_time).toLocaleString()}</p>
-				  )}
-				  {<p><strong>Capacidad máxima:</strong> {flightInfo.capacity}</p>}
-				 
-				  
-				</div>
-			  </FlightInfoContainer>
-			)}
+            <FlightInfoContainer>
+              <button onClick={handleCloseFlightInfo}>Cerrar</button>
+              <div>
+                {flightInfo.id && <p><strong>ID del vuelo:</strong> {flightInfo.id}</p>}
+                {flightInfo.origin && <p><strong>Aeropuerto de salida:</strong> {flightInfo.origin}</p>}
+                {flightInfo.destination && <p><strong>Aeropuerto de llegada:</strong> {flightInfo.destination}</p>}
+                {flightInfo.departure_date && (
+                  <p><strong>Fecha y hora de salida:</strong> {new Date(`${flightInfo.departure_date}T${flightInfo.departure_time}`).toLocaleString()}</p>
+                )}
+                {flightInfo.arrival_date && (
+                  <p><strong>Fecha y hora de llegada:</strong> {new Date(`${flightInfo.arrival_date}T${flightInfo.arrival_time}`).toLocaleString()}</p>
+                )}
+                {<p><strong>Capacidad máxima:</strong> {flightInfo.capacity}</p>}
+              </div>
+            </FlightInfoContainer>
+          )}
         </MainContent>
         <Legend />
       </Content>
       <InputContainer>
         <label>
           Fecha:
-          <input
-            type="date"
-            name="dia_actual"
-            value={tiempo_simulacion.dia_actual}
-            onChange={handleSimulacionChange}
-          />
+          <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
         </label>
         <label>
           Hora:
-          <input
-            type="time"
-            name="tiempo_actual"
-            value={tiempo_simulacion.tiempo_actual}
-            onChange={handleSimulacionChange}
-          />
+          <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
         </label>
       </InputContainer>
-      <EnviosPopup isOpen={activePopup === 'Envios'} onRequestClose={handleClosePopup} onAddEnvio={handleOpenNuevoEnvio} data={data} />
+      <NuevoEnvioPopup
+        isOpen={isNuevoEnvioOpen}
+        onRequestClose={handleCloseNuevoEnvio}
+        data={data}
+      />
       <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
       <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
       <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
-      <NuevoEnvioPopup isOpen={isNuevoEnvioOpen} onRequestClose={handleCloseNuevoEnvio} data={data} />
     </AppContainer>
   );
 }

@@ -82,16 +82,17 @@ const RadioGroup = styled.div`
 
 const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
+  const [fechaInicio, setFechaInicio] = useState('');
 
   const handleStartSimulation = () => {
-    onStartSimulation(tipoSimulacion);
+    onStartSimulation(tipoSimulacion, fechaInicio);
   };
 
   return (
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" />
+      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
