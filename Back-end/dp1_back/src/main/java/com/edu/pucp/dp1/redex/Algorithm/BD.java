@@ -35,13 +35,7 @@ public class BD {
     public static final int MAX_STOPOVERS = 20;
     public static final int POPULATION_NUM_INDIVIDUALS = 10;
     public static final int NUM_GENERATIONS = 10;
-    // public static final int MAX_CAPACITY_FLIGHT_AMERICA = 300;
-    // public static final int MAX_CAPACITY_FLIGHT_EUROPE = 250;
-    // public static final int MAX_CAPACITY_FLIGHT_TWO_CONTINENTS = 350;
-    // public static final int MAX_CAPACITY_STORAGE_AMERICA = 850;
-    // public static final int MAX_CAPACITY_STORAGE_EUROPE = 900;
-    
-	//public static final long EXECUTION_TIME = 900000;
+
     public static final long ONE_DAY_MS = 86400000;
     public static final long SEVEN_DAYS_MS = 604800000;
     public static final int SEMANAL_DAYS = 7;
@@ -124,11 +118,7 @@ public class BD {
                 country.setName(split[3]);
                 country.setAbbrev(split[4]);
                 Continent continent = new Continent();
-                // if (split[5].equals("AS")) {
-                //     airport.setMax_capacity(MAX_CAPACITY_STORAGE_AMERICA);
-                // } else if (split[5].equals("E")) {
-                //     airport.setMax_capacity(MAX_CAPACITY_STORAGE_EUROPE);
-                // }
+
                 continent.setName(split[6]);
                 country.setContinent(continent);
                 airport.setTime_zone(split[7]);
@@ -141,7 +131,6 @@ public class BD {
                 airports.add(airport);
                 countries.add(country);
                 continents.add(continent);
-                //System.out.println(airport.getMax_capacity());
             }
         } catch (Exception e) {
             System.out.println("EXCEPTION AIRPORTS: " + e.getMessage());
@@ -157,24 +146,13 @@ public class BD {
                 Flight flight = new Flight();
                 flight.setCode(data);
 
-                Airport airport_1;// = new Airport();
-                //airport_1.setCode(split[0]);
-                //int index_system = 0;
+                Airport airport_1;
                 for (int i = 0; i < airports.size(); i++) {
 					if(airports.get(i).getCode().equals(split[0])) {
 						airport_1 = airports.get(i);
 						flight.setDeparture_airport(airport_1);
 						break;
 					}
-					// if (airports.get(i).getCode().equals(split[0])) {
-                    //     airport_1.setCountry(airports.get(i).getCountry());
-                    //     airport_1.setTime_zone(airports.get(i).getTime_zone());
-                    //     airport_1.setLatitude(airports.get(i).getLatitude());
-                    //     airport_1.setLongitude(airports.get(i).getLongitude());
-                    // }
-                    // if (airports.get(i).getCode().equals("SPIM")) {
-                    //     index_system = i;
-                    // }
                 }
                 //flight.setDeparture_airport(airport_1);
                 
@@ -186,25 +164,9 @@ public class BD {
 						flight.setArrival_airport(airport_2);
 						break;
 					}
-					// if (airports.get(i).getCode().equals(split[1])) {
-                    //     airport_2.setCountry(airports.get(i).getCountry());
-                    //     airport_2.setTime_zone(airports.get(i).getTime_zone());
-                    //     airport_2.setLatitude(airports.get(i).getLatitude());
-                    //     airport_2.setLongitude(airports.get(i).getLongitude());
-                    // }
                 }
-                //flight.setArrival_airport(airport_2);
                 flight.setMax_capacity(Integer.valueOf(split[4]));
 				
-				// if (airport_1.getCountry().getContinent().getName().equals(airport_2.getCountry().getContinent().getName())) {
-                //     if (airport_1.getCountry().getContinent().getName().equals("America")) {
-                //         flight.setMax_capacity(MAX_CAPACITY_FLIGHT_AMERICA);
-                //     } else if (airport_1.getCountry().getContinent().getName().equals("Europe")) {
-                //         flight.setMax_capacity(MAX_CAPACITY_FLIGHT_EUROPE);
-                //     }
-                // } else {
-                //     flight.setMax_capacity(MAX_CAPACITY_FLIGHT_TWO_CONTINENTS);
-                // }
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
                 Date departure_time = formatter.parse(split[2]);
                 Date arrival_time = formatter.parse(split[3]);
@@ -219,7 +181,6 @@ public class BD {
                 flight.setArrival_date_time(arrival_time);
                 flight.calcEstimatedTime();
                 flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), airports.get(0)) * 60 * 1000);
-                //flight.setState(FlightState.En_Espera);
                 flightsTemp.add(flight);
             }
         } catch (Exception e) {
@@ -316,21 +277,12 @@ public class BD {
                             shipment.setCode(split[0]+"-"+split[1]);
                             
 							Airport departure;// = new Airport();
-                            //departure.setCode(split[0].substring(0, 4));
                             for (int i = 0; i < airports.size(); i++) {
 								if(airports.get(i).getCode().equals(split[0])){
 									departure = airports.get(i);
 									shipment.setDeparturAirport(departure);
-									//System.out.println(departure.getCode() + " " + departure.getCountry().getName());
 									break;
 								}
-								// if (airports.get(i).getCode().equals(split[0].substring(0, 4))) {
-                                //     departure.setCountry(airports.get(i).getCountry());
-                                //     departure.setTime_zone(airports.get(i).getTime_zone());
-                                //     departure.setId(airports.get(i).getId());
-                                //     departure.setLatitude(airports.get(i).getLatitude());
-                                //     departure.setLongitude(airports.get(i).getLongitude());
-                                // }
                             }
                             //shipment.setDeparturAirport(departure);
                             shipment.setRegisterDateTime(register_date_time);
@@ -343,15 +295,7 @@ public class BD {
 									shipment.setArrivalAirport(arrival);
 									break;
 								}
-								// if (airports.get(i).getCode().equals(split[3].substring(0, 4))) {
-                                //     arrival.setCountry(airports.get(i).getCountry());
-                                //     arrival.setTime_zone(airports.get(i).getTime_zone());
-                                //     arrival.setId(airports.get(i).getId());
-                                //     arrival.setLatitude(airports.get(i).getLatitude());
-                                //     arrival.setLongitude(airports.get(i).getLongitude());
-                                // }
                             }
-                            //shipment.setArrivalAirport(arrival);
                             
 							shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
 
@@ -415,25 +359,16 @@ public class BD {
                             shipment.setCode(split[0]+"-"+split[1]);
                             
 							Airport departure = new Airport();
-                            //departure.setCode(split[0].substring(0, 4));
                             for (int i = 0; i < airports.size(); i++) {
 								if(airports.get(i).getCode().equals(split[0])){
 									departure = airports.get(i);
 									shipment.setDeparturAirport(departure);
 									break;
 								}
-								// if (airports.get(i).getCode().equals(split[0].substring(0, 4))) {
-                                //     departure.setCountry(airports.get(i).getCountry());
-                                //     departure.setTime_zone(airports.get(i).getTime_zone());
-                                //     departure.setId(airports.get(i).getId());
-                                //     departure.setLatitude(airports.get(i).getLatitude());
-                                //     departure.setLongitude(airports.get(i).getLongitude());
-                                // }
                             }
-                            //shipment.setDeparturAirport(departure);
                             shipment.setRegisterDateTime(register_date_time);
                             
-							Airport arrival;// = new Airport();
+							Airport arrival;
                             //arrival.setCode(split[3].substring(0, 4));
                             for (int i = 0; i < airports.size(); i++) {
 								if(airports.get(i).getCode().equals(split[4].substring(0, 4))){
@@ -441,13 +376,6 @@ public class BD {
 									shipment.setArrivalAirport(arrival);
 									break;
 								}
-								// if (airports.get(i).getCode().equals(split[3].substring(0, 4))) {
-                                //     arrival.setCountry(airports.get(i).getCountry());
-                                //     arrival.setTime_zone(airports.get(i).getTime_zone());
-                                //     arrival.setId(airports.get(i).getId());
-                                //     arrival.setLatitude(airports.get(i).getLatitude());
-                                //     arrival.setLongitude(airports.get(i).getLongitude());
-                                // }
                             }
                             //shipment.setArrivalAirport(arrival);
                             

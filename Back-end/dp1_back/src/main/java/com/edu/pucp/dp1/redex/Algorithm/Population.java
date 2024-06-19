@@ -54,8 +54,6 @@ public class Population {
 		
 	}
 
-	
-	// ---------------------- PARENT SELECTION ---------------------- //
 	public Individual[] selection_parents_roulette(Population population){
 		Individual[] parents = new Individual[2];
 		int indexP1 = 0;
@@ -105,10 +103,6 @@ public class Population {
 		
 		parents[0] = population.getIndividuals()[indexP1];
 		parents[1] = population.getIndividuals()[indexP2];
-		
-		// ----------- POR SI ACASO ----------- //
-		//parents[0] = new Individual(population.getIndividuals()[indexP1]);
-		//parents[1] = new Individual(population.getIndividuals()[indexP2]);
 		
 		return parents;
 	}
@@ -168,10 +162,6 @@ public class Population {
 		
 		parents[0] = population.getIndividuals()[indexP1];
 		parents[1] = population.getIndividuals()[indexP2];
-		
-		// ----------- POR SI ACASO ----------- //
-		//parents[0] = new Individual(population.getIndividuals()[indexP1]);
-		//parents[1] = new Individual(population.getIndividuals()[indexP2]);
 		
 		return parents;
 	}
