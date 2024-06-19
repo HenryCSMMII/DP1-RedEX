@@ -272,12 +272,13 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
     tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
 	if(tamanio==0){
 		System.out.println("No se encontraron nuevos envíos");
-		return BD.flightsResolved;
+		return BD.flightsResolved;  
 	}
     CalendarFlightPool.generate_calendar();
 
     Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
 
+    //11111111111111111111111111111111111111111111111111111111111111111111111111
     population.initialize(BD.shipmentsTemp);
     population.evaluate();
 
@@ -288,12 +289,12 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
         System.out.println("Generación número: " + num_generations);
 
         List<Individual[]> new_parents = new ArrayList<>();
-
+        //22222222222222222222222222222222222222222222222222222222222222222222222222222222
         for (int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS / 2; i++) {
             Individual[] new_parents_group = population.selection_parents_roulette(population);
             new_parents.add(new_parents_group);
         }
-
+        //3333333333333333333333333333333333333333333333333333333333333333333333333333333333
         List<Individual> new_offspring = new ArrayList<>();
         for (int i = 0; i < new_parents.size(); i++) {
             Individual[] children = new_parents.get(i)[0].crossover_uniform(new_parents.get(i)[1]);
@@ -304,7 +305,7 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
         for (int i = 0; i < new_offspring.size(); i++) {
             new_offspring.get(i).mutation1(population);
         }
-
+        //4444444444444444444444444444444444444444444444444444444444444444444444444444444444
         Population population_temp = new Population(BD.POPULATION_NUM_INDIVIDUALS * 2);
 
         for (int i = 0, k = 0; i < new_parents.size(); i++, k += 2) {
@@ -324,7 +325,7 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
             System.out.println("Fitness de individuo " + i + ": " + list_fitness[i]);
         }
         System.out.println("==========================");
-
+        
         double[] list_fitness_temp = Arrays.copyOf(list_fitness, list_fitness.length);
         Arrays.sort(list_fitness_temp);
 
