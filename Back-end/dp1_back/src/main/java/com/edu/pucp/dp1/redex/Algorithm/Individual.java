@@ -54,18 +54,14 @@ public class Individual {
 
 	public double getFitness(int index) {//indice del inidividuo
 		if(true) {
-			//long suma = 0;
-			//for(int i=0;i<this.list_flight_schedule.size();i++) {
-			//	suma+= this.list_flight_schedule.get(i).getEstimated_time();
-			//}
+
 			List<Double> disponibilidad;
 			disponibilidad = new ArrayList<Double>();
 
-			for(int j=0;j<this.list_flight_schedule.size();j++) { // calculariamos que tan llenos estan los vuelos %
+			for(int j=0;j<this.list_flight_schedule.size();j++) {
 				for(int k=0;k<this.list_flight_schedule.get(j).getFlights().size();k++) {
 					if(this.list_flight_schedule.get(j).getFlights().get(k).getUsed_capacity()[index] > this.list_flight_schedule.get(j).getFlights().get(k).getMax_capacity()) {
-						this.fitness = 0.000001; //Peor fitness
-						//System.out.println("NO HAY SOLUCION");
+						this.fitness = 0.000001;
 						return this.fitness;
 					}
 					else {
@@ -116,9 +112,7 @@ public class Individual {
 
 	// ----------- POR SI ACASO ----------- //
 	public Individual(Individual individual) {
-		//this.list_shipments = new ArrayList<Shipment>(individual.list_shipments);
-		//this.list_flight_schedule = new ArrayList<FlightSchedule>(individual.list_flight_schedule);
-		
+
 		this.list_shipments = new ArrayList<Shipment>();
 		this.list_flight_schedule = new ArrayList<FlightSchedule>();
 		

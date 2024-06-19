@@ -51,42 +51,6 @@ public class AlgorithmController {
 		System.out.println("Acabo de leer continentes y paises");
 		return null;
 	}
-	
-	@RequestMapping(value="run2/", method = RequestMethod.GET)
-	public List<Flight> run2() throws IOException{
-		BD.readAirports();
-		BD.readFlights();
-		return BD.flightsTemp;
-	}
-	
-	@RequestMapping(value="read2/", method = RequestMethod.GET)
-	public String read2() throws IOException{
-		BD.readFlights();
-		System.out.println("Acabo de leer los vuelos");
-		return null;
-	}
-	
-	@RequestMapping(value="read3/", method = RequestMethod.POST)
-	public String read3(@RequestBody YourRequestData requestData) throws IOException{
-
-        Date fecha_inicio = requestData.getFecha_inicio();
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(fecha_inicio);
-
-		long date_simulation = 1722470400000L;
-        int type_simulation = 7;
-        int tamanio = 0;
-        BD.readAirports();
-        BD.readFlights();
-        tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
-		System.out.println("Acabo de leer los envíos");
-		return null;
-	}
-
-
-
-
 
 	@CrossOrigin
 @RequestMapping(value="runDiaDia/", method = RequestMethod.POST)
@@ -97,7 +61,6 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     BD.readAirports();
     BD.readFlights();
     tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
-    //CONSIDERAR EL CASO CUANDO SOLO EXISTE UN ARCHIVO EN PACK
 	if(tamanio==0){
 		System.out.println("No se encontraron nuevos envíos");
 		return BD.flightsResolved;
@@ -109,22 +72,21 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     population.initialize(BD.shipmentsTemp);
     population.evaluate();
 
-    int num_generations = 0;
-    int index_best_individual = 0;
+    int numGen = 0;
 
-    while (num_generations != BD.NUM_GENERATIONS) {
-        System.out.println("Generación número: " + num_generations);
+    while (numGen != BD.NUM_GENERATIONS) {
+        System.out.println("Generación número: " + numGen);
 
-        List<Individual[]> new_parents = new ArrayList<>();
+        List<Individual[]> newGenerations = new ArrayList<>();
 
         for (int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS / 2; i++) {
-            Individual[] new_parents_group = population.selection_parents_roulette(population);
-            new_parents.add(new_parents_group);
+            Individual[] newGeneration = population.selectionRoullete(population);
+            newGenerations.add(newGeneration);
         }
 
         List<Individual> new_offspring = new ArrayList<>();
-        for (int i = 0; i < new_parents.size(); i++) {
-            Individual[] children = new_parents.get(i)[0].crossover_uniform(new_parents.get(i)[1]);
+        for (int i = 0; i < newGenerations.size(); i++) {
+            Individual[] children = newGenerations.get(i)[0].crossover_uniform(newGenerations.get(i)[1]);
             new_offspring.add(children[0]);
             new_offspring.add(children[1]);
         }
@@ -135,10 +97,10 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
 
         Population population_temp = new Population(BD.POPULATION_NUM_INDIVIDUALS * 2);
 
-        for (int i = 0, k = 0; i < new_parents.size(); i++, k += 2) {
+        for (int i = 0, k = 0; i < newGenerations.size(); i++, k += 2) {
             System.out.println("i: " + i + " k: " + k);
-            population_temp.getIndividuals()[k] = new_parents.get(i)[0];
-            population_temp.getIndividuals()[k + 1] = new_parents.get(i)[1];
+            population_temp.getIndividuals()[k] = newGenerations.get(i)[0];
+            population_temp.getIndividuals()[k + 1] = newGenerations.get(i)[1];
         }
 
         for (int i = 0; i < new_offspring.size(); i++) {
@@ -197,7 +159,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
             }
         }
 
-        num_generations += 1;
+        numGen += 1;
     }
 
     Individual best_individual = population.getIndividuals()[0];
@@ -299,22 +261,21 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
     population.initialize(BD.shipmentsTemp);
     population.evaluate();
 
-    int num_generations = 0;
-    int index_best_individual = 0;
+    int numGen = 0;
 
-    while (num_generations != BD.NUM_GENERATIONS) {
-        System.out.println("Generación número: " + num_generations);
+    while (numGen != BD.NUM_GENERATIONS) {
+        System.out.println("Generación número: " + numGen);
 
-        List<Individual[]> new_parents = new ArrayList<>();
+        List<Individual[]> newGenerations = new ArrayList<>();
         //22222222222222222222222222222222222222222222222222222222222222222222222222222222
         for (int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS / 2; i++) {
-            Individual[] new_parents_group = population.selection_parents_roulette(population);
-            new_parents.add(new_parents_group);
+            Individual[] newGeneration = population.selectionRoullete(population);
+            newGenerations.add(newGeneration);
         }
         //3333333333333333333333333333333333333333333333333333333333333333333333333333333333
         List<Individual> new_offspring = new ArrayList<>();
-        for (int i = 0; i < new_parents.size(); i++) {
-            Individual[] children = new_parents.get(i)[0].crossover_uniform(new_parents.get(i)[1]);
+        for (int i = 0; i < newGenerations.size(); i++) {
+            Individual[] children = newGenerations.get(i)[0].crossover_uniform(newGenerations.get(i)[1]);
             new_offspring.add(children[0]);
             new_offspring.add(children[1]);
         }
@@ -325,10 +286,10 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
         //4444444444444444444444444444444444444444444444444444444444444444444444444444444444
         Population population_temp = new Population(BD.POPULATION_NUM_INDIVIDUALS * 2);
 
-        for (int i = 0, k = 0; i < new_parents.size(); i++, k += 2) {
+        for (int i = 0, k = 0; i < newGenerations.size(); i++, k += 2) {
             System.out.println("i: " + i + " k: " + k);
-            population_temp.getIndividuals()[k] = new_parents.get(i)[0];
-            population_temp.getIndividuals()[k + 1] = new_parents.get(i)[1];
+            population_temp.getIndividuals()[k] = newGenerations.get(i)[0];
+            population_temp.getIndividuals()[k + 1] = newGenerations.get(i)[1];
         }
 
         for (int i = 0; i < new_offspring.size(); i++) {
@@ -387,7 +348,7 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
             }
         }
 
-        num_generations += 1;
+        numGen += 1;
     }
 
     Individual best_individual = population.getIndividuals()[0];
@@ -514,7 +475,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
         List<Individual[]> new_parents = new ArrayList<>();
 
         for (int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS / 2; i++) {
-            Individual[] new_parents_group = population.selection_parents_roulette(population);
+            Individual[] new_parents_group = population.selectionRoullete(population);
             new_parents.add(new_parents_group);
         }
 
@@ -715,7 +676,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
 							//System.out.println("============== ROULETTE ==============");
 							
 							//Individual[] new_parents_group = population.selection_parents_tournament(population, 4);
-							Individual[] new_parents_group = population.selection_parents_roulette(population);
+							Individual[] new_parents_group = population.selectionRoullete(population);
 							new_parents.add(new_parents_group);
 						}
 						
@@ -800,8 +761,6 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
 								}
 							}
 						}
-			
-						//los guardo en una nueva poblacion // los 10 mejores descendientes
 			 
 						num_generations+=1;
 			
@@ -892,63 +851,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
         System.out.println("NUMERO DE ITINERARIOS: "+population.getIndividuals()[0].getList_flight_schedule().size());
         System.out.println("NUMERO DE PAQUETES: "+population.getIndividuals()[0].getList_shipments().size());
         
-        //return BD.flights[year_of_date][day_of_year - 1];
         return population.getIndividuals()[0].getList_flight_schedule();
     }
-	
-
-
-	/*
-	@RequestMapping(value="test/", method = RequestMethod.GET)
-	public List<Flight> test(){
-		BD.readAirports();
-		BD.readFlights();
-		CalendarFlightPool.generate_calendar();
-		
-		//System.out.println("WENAS: "+ GeneralData.list_pool_fligths[1][20].getArrival_date_time().getTime());
-		
-		return BD.flights[0][213];
-	}
-	
-	
-	
-	@RequestMapping(value="read_files/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
-	public void read_files(@PathVariable("date_simulation") long date_simulation, 
-							@PathVariable("type_simulation") int type_simulation){
-		BD.readAirports();
-		BD.readFlights();
-		//BD.read_list_shipment();
-		BD.read_list_shipment_with_date(date_simulation, type_simulation);
-		CalendarFlightPool.generate_calendar();
-		return;
-	}
-	
-	// @CrossOrigin
-	// @RequestMapping(value="get_simulation_flights/{date_simulation}/{type_simulation}", method = RequestMethod.GET)
-	// public List<ObjectNode> get_simulation_fligths(@PathVariable("date_simulation") long date_simulation, 
-	// 												@PathVariable("type_simulation") int type_simulation) throws JsonProcessingException{
-		
-	// 	// Tiempo de ejecucion del algoritmo => TA = 5min
-	// 	// Salto de cada ejecucion => SA = 10min
-	// 	// Proporcionalidad de tiempo => PT
-	// 	// PT = 1 -> Operaciones diarias
-	// 	// PT = algo que debemos descubrir -> Simulacion 5 dias
-	// 	// PT = algo que debemos descubrir -> Simulacion colapso
-		
-	// 	BD.read_list_airports();
-	// 	BD.read_list_flights();
-		
-	// 	// List<Flight> list_flights = this.genetic_algorithm(date_simulation, type_simulation);
-			
-	// 	// List<ObjectNode> result_api = JsonFormat.convertFlightToJSON(list_flights);
-
-	// 	//ObjectMapper objectMapper = new ObjectMapper();
-	// 	//objectMapper.readValues(result_api, JSONArray.class)
-		
-	// 	System.out.println("ESTA ES LA FECHA EN MS POR PARAMETRO: " + date_simulation);
-		
-		return result_api;
-	}
-	*/
 	
 }
