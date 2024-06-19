@@ -27,6 +27,8 @@ public class BD {
     public static Set<String> processedShipments = new HashSet<>();
     public static Set<Integer> processedFlights = new HashSet<>();
 
+    public static int numero_Run_Semanal = 0;
+
     // Constants
     public static final int MIN_INITIAL_CHROMOSOME_LENGTH = 2;
     public static final int MAX_INITIAL_CHROMOSOME_LENGTH = 5;
@@ -225,9 +227,9 @@ public class BD {
         }
     }
 
-    public static void readShipments() {
+    public static void readShipments(String filePath) {
         shipmentsTemp = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/pack/envios.txt"))) {
+        try (Scanner scanner = new Scanner(new File(filePath))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split("-");
@@ -236,42 +238,28 @@ public class BD {
 				shipment.setId(shipmentsTemp.size());
                 shipment.setCode(split[0]);
                 
-				Airport departure;// = new Airport();
-                //departure.setCode(split[0].substring(0, 4));
+				Airport departure;
                 for (int i = 0; i < airports.size(); i++) {
 					if(airports.get(i).getCode().equals(split[0])){
 						departure = airports.get(i);
 						shipment.setDeparturAirport(departure);
 						break;
 					}	
-					// if (airports.get(i).getCode().equals(split[0].substring(0, 4))) {
-                    //     departure.setCountry(airports.get(i).getCountry());
-                    //     departure.setId(airports.get(i).getId());
-                    // }
                 }
-                //shipment.setDeparturAirport(departure);
                 
 		        String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
-		        
 		        SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 		        Date register_date_time = formatter_date.parse(dateTime);
-		        
 				shipment.setRegisterDateTime(register_date_time);
                 
-				Airport arrival;// = new Airport();
-                //arrival.setCode(split[3].substring(0, 4));
+				Airport arrival;
                 for (int i = 0; i < airports.size(); i++) {
 					if(airports.get(i).getCode().equals(split[4].substring(0, 4))){
 						arrival = airports.get(i);
 						shipment.setArrivalAirport(arrival);
 						break;
 					}
-					// if (airports.get(i).getCode().equals(split[3].substring(0, 4))) {
-                    //     arrival.setCountry(airports.get(i).getCountry());
-                    //     arrival.setId(airports.get(i).getId());
-                    // }
                 }
-                //shipment.setArrivalAirport(arrival);
                 shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
                 shipment.setDepartureTime(null);
                 shipment.setArrivalTime(null);
