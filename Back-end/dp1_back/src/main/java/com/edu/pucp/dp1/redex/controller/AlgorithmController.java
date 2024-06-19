@@ -66,12 +66,24 @@ public class AlgorithmController {
 		return null;
 	}
 	
-	@RequestMapping(value="read3/", method = RequestMethod.GET)
-	public String read3() throws IOException{
-		//BD.readShipments();
+	@RequestMapping(value="read3/", method = RequestMethod.POST)
+	public String read3(@RequestBody YourRequestData requestData) throws IOException{
+
+        Date fecha_inicio = requestData.getFecha_inicio();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fecha_inicio);
+
+		long date_simulation = 1722470400000L;
+        int type_simulation = 7;
+        int tamanio = 0;
+        BD.readAirports();
+        BD.readFlights();
+        tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
 		System.out.println("Acabo de leer los envíos");
 		return null;
 	}
+
 
 	@CrossOrigin
 @RequestMapping(value="runDiaDia/", method = RequestMethod.GET)
@@ -325,7 +337,7 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
             System.out.println("Fitness de individuo " + i + ": " + list_fitness[i]);
         }
         System.out.println("==========================");
-        
+
         double[] list_fitness_temp = Arrays.copyOf(list_fitness, list_fitness.length);
         Arrays.sort(list_fitness_temp);
 
@@ -453,9 +465,17 @@ public List<Flight> weekly_genetic_algorithm(/*long date_simulation,int type_sim
 @RequestMapping(value="runSemanalv2/", method = RequestMethod.POST)
 public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData requestData){
     
-     int nHoras = requestData.getnHoras();
-     Date fecha_inicio = requestData.getFecha_inicio();
-      
+    
+    int type_simulation = 7;
+    int nHoras = requestData.getnHoras();
+    Date fecha_inicio = requestData.getFecha_inicio();
+    
+    if(BD.numero_Run_Semanal==0){
+        BD.readAirports();
+        BD.readFlights();
+        BD.read_list_shipment_with_date(fecha_inicio.getTime(), type_simulation);
+    }
+
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(fecha_inicio);
     calendar.add(Calendar.HOUR_OF_DAY, nHoras*BD.numero_Run_Semanal);
@@ -464,7 +484,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
     calendar.add(Calendar.HOUR_OF_DAY, nHoras*BD.numero_Run_Semanal);
     Date fecha_fin_intervalo = calendar.getTime();
 
-     int type_simulation = 7;
+     
 
      CalendarFlightPool.generate_calendar();
 
@@ -589,7 +609,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
     System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
-    LocalDate date_array = LocalDate.parse(formater_date.format(fecha_inicio_intervalo));
+    LocalDate date_array = LocalDate.parse(formater_date.format(fecha_inicio));
 
 
     int day_of_year = date_array.getDayOfYear();
