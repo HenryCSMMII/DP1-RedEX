@@ -71,7 +71,7 @@ const TextArea = styled.textarea`
   height: 100px;
   resize: none;
   margin-bottom: 20px;
-  box-sizing: border-box;
+  box-sizing: border-box; /* Asegura que no se corte el contenido */
 `;
 
 const RadioGroup = styled.div`
@@ -80,29 +80,18 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const N_HORAS = 5;
-
 const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
-  const [fechaInicio, setFechaInicio] = useState('');
 
   const handleStartSimulation = () => {
-    if (tipoSimulacion === 'semanal') {
-      const payload = {
-        nHoras: N_HORAS.toString(),
-        fecha_inicio: fechaInicio,
-      };
-      onStartSimulation(tipoSimulacion, payload);
-    } else {
-      onStartSimulation(tipoSimulacion);
-    }
+    onStartSimulation(tipoSimulacion);
   };
 
   return (
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+      <Input type="date" />
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
