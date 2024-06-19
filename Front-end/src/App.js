@@ -106,9 +106,9 @@ function App() {
   const fetchData = async () => {
     try {
       const [airports, continents, countries] = await Promise.all([
-        axios.get('http://localhost:8080/airport/'),
-        axios.get('http://localhost:8080/continent/'),
-        axios.get('http://localhost:8080/country/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/airport/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/continent/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/country/'),
       ]);
 
       setData((prevData) => ({
@@ -373,11 +373,11 @@ function App() {
   const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
     let url = '';
     if (tipoSimulacion === 'diario') {
-      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
+      url = 'http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/runDiaDia/';
     } else if (tipoSimulacion === 'semanal') {
-      url = 'http://localhost:8080/api/algorithm/runSemanal/';
+      url = 'http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/runSemanal/';
     } else if (tipoSimulacion === 'colapso') {
-      url = 'http://localhost:8080/api/algorithm/run/';
+      url = 'http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/run/';
     }
 
     setTipoSimulacion(tipoSimulacion);

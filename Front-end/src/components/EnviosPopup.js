@@ -186,7 +186,7 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
   useEffect(() => {
     const fetchEnvios = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/shipment/');
+        const response = await axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/');
         setEnvios(response.data);
         setFilteredEnvios(response.data);
       } catch (error) {

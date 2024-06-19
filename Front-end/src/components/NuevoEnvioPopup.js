@@ -138,7 +138,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
       // Verificar el payload de envío
       console.log("Shipment payload:", shipmentPayload);
 
-      const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
+      const shipmentResponse = await axios.post('http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/create/', shipmentPayload);
       
       alert('Envio creado exitosamente');
       onRequestClose();
@@ -146,7 +146,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
       // Reiniciar la simulación con la nueva información
       if (tipoSimulacion) {
         const currentSimulationTime = `${tiempoSimulacion.dia_actual}T${tiempoSimulacion.tiempo_actual}`;
-        await runAlgorithm(`http://localhost:8080/api/algorithm/run${tipoSimulacion.charAt(0).toUpperCase() + tipoSimulacion.slice(1)}/`, currentSimulationTime);
+        await runAlgorithm(`http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/run${tipoSimulacion.charAt(0).toUpperCase() + tipoSimulacion.slice(1)}/`, currentSimulationTime);
       }
     } catch (error) {
       console.error('Error creating envio:', error);
