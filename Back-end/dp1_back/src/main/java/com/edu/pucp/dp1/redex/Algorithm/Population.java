@@ -21,40 +21,40 @@ public class Population {
 		this.individuals = individuals;
 	}
 	
-	public void initialize(List<Shipment> list_of_shipments_original) {
+	public void initialize(List<Shipment> originalList) {
 		
-		System.out.println(list_of_shipments_original.size());
+		System.out.println(originalList.size());
 		for(int i=0; i<this.individuals.length;i++) {
 			
-			List<Shipment> list_of_shipments = new ArrayList<Shipment>();
-			for(int k=0; k<list_of_shipments_original.size();k++) {
-				list_of_shipments.add(new Shipment(list_of_shipments_original.get(k)));
+			List<Shipment> shipments = new ArrayList<Shipment>();
+			for(int k=0; k<originalList.size();k++) {
+				shipments.add(new Shipment(originalList.get(k)));
 			}
 			this.individuals[i] = new Individual();
-			this.individuals[i].setList_shipments(list_of_shipments);
+			this.individuals[i].setList_shipments(shipments);
 			this.individuals[i].initialize();
 		}
 		
 	}
 
 
-	public void initializePEDRO(List<Shipment> list_of_shipments_original) {
+	public void initializePEDRO(List<Shipment> originalList) {
 		
-		System.out.println(list_of_shipments_original.size());
+		System.out.println(originalList.size());
 		for(int i=0; i<this.individuals.length;i++) {
 			
-			List<Shipment> list_of_shipments = new ArrayList<Shipment>();
-			for(int k=0; k<list_of_shipments_original.size();k++) {
-				list_of_shipments.add(new Shipment(list_of_shipments_original.get(k)));
+			List<Shipment> shipments = new ArrayList<Shipment>();
+			for(int k=0; k<originalList.size();k++) {
+				shipments.add(new Shipment(originalList.get(k)));
 			}
 			this.individuals[i] = new Individual();
-			this.individuals[i].setList_shipments(list_of_shipments);
+			this.individuals[i].setList_shipments(shipments);
 			this.individuals[i].initialize();
 		}
 		
 	}
 
-	public Individual[] selection_parents_roulette(Population population){
+	public Individual[] selectionRoullete(Population population){
 		Individual[] parents = new Individual[2];
 		int indexP1 = 0;
 		int indexP2 = 0;
