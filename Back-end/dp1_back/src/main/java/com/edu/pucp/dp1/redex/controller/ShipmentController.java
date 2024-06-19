@@ -1,6 +1,11 @@
 package com.edu.pucp.dp1.redex.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.edu.pucp.dp1.redex.Algorithm.BD;
@@ -10,10 +15,7 @@ import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.model.State;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,28 +39,29 @@ public class ShipmentController {
     }
 
     @PostMapping("/read")
-    public String readShipments(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return "File is empty";
-        }
-        
+    public List<ShipmentDTO> readShipments(@RequestParam("file") MultipartFile file) {
         try {
-            // Save the file to a temporary location
-            Path tempDir = Files.createTempDirectory("");
-            Path tempFile = tempDir.resolve(file.getOriginalFilename());
-            Files.copy(file.getInputStream(), tempFile);
+            File convFile = new File(file.getOriginalFilename());
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
             
-            // Read the shipments from the file
-            BD.readShipments(tempFile.toString());
+            BD.readShipments(convFile.getAbsolutePath());
             
-            // Delete the temporary file
-            Files.delete(tempFile);
-            Files.delete(tempDir);
-            
-            return "Envíos leídos exitosamente.";
-        } catch (IOException e) {
+            return BD.shipmentsTemp.stream()
+                    .map(shipment -> new ShipmentDTO(
+                            shipment.getId(),
+                            shipment.getPackageQuantity(),
+                            shipment.getDepartureAirport().getId(),
+                            shipment.getArrivalAirport().getId(),
+                            shipment.getState() != null ? shipment.getState().name() : null,
+                            shipment.getDepartureTime(),
+                            shipment.getArrivalTime(),
+                            shipment.getClient() != null ? shipment.getClient().getDni() : null))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
             e.printStackTrace();
-            return "Error al leer el archivo de envíos.";
+            return null;
         }
     }
 
