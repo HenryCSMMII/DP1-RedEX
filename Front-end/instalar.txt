@@ -3,4 +3,5 @@ npm install @react-google-maps/api
 npm install react-modal
 npm install styled-components
 npm install @googlemaps/react-wrapper
+npm install date-fns
 

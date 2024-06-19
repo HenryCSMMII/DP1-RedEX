@@ -55,11 +55,11 @@ const Logout = styled.div`
   }
 `;
 
-const Sidebar = ({ onEnviosClick, onVuelosClick, onAeropuertosClick, onReportesClick, onSimulacionClick }) => {
+const Sidebar = ({ onNuevoEnvioClick, onVuelosClick, onAeropuertosClick, onReportesClick, onSimulacionClick }) => {
   return (
     <SidebarContainer>
       <Title>RedEx</Title>
-      <MenuItem onClick={onEnviosClick}>Envios</MenuItem>
+      <MenuItem onClick={onNuevoEnvioClick}>Crear Envio</MenuItem>
       <MenuItem onClick={onVuelosClick}>Vuelos</MenuItem>
       <MenuItem onClick={onAeropuertosClick}>Aeropuertos</MenuItem>
       <MenuItem onClick={onReportesClick}>Reportes</MenuItem>

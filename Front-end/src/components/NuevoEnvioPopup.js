@@ -61,7 +61,7 @@ const Button = styled.button`
   }
 `;
 
-const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
+const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgorithm, tiempoSimulacion }) => {
   const [selectedCountryRemitente, setSelectedCountryRemitente] = useState('');
   const [selectedCountryDestinatario, setSelectedCountryDestinatario] = useState('');
   const [citiesRemitente, setCitiesRemitente] = useState([]);
@@ -125,39 +125,29 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
     try {
       const shipmentPayload = {
         packageQuantity: cantidadPaquetes,
-        departureAirportId: remitente.ciudad,
-        arrivalAirportId: destinatario.ciudad,
-        state: null,
+        departureAirport: {
+          id: remitente.ciudad
+        },
+        arrivalAirport: {
+          id: destinatario.ciudad
+        },
         departureTime: fechaEnvio,
         arrivalTime: fechaEnvio,
-        clientSenderId: null,
       };
 
       // Verificar el payload de envío
       console.log("Shipment payload:", shipmentPayload);
 
-      const shipmentResponse = await axios.post('http://localhost:8080/shipment/', shipmentPayload);
-      const newShipmentId = shipmentResponse.data.id;
-
-      // Crear múltiples paquetes según la cantidad de paquetes
-      for (let i = 0; i < cantidadPaquetes; i++) {
-        const packagePayload = {
-          departureAirportId: remitente.ciudad,
-          arrivalAirportId: destinatario.ciudad,
-          departureTime: '08:00:00',
-          arrivalTime: fechaEnvio,
-          clientSenderId: null,
-          shipmentId: newShipmentId,
-        };
-
-        // Verificar el payload de paquete
-        console.log("Package payload:", packagePayload);
-
-        await axios.post('http://localhost:8080/package/', packagePayload);
-      }
-
+      const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
+      
       alert('Envio creado exitosamente');
       onRequestClose();
+
+      // Reiniciar la simulación con la nueva información
+      if (tipoSimulacion) {
+        const currentSimulationTime = `${tiempoSimulacion.dia_actual}T${tiempoSimulacion.tiempo_actual}`;
+        await runAlgorithm(`http://localhost:8080/api/algorithm/run${tipoSimulacion.charAt(0).toUpperCase() + tipoSimulacion.slice(1)}/`, currentSimulationTime);
+      }
     } catch (error) {
       console.error('Error creating envio:', error);
       if (error.response) {
