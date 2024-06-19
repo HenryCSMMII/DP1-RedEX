@@ -125,17 +125,16 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
   const [filteredAeropuertos, setFilteredAeropuertos] = useState([]);
   const [filters, setFilters] = useState({
     nombre: '',
-    continente: '',
-    capacidad: ''
+    continente: ''
   });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   useEffect(() => {
-    if (data.airports.length > 0 && data.countries.length > 0 && data.continents.length > 0) {
+    if (isOpen) {
       filterAeropuertos();
     }
-  }, [filters, data]);
+  }, [filters, data, isOpen]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -146,14 +145,16 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
   };
 
   const filterAeropuertos = () => {
-    let filtered = data.airports.map(airport => {
-      const country = data.countries.find(country => country.id === airport.countryId);
-      const continent = data.continents.find(continent => continent.id === country.continentId);
+    if (!data.airports || !data.countries || !data.continents) return;
+
+    let filtered = data.airports.map(aeropuerto => {
+      const country = data.countries.find(country => country.id === aeropuerto.countryId);
+      const continentName = data.continents.find(continent => continent.id === country.continentId)?.name.split('/')[0] || 'Desconocido';
 
       return {
-        ...airport,
+        ...aeropuerto,
         country,
-        continent
+        continent: continentName
       };
     });
 
@@ -161,23 +162,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
       filtered = filtered.filter(aeropuerto => aeropuerto.code?.toLowerCase().includes(filters.nombre.toLowerCase()));
     }
     if (filters.continente) {
-      filtered = filtered.filter(aeropuerto => aeropuerto.continent.name?.toLowerCase().includes(filters.continente.toLowerCase()));
-    }
-    if (filters.capacidad) {
-      filtered = filtered.filter(aeropuerto => {
-        const used = aeropuerto.currentLoad || 0;
-        const total = aeropuerto.max_capacity || 1; // default value to avoid division by zero
-        switch (filters.capacidad) {
-          case 'Baja':
-            return used / total < 0.33;
-          case 'Media':
-            return used / total >= 0.33 && used / total <= 0.66;
-          case 'Alta':
-            return used / total > 0.66;
-          default:
-            return true;
-        }
-      });
+      filtered = filtered.filter(aeropuerto => aeropuerto.continent.toLowerCase().includes(filters.continente.toLowerCase()));
     }
 
     setFilteredAeropuertos(filtered);
@@ -193,6 +178,14 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
 
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
+
+  const getUniqueContinents = () => {
+    const uniqueContinents = Array.from(new Set(data.countries.map(country => {
+      const continent = data.continents.find(continent => continent.id === country.continentId);
+      return continent.name.split('/')[0];
+    })));
+    return uniqueContinents;
   };
 
   if (!isOpen) return null;
@@ -229,7 +222,7 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
             <HeaderContainer>
               <h2>Aeropuertos</h2>
               <ButtonsContainer>
-                <Button>Importar aeropuerto(s)</Button>
+                
               </ButtonsContainer>
             </HeaderContainer>
             <FiltersContainer>
@@ -240,15 +233,9 @@ const AeropuertosPopup = ({ isOpen, onRequestClose, data }) => {
                 <FilterInput type="text" placeholder="Nombre del aeropuerto" name="nombre" value={filters.nombre} onChange={handleFilterChange} />
                 <Select name="continente" value={filters.continente} onChange={handleFilterChange}>
                   <option value="">Continente</option>
-                  {data.continents.map(continent => (
-                    <option key={continent.id} value={continent.name}>{continent.name}</option>
+                  {getUniqueContinents().map(continent => (
+                    <option key={continent} value={continent}>{continent}</option>
                   ))}
-                </Select>
-                <Select name="capacidad" value={filters.capacidad} onChange={handleFilterChange}>
-                  <option value="">Capacidad</option>
-                  <option value="Baja">Baja</option>
-                  <option value="Media">Media</option>
-                  <option value="Alta">Alta</option>
                 </Select>
               </FiltersRow>
             </FiltersContainer>

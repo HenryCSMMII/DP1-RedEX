@@ -77,37 +77,6 @@ const HeaderContainer = styled.div`
   margin-bottom: 10px;
 `;
 
-const ButtonsContainer = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const Button = styled.button`
-  background-color: #6ba292;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #5a8a7d;
-  }
-`;
-
-const EditButton = styled.button`
-  background-color: #6ba292;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #5a8a7d;
-  }
-`;
-
 const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -191,17 +160,17 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
     let filtered = vuelos;
 
     if (filters.vuelo) {
-      filtered = filtered.filter(vuelo => vuelo.code.toString().includes(filters.vuelo));
+      filtered = filtered.filter(vuelo => vuelo.id.toString().includes(filters.vuelo));
     }
     if (filters.origen) {
       filtered = filtered.filter(vuelo => {
-        const origin = data.airports.find(airport => airport.id === vuelo.departure_airport.id)?.code || '';
+        const origin = vuelo.code.split('-')[0];
         return origin.toLowerCase().includes(filters.origen.toLowerCase());
       });
     }
     if (filters.destino) {
       filtered = filtered.filter(vuelo => {
-        const destination = data.airports.find(airport => airport.id === vuelo.arrival_airport.id)?.code || '';
+        const destination = vuelo.code.split('-')[1];
         return destination.toLowerCase().includes(filters.destino.toLowerCase());
       });
     }
@@ -256,9 +225,6 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
       <ModalContent>
         <HeaderContainer>
           <h2>Vuelos</h2>
-          <ButtonsContainer>
-            <Button>Importar vuelo(s)</Button>
-          </ButtonsContainer>
         </HeaderContainer>
         <FiltersContainer>
           <FiltersTitle>
@@ -291,13 +257,12 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
               </thead>
               <tbody>
                 {currentItems.map((vuelo) => {
-                  const departureAirport = data.airports.find(airport => airport.id === vuelo.departure_airport_id);
-                  const arrivalAirport = data.airports.find(airport => airport.id === vuelo.arrival_airport_id);
+                  const [origin, destination] = vuelo.code.split('-');
                   return (
                     <tr key={vuelo.id} onClick={() => handleRowClick(vuelo)}>
-                      <td>{vuelo.code}</td>
-                      <td>{departureAirport?.code || 'Desconocido'}</td>
-                      <td>{arrivalAirport?.code || 'Desconocido'}</td>
+                      <td>{vuelo.id}</td>
+                      <td>{origin}</td>
+                      <td>{destination}</td>
                       <td>{new Date(vuelo.departure_date_time).toLocaleDateString()}</td>
                       <td>{new Date(vuelo.departure_date_time).toLocaleTimeString()}</td>
                       <td>{vuelo.state || 'Desconocido'}</td>

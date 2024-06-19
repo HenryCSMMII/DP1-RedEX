@@ -71,6 +71,17 @@ const InputContainer = styled.div`
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
 
+const FlightInfoContainer = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+`;
+
 let globalCounter = 0;
 
 function App() {
@@ -93,6 +104,7 @@ function App() {
   const [retryTimer, setRetryTimer] = useState(null);
   const simulationIntervalRef = useRef(null);
   const [selectedFlight, setSelectedFlight] = useState(null);
+  const [flightInfo, setFlightInfo] = useState(null);
 
   const fetchData = async () => {
     try {
@@ -286,6 +298,14 @@ function App() {
     }
   };
 
+  const handleFlightClick = (flight) => {
+    setFlightInfo(flight);
+  };
+
+  const handleCloseFlightInfo = () => {
+    setFlightInfo(null);
+  };
+
   const renderMapContent = () => {
     const currentDateTime = new Date(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
@@ -323,31 +343,12 @@ function App() {
                   scaledSize: new window.google.maps.Size(10, 10),
                   rotation: planePosition.angle
                 }}
-                onMouseOver={() => setSelectedFlight(flight)}
-                onMouseOut={() => setSelectedFlight(null)}
+                onClick={() => handleFlightClick(flight)}
               />
             );
           }
           return null;
         })}
-        {selectedFlight && selectedFlight.departure_airport && selectedFlight.arrival_airport && (
-          <InfoWindow
-            position={calculatePlanePosition(selectedFlight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual)}
-            onCloseClick={() => setSelectedFlight(null)}
-          >
-            <div>
-              <p>ID: {selectedFlight.id}</p>
-              <p>Departure Date: {selectedFlight.departure_date_time.split('T')[0]}</p>
-              <p>Departure Time: {selectedFlight.departure_date_time.split('T')[1]}</p>
-              <p>Arrival Date: {selectedFlight.arrival_date_time.split('T')[0]}</p>
-              <p>Arrival Time: {selectedFlight.arrival_date_time.split('T')[1]}</p>
-              <p>Departure Airport: {selectedFlight.departure_airport.code}</p>
-              <p>Arrival Airport: {selectedFlight.arrival_airport.code}</p>
-              <p>Max Capacity: {selectedFlight.max_capacity}</p>
-              <p>Used Capacity: {selectedFlight.used_capacity[0]}</p>
-            </div>
-          </InfoWindow>
-        )}
       </>
     );
   };
@@ -408,6 +409,26 @@ function App() {
             </LoadScript>
           </MapContainer>
           {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
+          {flightInfo && (
+			  <FlightInfoContainer>
+				<button onClick={handleCloseFlightInfo}>Cerrar</button>
+				<div>
+				  {flightInfo.id && <p><strong>ID del vuelo:</strong> {flightInfo.id}</p>}
+				 
+				  {flightInfo.origin && <p><strong>Aeropuerto de salida:</strong> {flightInfo.origin}</p>}
+				  {flightInfo.destination && <p><strong>Aeropuerto de llegada:</strong> {flightInfo.destination}</p>}
+				  {(
+					<p><strong>Fecha y hora de salida:</strong> {new Date(flightInfo.departure_date_time).toLocaleString()}</p>
+				  )}
+				  {(
+					<p><strong>Fecha y hora de llegada:</strong> {new Date(flightInfo.arrival_date_time).toLocaleString()}</p>
+				  )}
+				  {<p><strong>Capacidad máxima:</strong> {flightInfo.capacity}</p>}
+				 
+				  
+				</div>
+			  </FlightInfoContainer>
+			)}
         </MainContent>
         <Legend />
       </Content>
@@ -431,6 +452,11 @@ function App() {
           />
         </label>
       </InputContainer>
+      <EnviosPopup isOpen={activePopup === 'Envios'} onRequestClose={handleClosePopup} onAddEnvio={handleOpenNuevoEnvio} data={data} />
+      <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
+      <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
+      <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
+      <NuevoEnvioPopup isOpen={isNuevoEnvioOpen} onRequestClose={handleCloseNuevoEnvio} data={data} />
     </AppContainer>
   );
 }

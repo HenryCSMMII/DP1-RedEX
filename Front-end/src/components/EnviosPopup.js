@@ -109,6 +109,31 @@ const EditButton = styled.button`
   }
 `;
 
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+`;
+
+const PaginationButton = styled.button`
+  background-color: #6ba292;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
+
+  &:hover {
+    background-color: #5a8a7d;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
 const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
   const [isResumenOpen, setIsResumenOpen] = useState(false);
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
@@ -123,6 +148,8 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
     desde: '',
     hasta: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const handleRowClick = (envio) => {
     setSelectedEnvio(envio);
@@ -204,6 +231,18 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
     setFilteredEnvios(filtered);
   };
 
+  const totalPages = Math.ceil(filteredEnvios.length / itemsPerPage);
+
+  const currentItems = filteredEnvios.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -262,7 +301,7 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
             </tr>
           </thead>
           <tbody>
-            {filteredEnvios.map((envio) => (
+            {currentItems.map((envio) => (
               <tr key={envio.id} onClick={() => handleRowClick(envio)}>
                 <td>{envio.id}</td>
                 <td>{data.airports.find(airport => airport.id === envio.departureAirportId)?.code || 'Desconocido'}</td>
@@ -278,6 +317,14 @@ const EnviosPopup = ({ isOpen, onRequestClose, data, onAddEnvio }) => {
             ))}
           </tbody>
         </Table>
+        <PaginationContainer>
+          <PaginationButton onClick={handlePreviousPage} disabled={currentPage === 1}>
+            Anterior
+          </PaginationButton>
+          <PaginationButton onClick={handleNextPage} disabled={currentPage === totalPages}>
+            Siguiente
+          </PaginationButton>
+        </PaginationContainer>
       </ModalContent>
       {selectedEnvio && (
         <ResumenEnvioPopup
