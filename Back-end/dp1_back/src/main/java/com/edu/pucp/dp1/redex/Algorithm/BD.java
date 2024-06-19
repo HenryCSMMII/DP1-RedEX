@@ -227,64 +227,54 @@ public class BD {
         }
     }
 
-    public static void readShipments() {
+    public static void readShipments(String filePath) {
         shipmentsTemp = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File("Back-end/dp1_back/src/main/resources/input/envios.txt"))) {
+        try (Scanner scanner = new Scanner(new File(filePath))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split("-");
                 
-				Shipment shipment = new Shipment();
-				shipment.setId(shipmentsTemp.size());
+                Shipment shipment = new Shipment();
+                shipment.setId(shipmentsTemp.size());
                 shipment.setCode(split[0]);
                 
-				Airport departure;// = new Airport();
-                //departure.setCode(split[0].substring(0, 4));
-                for (int i = 0; i < airports.size(); i++) {
-					if(airports.get(i).getCode().equals(split[0])){
-						departure = airports.get(i);
-						shipment.setDeparturAirport(departure);
-						break;
-					}	
-					// if (airports.get(i).getCode().equals(split[0].substring(0, 4))) {
-                    //     departure.setCountry(airports.get(i).getCountry());
-                    //     departure.setId(airports.get(i).getId());
-                    // }
+                Airport departure = airports.stream()
+                    .filter(a -> a.getCode().equals(split[0].substring(0, 4)))
+                    .findFirst()
+                    .orElse(null);
+                if (departure == null) {
+                    System.out.println("Departure airport not found: " + split[0].substring(0, 4));
+                    continue;
                 }
-                //shipment.setDeparturAirport(departure);
+                shipment.setDeparturAirport(departure);
                 
-		        String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
-		        
-		        SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		        Date register_date_time = formatter_date.parse(dateTime);
-		        
-				shipment.setRegisterDateTime(register_date_time);
+                String dateTime = split[1].substring(6) + '/' + split[1].substring(4, 6) + '/' + split[1].substring(0, 4) + " " + split[2];
+                SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                Date register_date_time = formatter_date.parse(dateTime);
+                shipment.setRegisterDateTime(register_date_time);
                 
-				Airport arrival;// = new Airport();
-                //arrival.setCode(split[3].substring(0, 4));
-                for (int i = 0; i < airports.size(); i++) {
-					if(airports.get(i).getCode().equals(split[4].substring(0, 4))){
-						arrival = airports.get(i);
-						shipment.setArrivalAirport(arrival);
-						break;
-					}
-					// if (airports.get(i).getCode().equals(split[3].substring(0, 4))) {
-                    //     arrival.setCountry(airports.get(i).getCountry());
-                    //     arrival.setId(airports.get(i).getId());
-                    // }
+                Airport arrival = airports.stream()
+                    .filter(a -> a.getCode().equals(split[3].substring(0, 4)))
+                    .findFirst()
+                    .orElse(null);
+                if (arrival == null) {
+                    System.out.println("Arrival airport not found: " + split[3].substring(0, 4));
+                    continue;
                 }
-                //shipment.setArrivalAirport(arrival);
-                shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
-                shipment.setDepartureTime(null);
+                shipment.setArrivalAirport(arrival);
+                
+                shipment.setPackageQuantity(Integer.parseInt(split[3].substring(5)));
+                shipment.setDepartureTime(register_date_time); // Set departure time from file
                 shipment.setArrivalTime(null);
                 shipment.setFlightSchedule(null);
                 shipment.setClient(null);
                 shipment.setOperator(null);
-                shipment.setState(State.Creado);
+                shipment.setState(State.Creado);  // Set state to Creado when the shipment is read
+                
                 shipmentsTemp.add(shipment);
             }
         } catch (Exception e) {
-            System.out.println("EXCEPTION SHIPMENTS SIN PARAMETRO: " + e.getMessage());
+            System.out.println("EXCEPTION SHIPMENTS: " + e.getMessage());
         }
     }
 

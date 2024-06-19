@@ -1,10 +1,7 @@
 package com.edu.pucp.dp1.redex.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.dto.ShipmentDTO;
@@ -12,6 +9,11 @@ import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Shipment;
 import com.edu.pucp.dp1.redex.model.State;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,12 +36,27 @@ public class ShipmentController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/read")
-    public String readShipments() {
+    @PostMapping("/read")
+    public String readShipments(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return "File is empty";
+        }
+        
         try {
-            BD.readShipments();
+            // Save the file to a temporary location
+            Path tempDir = Files.createTempDirectory("");
+            Path tempFile = tempDir.resolve(file.getOriginalFilename());
+            Files.copy(file.getInputStream(), tempFile);
+            
+            // Read the shipments from the file
+            BD.readShipments(tempFile.toString());
+            
+            // Delete the temporary file
+            Files.delete(tempFile);
+            Files.delete(tempDir);
+            
             return "Envíos leídos exitosamente.";
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return "Error al leer el archivo de envíos.";
         }
