@@ -670,12 +670,8 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
 			
 						List<Individual[]> new_parents = new ArrayList<Individual[]>();
 						
-						//System.out.println("============== HOLA ==============");
-						
 						for(int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS/2; i++) {
-							//System.out.println("============== ROULETTE ==============");
-							
-							//Individual[] new_parents_group = population.selection_parents_tournament(population, 4);
+							//System.out.println("============== ROULETTE ==============")
 							Individual[] new_parents_group = population.selectionRoullete(population);
 							new_parents.add(new_parents_group);
 						}
