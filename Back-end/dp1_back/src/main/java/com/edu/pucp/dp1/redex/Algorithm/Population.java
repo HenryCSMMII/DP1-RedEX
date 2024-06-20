@@ -59,42 +59,42 @@ public class Population {
 		int indexP1 = 0;
 		int indexP2 = 0;
 		
-		double sum_fitness = 0;
-		double cum_fitness, pick_fitness;
+		double sumFit = 0;
+		double fitness, bestFitness;
 		
 		Random random = new Random();
 		
-		// Selection first parent
+		// Primer padre
 		for (int i = 0; i < population.getIndividuals().length; i++) {
-			sum_fitness += population.getIndividuals()[i].getFitness(i);
+			sumFit += population.getIndividuals()[i].getFitness(i);
 			
-			System.out.println("fitness individual = " + population.getIndividuals()[i].getFitness(i));
+			System.out.println("Fitness individual = " + population.getIndividuals()[i].getFitness(i));
 		}
 		
-		System.out.println("sum_fitness = " + sum_fitness);
+		System.out.println("Suma = " + sumFit);
 		
-		cum_fitness = 0;
-		pick_fitness = random.nextDouble()*sum_fitness;
+		fitness = 0;
+		bestFitness = random.nextDouble()*sumFit;
 		
 		for (int i = 0; i < population.getIndividuals().length; i++) {
-			cum_fitness += population.getIndividuals()[i].getFitness(i);
+			fitness += population.getIndividuals()[i].getFitness(i);
 			
-			if(cum_fitness > pick_fitness) {
+			if(fitness > bestFitness) {
 				indexP1 = i;
 				break;
 			}			
 		}
 		
-		// Selection second parent
-		sum_fitness = sum_fitness - population.getIndividuals()[indexP1].getFitness(indexP1);
-		pick_fitness = random.nextDouble()*sum_fitness;
-		cum_fitness = 0;
+		// segundo padre
+		sumFit -= population.getIndividuals()[indexP1].getFitness(indexP1);
+		bestFitness = random.nextDouble()*sumFit;
+		fitness = 0;
 		
 		for (int i = 0; i < population.getIndividuals().length; i++) {
 			if(i != indexP1) {
-				cum_fitness += population.getIndividuals()[i].getFitness(i);
+				fitness += population.getIndividuals()[i].getFitness(i);
 				
-				if(cum_fitness > pick_fitness) {
+				if(fitness > bestFitness) {
 					indexP2 = i;
 					break;
 				}
