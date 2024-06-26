@@ -125,9 +125,11 @@ function App() {
   };
 
   const runAlgorithm = async (url, fechaInicio) => {
+	console.log('Hola '+fechaInicio);
     try {
       const response = await axios.post(url, { fecha_inicio: fechaInicio });
       const flightsResponse = response.data;
+
       if (response.status !== 500) {
         const flights = flightsResponse.map((flight) => {
           const departureDateTime = parseISO(flight.departure_date_time);
@@ -160,8 +162,8 @@ function App() {
           ...prevData,
           flights: flights,
         }));
+
         startSimulationInterval();
-        console.log('Data fetched:', flights);
       } else {
         console.error('Internal Server Error', response);
       }
@@ -177,22 +179,31 @@ function App() {
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        console.log('Current DateTime before increment:', currentDateTime);
-        const newDateTime = addMinutes(currentDateTime, 30);
-        console.log('Current DateTime after increment:', newDateTime);
+        const newDateTime = addMinutes(currentDateTime, 30); //Importante!30 min
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
-
-        console.log('New Date:', newDate);
-        console.log('New Time:', newTime);
-
         return {
           dia_actual: newDate,
           tiempo_actual: newTime,
         };
       });
-    }, 1000);
+    }, 1000);// 1 seg
+  };
+
+  const stopSimulationInterval = () => {
+    if (simulationIntervalRef.current) {
+      clearInterval(simulationIntervalRef.current);
+    }
+    setTipoSimulacion(null);
+    setTiempoSimulacion({
+      dia_actual: '',
+      tiempo_actual: '',
+    });
+    setData((prevData) => ({
+      ...prevData,
+      flights: [],
+    }));
   };
 
   useEffect(() => {
@@ -207,7 +218,6 @@ function App() {
 
   useEffect(() => {
     if (isMapLoaded && !loading) {
-      console.log('Map and data loaded, forcing re-render');
       setIsMapLoaded(false);
       setTimeout(() => setIsMapLoaded(true), 0);
     }
@@ -227,7 +237,6 @@ function App() {
   const handleMapLoad = (map) => {
     mapRef.current = map;
     setIsMapLoaded(true);
-    console.log('Map loaded');
   };
 
   const handleOpenPopup = (popupName) => {
@@ -261,7 +270,7 @@ function App() {
   const calculatePlanePosition = (flight, dia_actual, tiempo_actual) => {
     const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
     const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
-    const currentDateTime = parseISO(`${dia_actual}T${tiempo_actual}`);
+    const currentDateTime = parseISO(`${dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
     if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
       const totalDuration = arrivalDateTime - departureDateTime;
@@ -278,7 +287,6 @@ function App() {
         const currentLng =
           parseFloat(originAirport.longitude) +
           progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
-        console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
 
         let angle =
           Math.atan2(
@@ -287,7 +295,6 @@ function App() {
           ) *
           (180 / Math.PI);
 
-        // Ajustar el ángulo si el avión se mueve de derecha a izquierda
         const movingLeft = parseFloat(originAirport.longitude) > parseFloat(destinationAirport.longitude);
 
         return { lat: currentLat, lng: currentLng, angle, movingLeft };
@@ -315,6 +322,10 @@ function App() {
   };
 
   const renderMapContent = () => {
+    if (!window.google || !window.google.maps) {
+      return null;
+    }
+
     const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
     const activeFlights = data.flights.filter((flight) => {
@@ -392,6 +403,7 @@ function App() {
         onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
         onReportesClick={() => handleOpenPopup('Reportes')}
         onSimulacionClick={() => handleOpenPopup('Simulacion')}
+        onDetenerSimulacionClick={stopSimulationInterval}
       />
       <Content>
         <MainContent>
@@ -414,7 +426,13 @@ function App() {
               )}
             </LoadScript>
           </MapContainer>
-          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
+          {activePopup === 'Simulacion' && (
+            <SimulacionSidebar
+              onClose={handleClosePopup}
+              onStartSimulation={handleStartSimulation}
+              onStopSimulation={stopSimulationInterval}
+            />
+          )}
           {flightInfo && (
             <FlightInfoContainer>
               <button onClick={handleCloseFlightInfo}>Cerrar</button>

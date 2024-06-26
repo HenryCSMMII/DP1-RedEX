@@ -33,14 +33,6 @@ const Input = styled.input`
   width: 100%;
 `;
 
-const Select = styled.select`
-  padding: 5px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-`;
-
 const Button = styled.button`
   padding: 10px 20px;
   margin-bottom: 10px;
@@ -80,7 +72,7 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
+const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
   const [fechaInicio, setFechaInicio] = useState('');
 
@@ -127,7 +119,7 @@ const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
         </Label>
       </RadioGroup>
       <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
-      <Button danger>Detener simulación</Button>
+      <Button danger onClick={onStopSimulation}>Detener simulación</Button>
       <Label>Consola de sucesos</Label>
       <TextArea readOnly />
       <Label>Resultado</Label>

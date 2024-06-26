@@ -85,19 +85,14 @@ const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
   const [fechaInicio, setFechaInicio] = useState('');
 
   const handleStartSimulation = () => {
-    if (tipoSimulacion === 'diario') {
-      const today = new Date().toISOString().split('T')[0];
-      onStartSimulation(tipoSimulacion, today);
-    } else {
-      onStartSimulation(tipoSimulacion, fechaInicio);
-    }
+    onStartSimulation(tipoSimulacion, fechaInicio);
   };
 
   return (
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} disabled={tipoSimulacion === 'diario'} />
+      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
