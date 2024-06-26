@@ -49,15 +49,15 @@ const ButtonGroup = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${(props) => (props.primary ? '#6ba292' : '#ccc')};
-  color: ${(props) => (props.primary ? '#fff' : '#000')};
+  background-color: ${(props) => (props.$primary ? '#6ba292' : '#ccc')};
+  color: ${(props) => (props.$primary ? '#fff' : '#000')};
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
 
   &:hover {
-    background-color: ${(props) => (props.primary ? '#5a8a7d' : '#bbb')};
+    background-color: ${(props) => (props.$primary ? '#5a8a7d' : '#bbb')};
   }
 `;
 
@@ -88,22 +88,22 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
   const [fechaEnvio, setFechaEnvio] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    if (data && selectedCountryRemitente) {
-      const filteredCities = data.airports.filter(airport => airport.countryId === parseInt(selectedCountryRemitente));
+    if (selectedCountryRemitente) {
+      const filteredCities = data.ciudad.filter(city => city.countryId === parseInt(selectedCountryRemitente));
       setCitiesRemitente(filteredCities);
     } else {
       setCitiesRemitente([]);
     }
-  }, [selectedCountryRemitente, data]);
+  }, [selectedCountryRemitente, data.ciudad]);
 
   useEffect(() => {
-    if (data && selectedCountryDestinatario) {
-      const filteredCities = data.airports.filter(airport => airport.countryId === parseInt(selectedCountryDestinatario));
+    if (selectedCountryDestinatario) {
+      const filteredCities = data.ciudad.filter(city => city.countryId === parseInt(selectedCountryDestinatario));
       setCitiesDestinatario(filteredCities);
     } else {
       setCitiesDestinatario([]);
     }
-  }, [selectedCountryDestinatario, data]);
+  }, [selectedCountryDestinatario, data.ciudad]);
 
   if (!data) {
     return null;
@@ -123,23 +123,27 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
 
   const handleSubmit = async () => {
     try {
+      const departureAirport = data.airports.find(airport => airport.countryId === parseInt(remitente.pais));
+      const arrivalAirport = data.airports.find(airport => airport.countryId === parseInt(destinatario.pais));
+
+      if (!departureAirport || !arrivalAirport) {
+        throw new Error('No se encontró el aeropuerto correspondiente.');
+      }
+
       const shipmentPayload = {
         packageQuantity: cantidadPaquetes,
         departureAirport: {
-          id: remitente.ciudad
+          id: departureAirport.id
         },
         arrivalAirport: {
-          id: destinatario.ciudad
+          id: arrivalAirport.id
         },
-        departureTime: fechaEnvio,
-        arrivalTime: fechaEnvio,
+        departureTime: null,
+        arrivalTime: null,
       };
 
-      // Verificar el payload de envío
-      console.log("Shipment payload:", shipmentPayload);
-
       const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
-      
+
       alert('Envio creado exitosamente');
       onRequestClose();
 
@@ -147,6 +151,8 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
       if (tipoSimulacion) {
         const currentSimulationTime = `${tiempoSimulacion.dia_actual}T${tiempoSimulacion.tiempo_actual}`;
         await runAlgorithm(`http://localhost:8080/api/algorithm/run${tipoSimulacion.charAt(0).toUpperCase() + tipoSimulacion.slice(1)}/`, currentSimulationTime);
+      } else {
+        console.log('tipoSimulacion es nulo o indefinido');
       }
     } catch (error) {
       console.error('Error creating envio:', error);
@@ -205,7 +211,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
             inputMode="numeric"
             onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
           />
-          <Select name="pais" onChange={(e) => setSelectedCountryRemitente(e.target.value)}>
+          <Select name="pais" onChange={(e) => { setSelectedCountryRemitente(e.target.value); handleInputChange(e, setRemitente, remitente); }}>
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -215,9 +221,9 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
           </Select>
           <Select name="ciudad" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
             <option value="">Seleccione una ciudad</option>
-            {citiesRemitente.map((airport) => (
-              <option key={airport.id} value={airport.id}>
-                {airport.code}
+            {citiesRemitente.map((city) => (
+              <option key={city.id} value={city.id}>
+                {city.name}
               </option>
             ))}
           </Select>
@@ -255,7 +261,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
             inputMode="numeric"
             onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
           />
-          <Select name="pais" onChange={(e) => setSelectedCountryDestinatario(e.target.value)}>
+          <Select name="pais" onChange={(e) => { setSelectedCountryDestinatario(e.target.value); handleInputChange(e, setDestinatario, destinatario); }}>
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -265,9 +271,9 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
           </Select>
           <Select name="ciudad" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
             <option value="">Seleccione una ciudad</option>
-            {citiesDestinatario.map((airport) => (
-              <option key={airport.id} value={airport.id}>
-                {airport.code}
+            {citiesDestinatario.map((city) => (
+              <option key={city.id} value={city.id}>
+                {city.name}
               </option>
             ))}
           </Select>
@@ -304,7 +310,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
         </FormGroup>
         <ButtonGroup>
           <Button onClick={onRequestClose}>Cancelar</Button>
-          <Button primary onClick={handleSubmit}>Crear envío</Button>
+          <Button $primary onClick={handleSubmit}>Crear envío</Button>
         </ButtonGroup>
       </ModalContent>
     </Modal>

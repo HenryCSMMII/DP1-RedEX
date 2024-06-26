@@ -23,11 +23,7 @@ import planeGreenRotado from './images/planeGreenRotado.png';
 const AppContainer = styled.div`
   display: flex;
   height: 100vh;
-  flex-direction: column;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
+  flex-direction: row;
 `;
 
 const Content = styled.div`
@@ -47,9 +43,6 @@ const MainContent = styled.div`
 `;
 
 const MapContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
@@ -88,6 +81,7 @@ function App() {
     airports: [],
     continents: [],
     countries: [],
+    ciudad: [],
     estadoVuelo: [],
     flights: [],
   });
@@ -105,10 +99,11 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [airports, continents, countries] = await Promise.all([
+      const [airports, continents, countries, ciudad] = await Promise.all([
         axios.get('http://localhost:8080/airport/'),
         axios.get('http://localhost:8080/continent/'),
         axios.get('http://localhost:8080/country/'),
+        axios.get('http://localhost:8080/ciudad/')
       ]);
 
       setData((prevData) => ({
@@ -116,6 +111,7 @@ function App() {
         airports: airports.data,
         continents: continents.data,
         countries: countries.data,
+        ciudad: ciudad.data
       }));
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -125,7 +121,6 @@ function App() {
   };
 
   const runAlgorithm = async (url, fechaInicio) => {
-	console.log('Hola '+fechaInicio);
     try {
       const response = await axios.post(url, { fecha_inicio: fechaInicio });
       const flightsResponse = response.data;
@@ -144,7 +139,7 @@ function App() {
             current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
-            duration: (arrivalDateTime - departureDateTime) / 60000, // duration in minutes
+            duration: (arrivalDateTime - departureDateTime) / 60000,
             flight_number: flight.code,
             origin: flight.departure_airport.code,
             estado_vuelo_id: 1,
@@ -179,7 +174,7 @@ function App() {
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        const newDateTime = addMinutes(currentDateTime, 30); //Importante!30 min
+        const newDateTime = addMinutes(currentDateTime, 30);
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
@@ -188,7 +183,7 @@ function App() {
           tiempo_actual: newTime,
         };
       });
-    }, 1000);// 1 seg
+    }, 1000);
   };
 
   const stopSimulationInterval = () => {
@@ -344,7 +339,7 @@ function App() {
               title={airport.code}
               icon={{
                 url: redDot,
-                scaledSize: new window.google.maps.Size(32, 32),
+                scaledSize: new window.google.maps.Size(35, 35),
               }}
             />
           ))}
@@ -361,7 +356,7 @@ function App() {
                   position={{ lat: planePosition.lat, lng: planePosition.lng }}
                   icon={{
                     url: planePosition.movingLeft ? rotatedIcon : icon,
-                    scaledSize: new window.google.maps.Size(10, 10),
+                    scaledSize: new window.google.maps.Size(25, 25),
                     rotation: planePosition.angle,
                   }}
                   onClick={() => handleFlightClick(flight)}
@@ -416,8 +411,17 @@ function App() {
               {isMapLoaded && (
                 <GoogleMap
                   mapContainerStyle={{ width: '100%', height: '100%' }}
-                  center={{ lat: -3.745, lng: -38.523 }}
+                  center={{ lat: 5.7942, lng: 60.8822 }}
                   zoom={3}
+                  options={{
+                    zoomControl: false,
+                    streetViewControl: false,
+                    mapTypeControl: false,
+                    fullscreenControl: false,
+                    mapTypeId: 'roadmap',
+                    disableDefaultUI: true,
+                    gestureHandling: 'none',
+                  }}
                   onLoad={handleMapLoad}
                   mapId="56d2948ec3b0b447"
                 >
