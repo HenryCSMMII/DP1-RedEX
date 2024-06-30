@@ -2,6 +2,7 @@ package com.edu.pucp.dp1.redex.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.edu.pucp.dp1.redex.Algorithm.BD;
 import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
@@ -168,4 +169,28 @@ public class Flight {
 	public void setDifference_system(long difference_system) {
 		this.difference_system = difference_system;
 	}
+
+	 @Override
+    public boolean equals(Object obj) {
+        // Verifica si 'this' es igual a 'obj'
+        if (this == obj) {
+            return true;
+        }
+        // Verifica si 'obj' es nulo o si las clases son diferentes
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        // Realiza un casting de 'obj' a 'Flight'
+        Flight flight = (Flight) obj;
+        // Compara los campos relevantes (id y departure_date_time)
+        return this.id == flight.id &&
+               this.departure_date_time.equals(flight.departure_date_time);
+    }
+
+    @Override
+    public int hashCode() {
+        // Utiliza un método de utilidad para calcular el hash
+        return Objects.hash(id, departure_date_time);
+    }
+
 }
