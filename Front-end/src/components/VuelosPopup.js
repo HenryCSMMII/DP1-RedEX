@@ -235,7 +235,7 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
             <FilterInput type="text" placeholder="Origen" name="origen" value={filters.origen} onChange={handleFilterChange} />
             <FilterInput type="text" placeholder="Destino" name="destino" value={filters.destino} onChange={handleFilterChange} />
             <FilterInput type="text" placeholder="Estado" name="estado" value={filters.estado} onChange={handleFilterChange} />
-            
+            <DateInput type="date" placeholder="Desde" name="fechaDesde" value={filters.fechaDesde} onChange={handleFilterChange} />
             <DateInput type="date" placeholder="Hasta" name="fechaHasta" value={filters.fechaHasta} onChange={handleFilterChange} />
           </FiltersRow>
         </FiltersContainer>
@@ -249,7 +249,7 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
                   <th>#Vuelo</th>
                   <th>Origen</th>
                   <th>Destino</th>
-                  
+                  <th>Fecha de partida</th>
                   <th>Hora de partida</th>
                   <th>Estado</th>
                   <th>Capacidad</th>

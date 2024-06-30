@@ -61,7 +61,7 @@ const Button = styled.button`
   }
 `;
 
-const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgorithm, tiempoSimulacion }) => {
+const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
   const [selectedCountryRemitente, setSelectedCountryRemitente] = useState('');
   const [selectedCountryDestinatario, setSelectedCountryDestinatario] = useState('');
   const [citiesRemitente, setCitiesRemitente] = useState([]);
@@ -123,11 +123,18 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
 
   const handleSubmit = async () => {
     try {
+      console.log('Data Airports:', data.airports);
+      console.log('Remitente País ID:', remitente.pais);
+      console.log('Destinatario País ID:', destinatario.pais);
+
       const departureAirport = data.airports.find(airport => airport.countryId === parseInt(remitente.pais));
       const arrivalAirport = data.airports.find(airport => airport.countryId === parseInt(destinatario.pais));
 
-      if (!departureAirport || !arrivalAirport) {
-        throw new Error('No se encontró el aeropuerto correspondiente.');
+      if (!departureAirport) {
+        throw new Error(`No se encontró el aeropuerto correspondiente al país remitente con ID: ${remitente.pais}`);
+      }
+      if (!arrivalAirport) {
+        throw new Error(`No se encontró el aeropuerto correspondiente al país destinatario con ID: ${destinatario.pais}`);
       }
 
       const shipmentPayload = {
@@ -142,18 +149,14 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
         arrivalTime: null,
       };
 
+      console.log('Payload:', JSON.stringify(shipmentPayload));
+
       const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
 
       alert('Envio creado exitosamente');
       onRequestClose();
-
-      // Reiniciar la simulación con la nueva información
-      if (tipoSimulacion) {
-        const currentSimulationTime = `${tiempoSimulacion.dia_actual}T${tiempoSimulacion.tiempo_actual}`;
-        await runAlgorithm(`http://localhost:8080/api/algorithm/run${tipoSimulacion.charAt(0).toUpperCase() + tipoSimulacion.slice(1)}/`, currentSimulationTime);
-      }
     } catch (error) {
-      console.error('Error creating envio:', error);
+      console.error('Error creating envio:', error.message);
       if (error.response) {
         console.error('Error response data:', error.response.data);
         console.error('Error response status:', error.response.status);
@@ -316,4 +319,3 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data, tipoSimulacion, runAlgo
 };
 
 export default NuevoEnvioPopup;
-

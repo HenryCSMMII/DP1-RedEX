@@ -19,12 +19,12 @@
 19;Dinamarca;DK;Europe;Copenhague
 20;Holanda;NL;Europe;Amsterdam
 21;India;IN;Asia;Delhi
-22;Corea del Sur;KR;Asia;Seul
-23;Tailandia;TH;Asia;Bangkok
+22;Siria;SY;Asia;Damasco
+23;Arabia Saudita;SA;Asia;Riad
 24;Emiratos A.U;AE;Asia;Dubai
-25;China;CN;Asia;Beijing
-26;Japon;JP;Asia;Tokyio
-27;Malasia;MY;Asia;Kuala
-28;Singapure;SG;Asia;Singapure
-29;Indonesia;ID;Asia;Jakarta
-30;Filipinas;PH;Asia;Manila
+25;Afganistan;AF;Asia;Kabul
+26;Oman;OM;Asia;Mascate
+27;Yemen;YE;Asia;Sana
+28;Pakistan;PK;Asia;Karachi
+29;Azerbaiyan;AZ;Asia;Baku
+30;Jordania;JO;Asia;Aman

@@ -19,12 +19,12 @@
 19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhague,+2,55.6181,12.6561,480
 20,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam,+2,52.3000,4.7650,480
 21,VIDP,Delhi,India,delh,A,Asia/Delhi,+5,28.5664,77.1031,480
-22,RKSI,Seul,Corea del Sur,seul,A,Asia/Seul,+9,37.4633,126.4400,400
-23,VTBS,Bangkok,Tailandia,bang,A,Asia/Bangkok,+7,13.6808,100.7472,420
+22,OSDI,Damasco,Siria,dama,A,Asia/Damasco,+3,33.4114,36.5156,400
+23,OERK,Riad,Arabia Saudita,riad,A,Asia/Riad,+3,24.9578,46.6989,420
 24,OMDB,Dubai,Emiratos A.U,emir,A,Asia/Dubai,+4,25.2528,55.3644,420
-25,ZBAA,Beijing,China,beij,A,Asia/Beijing,+8,40.0725,116.5975,480
-26,RJTT,Tokyio,Japon,toky,A,Asia/Tokyio,+9,35.5522,139.7800,460
-27,WMKK,Kuala,Malasia,kual,A,Asia/Kuala,+8,2.7433,101.6981,420
-28,WSSS,Singapure,Singapure,sing,A,Asia/Singapure,+8,1.3569,103.9886,400
-29,WIII,Jakarta,Indonesia,jaka,A,Asia/Jakarta,+7,-6.1256,106.6558,400
-30,RPLL,Manila,Filipinas,mani,A,Asia/Manila,+8,14.5086,121.0194,400
+25,OAKB,Kabul,Afganistan,kabu,A,Asia/Kabul,+4,34.5656,69.2108,480
+26,OOMS,Mascate,Oman,masc,A,Asia/Mascate,+4,23.5894,58.2842,460
+27,OYSN,Sana,Yemen,sana,A,Asia/Sana,+3,15.4761,44.2197,420
+28,OPKC,Karachi,Pakistan,kara,A,Asia/Karachi,+5,24.9000,67.1500,410
+29,UBBB,Baku,Azerbaiyan,baku,A,Asia/Baku,+2,40.4672,50.0467,400
+30,OJAI,Aman,Jordania,aman,A,Asia/Aman,+3,31.7225,35.9933,400
