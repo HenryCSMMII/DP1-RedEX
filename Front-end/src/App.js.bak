@@ -402,13 +402,6 @@ function App() {
           }
         }
       }
-
-      // Imprimir la trayectoria y ubicación actual del paquete
-      const trajectory = allShipments.filter(s => s.id === shipment.id)
-        .map(s => `${s.departure_airport_plane} -> ${s.arrival_airport_plane}`)
-        .join(' -> ');
-
-      console.log(`Envio ID: ${shipment.id} trayectoria: ${trajectory}. Ubicación actual: ${currentDateTime >= arrivalDateTime ? arrival_airport_plane : (currentDateTime >= departureDateTime ? 'En vuelo' : departure_airport_plane)}`);
     });
 
     const getDotIcon = (airportCode) => {
