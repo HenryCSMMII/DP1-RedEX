@@ -43,7 +43,7 @@ public class BD {
 
     public static void readContinents() throws IOException {
         continents = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/continentes.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/continentes.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] parts = data.split(";");
@@ -60,7 +60,7 @@ public class BD {
 
     public static void readCountries() throws IOException {
         countries = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/paises.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/paises.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] parts = data.split(";");
@@ -88,7 +88,7 @@ public class BD {
 
     public static void readCities() throws IOException {
         cities = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/ciudades.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/ciudades.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] parts = data.split(",");
@@ -105,41 +105,71 @@ public class BD {
 
     public static void readAirports() {
         airports = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/aeropuertos.txt"))) {
+        try (Scanner scanner = new Scanner(new File("Back-end/dp1_back/src/main/resources/input/aeropuertos.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split(",");
+    
                 Airport airport = new Airport();
                 airport.setId(Integer.valueOf(split[0]));
-                airport.setCode(split[1]);
-
-                Country country = new Country();
-                country.setCity(split[2]);
-                country.setName(split[3]);
-                country.setAbbrev(split[4]);
-                Continent continent = new Continent();
-
-                continent.setName(split[6]);
-                country.setContinent(continent);
-                airport.setTime_zone(split[7]);
+                airport.setCode(split[1].trim());
+    
+                // Extraer el continente y el país de split[6]
+                String[] continentParts = split[6].trim().split("/");
+                String continentName = continentParts[0];
+                String countryNamePart = continentParts.length > 1 ? continentParts[1] : "";
+    
+                // Buscar o crear Continent
+                Continent continent = null;
+                for (Continent c : continents) {
+                    if (c.getName().trim().equals(continentName)) {
+                        continent = c;
+                        break;
+                    }
+                }
+                if (continent == null) {
+                    continent = new Continent();
+                    continent.setName(continentName);
+                    continents.add(continent);
+                }
+    
+                // Buscar o crear Country
+                Country country = null;
+                for (Country c : countries) {
+                    if (c.getName().trim().equals(split[3].trim())) {
+                        country = c;
+                        break;
+                    }
+                }
+                if (country == null) {
+                    country = new Country();
+                    country.setCity(split[2].trim());
+                    country.setName(split[3].trim());
+                    country.setAbbrev(split[4].trim());
+                    country.setContinent(continent);
+                    countries.add(country);
+                    System.out.println("problema id: ");
+                }
+    
                 airport.setCountry(country);
-                airport.setLatitude(split[8]);
-                airport.setLongitude(split[9]);
-				airport.setMax_capacity(Integer.valueOf(split[10]));
-
+                airport.setTime_zone(split[7].trim());
+                airport.setLatitude(split[8].trim());
+                airport.setLongitude(split[9].trim());
+                airport.setMax_capacity(Integer.valueOf(split[10].trim()));
                 airport.setStorage(new ArrayList<>());
                 airports.add(airport);
-                countries.add(country);
-                continents.add(continent);
             }
         } catch (Exception e) {
             System.out.println("EXCEPTION AIRPORTS: " + e.getMessage());
         }
     }
+    
+    
+    
 
     public static void readFlights() {
         flightsTemp = new ArrayList<>();
-        try (Scanner scanner = new Scanner(new File( "src/main/resources/input/itinerario.txt"))) {
+        try (Scanner scanner = new Scanner(new File( "Back-end/dp1_back/src/main/resources/input/itinerario.txt"))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split("-");
@@ -248,7 +278,7 @@ public class BD {
         }
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "src/main/resources/input/pack/"))) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "Back-end/dp1_back/src/main/resources/input/pack/"))) {
             for (Path path : stream) {
                 if (!Files.isDirectory(path)) {
                     fileSet.add(path.getFileName().toString());
@@ -260,7 +290,7 @@ public class BD {
         }
         try {
             for (int j = 0; j < pack_files.size(); j++) {
-                File file = new File("src/main/resources/input/pack/" + pack_files.get(j));
+                File file = new File("Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
                 try (Scanner scanner = new Scanner(file)) {
                     while (scanner.hasNextLine()) {
                         String data = scanner.nextLine();
@@ -330,7 +360,7 @@ public class BD {
         limit_date_data = date_simulation + ONE_DAY_MS + ONE_DAY_MS;
         List<String> pack_files = new ArrayList<>();
         Set<String> fileSet = new HashSet<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "src/main/resources/input/pack/"))) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "Back-end/dp1_back/src/main/resources/input/pack/"))) {
             for (Path path : stream) {
                 if (!Files.isDirectory(path)) {
                     fileSet.add(path.getFileName().toString());
