@@ -59,104 +59,45 @@ public class Population {
 		int indexP1 = 0;
 		int indexP2 = 0;
 		
-		double sum_fitness = 0;
-		double cum_fitness, pick_fitness;
+		double sumFit = 0;
+		double fitness, bestFitness;
 		
 		Random random = new Random();
 		
-		// Selection first parent
+		// Primer padre
 		for (int i = 0; i < population.getIndividuals().length; i++) {
-			sum_fitness += population.getIndividuals()[i].getFitness(i);
+			sumFit += population.getIndividuals()[i].getFitness(i);
 			
-			System.out.println("fitness individual = " + population.getIndividuals()[i].getFitness(i));
+			System.out.println("Fitness individual = " + population.getIndividuals()[i].getFitness(i));
 		}
 		
-		System.out.println("sum_fitness = " + sum_fitness);
+		System.out.println("Suma = " + sumFit);
 		
-		cum_fitness = 0;
-		pick_fitness = random.nextDouble()*sum_fitness;
+		fitness = 0;
+		bestFitness = random.nextDouble()*sumFit;
 		
 		for (int i = 0; i < population.getIndividuals().length; i++) {
-			cum_fitness += population.getIndividuals()[i].getFitness(i);
+			fitness += population.getIndividuals()[i].getFitness(i);
 			
-			if(cum_fitness > pick_fitness) {
+			if(fitness > bestFitness) {
 				indexP1 = i;
 				break;
 			}			
 		}
 		
-		// Selection second parent
-		sum_fitness = sum_fitness - population.getIndividuals()[indexP1].getFitness(indexP1);
-		pick_fitness = random.nextDouble()*sum_fitness;
-		cum_fitness = 0;
+		// segundo padre
+		sumFit -= population.getIndividuals()[indexP1].getFitness(indexP1);
+		bestFitness = random.nextDouble()*sumFit;
+		fitness = 0;
 		
 		for (int i = 0; i < population.getIndividuals().length; i++) {
 			if(i != indexP1) {
-				cum_fitness += population.getIndividuals()[i].getFitness(i);
+				fitness += population.getIndividuals()[i].getFitness(i);
 				
-				if(cum_fitness > pick_fitness) {
+				if(fitness > bestFitness) {
 					indexP2 = i;
 					break;
 				}
-			}
-		}
-		
-		parents[0] = population.getIndividuals()[indexP1];
-		parents[1] = population.getIndividuals()[indexP2];
-		
-		return parents;
-	}
-	
-	public Individual[] selection_parents_tournament(Population population, double percentage_size) {
-		Individual[] parents = new Individual[2];		
-		int indexP1 = 0;
-		int indexP2 = 0;
-		
-		int population_size, tournament_size;
-		double max_fitness;
-		
-		Random random = new Random();
-		
-		population_size = population.getIndividuals().length;
-		tournament_size = (int) (percentage_size*population_size/100);
-		
-		// Select first parent
-		Individual[] tournament_pool = new Individual[tournament_size];
-		
-		for (int i = 0; i < tournament_size; i++) {
-			int random_index = random.nextInt(population_size);
-			tournament_pool[i] = population.getIndividuals()[random_index];
-		}
-		
-		double sum_fitness = 0;
-		for (int i = 0; i < tournament_pool.length; i++) {
-			sum_fitness += tournament_pool[i].getFitness(i);
-			
-			System.out.println("fitness individual = " + tournament_pool[i].getFitness(i));
-		}
-		System.out.println("sum_fitness = " + sum_fitness);
-		
-		max_fitness = -1;
-		
-		for (int i = 0; i < tournament_pool.length; i++) {
-			if (tournament_pool[i].getFitness(i) > max_fitness) {
-				max_fitness = tournament_pool[i].getFitness(i);
-				indexP1 = i;
-			}
-		}
-		
-		// Select second parent
-		for (int i = 0; i < tournament_size; i++) {
-			int random_index = random.nextInt(population_size);
-			tournament_pool[i] = population.getIndividuals()[random_index];
-		}
-		
-		max_fitness = -1;
-		
-		for (int i = 0; i < tournament_pool.length; i++) {
-			if (i != indexP1 && tournament_pool[i].getFitness(i) > max_fitness) {
-				max_fitness = tournament_pool[i].getFitness(i);
-				indexP2 = i;
 			}
 		}
 		

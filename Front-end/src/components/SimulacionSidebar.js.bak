@@ -33,14 +33,6 @@ const Input = styled.input`
   width: 100%;
 `;
 
-const Select = styled.select`
-  padding: 5px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-`;
-
 const Button = styled.button`
   padding: 10px 20px;
   margin-bottom: 10px;
@@ -80,24 +72,19 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
+const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
   const [fechaInicio, setFechaInicio] = useState('');
 
   const handleStartSimulation = () => {
-    if (tipoSimulacion === 'diario') {
-      const today = new Date().toISOString().split('T')[0];
-      onStartSimulation(tipoSimulacion, today);
-    } else {
-      onStartSimulation(tipoSimulacion, fechaInicio);
-    }
+    onStartSimulation(tipoSimulacion, fechaInicio);
   };
 
   return (
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} disabled={tipoSimulacion === 'diario'} />
+      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
@@ -131,8 +118,8 @@ const SimulacionSidebar = ({ onClose, onStartSimulation }) => {
           Al colapso
         </Label>
       </RadioGroup>
-      <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
-      <Button danger>Detener simulación</Button>
+      <Button primary="true" onClick={handleStartSimulation}>Iniciar simulación</Button>
+      <Button danger="true" onClick={onStopSimulation}>Detener simulación</Button>
       <Label>Consola de sucesos</Label>
       <TextArea readOnly />
       <Label>Resultado</Label>

@@ -22,8 +22,7 @@ import com.edu.pucp.dp1.redex.utils.TimeZoneAirport;
 public class Individual {
 	
 	private List<FlightSchedule> list_flight_schedule;
-	private List<Shipment> list_shipments; //Su lista privada de envios porque se pueden separar los
-										  //productos y depende de cada solución como se manejará
+	private List<Shipment> list_shipments;
 	private double fitness;
 	private long all_estimated_time;
 	private Random random;

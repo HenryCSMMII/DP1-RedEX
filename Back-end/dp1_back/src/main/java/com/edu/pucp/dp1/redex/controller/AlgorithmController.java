@@ -213,6 +213,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     List<Integer> vuelos = new ArrayList<>();
     boolean noEncontrado = true;
     System.out.println("Tamaño: " + tamanio);
+    tamanio = population.getIndividuals()[0].getList_shipments().size();
     for (int i = 0; i < tamanio; i++) {
         for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
             Integer idVuelo = flight.getId();
@@ -398,10 +399,18 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
 
     System.out.println("NUMERO DE ITINERARIOS: " + population.getIndividuals()[0].getList_flight_schedule().size());
     System.out.println("NUMERO DE PAQUETES: " + population.getIndividuals()[0].getList_shipments().size());
+    System.out.println("Tamaño: " + tamanio);
+    tamanio = population.getIndividuals()[0].getList_shipments().size();
+    
+    for(int m=0; m<tamanio; m++){
+        population.getIndividuals()[0].getList_shipments().get(m).setDepartureTime(population.getIndividuals()[0].getList_flight_schedule().get(m).getFlights().get(0).getDeparture_date_time());
+        population.getIndividuals()[0].getList_shipments().get(m).setArrivalTime(population.getIndividuals()[0].getList_flight_schedule().get(m).getFlights().get(population.getIndividuals()[0].getList_flight_schedule().get(m).getFlights().size()-1).getArrival_date_time());
+        m++;
+    }
 
     List<Integer> vuelos = new ArrayList<>();
     boolean noEncontrado = true;
-    System.out.println("Tamaño: " + tamanio);
+    
     for (int i = 0; i < tamanio; i++) {
         for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
             Integer idVuelo = flight.getId();
@@ -670,12 +679,8 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
 			
 						List<Individual[]> new_parents = new ArrayList<Individual[]>();
 						
-						//System.out.println("============== HOLA ==============");
-						
 						for(int i = 0; i < BD.POPULATION_NUM_INDIVIDUALS/2; i++) {
-							//System.out.println("============== ROULETTE ==============");
-							
-							//Individual[] new_parents_group = population.selection_parents_tournament(population, 4);
+							//System.out.println("============== ROULETTE ==============")
 							Individual[] new_parents_group = population.selectionRoullete(population);
 							new_parents.add(new_parents_group);
 						}

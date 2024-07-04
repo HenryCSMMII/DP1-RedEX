@@ -13,6 +13,8 @@ import SimulacionSidebar from './components/SimulacionSidebar';
 import axios from 'axios';
 import Modal from 'react-modal';
 import redDot from './images/red-dot.png';
+import yellowDot from './images/yellow-dot.png';
+import greenDot from './images/green-dot.png';
 import planeRed from './images/planeRed.png';
 import planeRedRotado from './images/planeRedRotado.png';
 import planeYellow from './images/planeYellow.png';
@@ -23,11 +25,7 @@ import planeGreenRotado from './images/planeGreenRotado.png';
 const AppContainer = styled.div`
   display: flex;
   height: 100vh;
-  flex-direction: column;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
+  flex-direction: row;
 `;
 
 const Content = styled.div`
@@ -47,9 +45,6 @@ const MainContent = styled.div`
 `;
 
 const MapContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
@@ -88,6 +83,7 @@ function App() {
     airports: [],
     continents: [],
     countries: [],
+    ciudad: [],
     estadoVuelo: [],
     flights: [],
   });
@@ -102,20 +98,34 @@ function App() {
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [flightInfo, setFlightInfo] = useState(null);
   const [tipoSimulacion, setTipoSimulacion] = useState(null);
+  const [allShipments, setAllShipments] = useState([]);
+  const [airportCapacities, setAirportCapacities] = useState({});
 
   const fetchData = async () => {
     try {
-      const [airports, continents, countries] = await Promise.all([
+      const [airports, continents, countries, ciudad] = await Promise.all([
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/airport/'),
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/continent/'),
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/country/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/ciudad/')
       ]);
+
+      console.log('Airports data:', airports.data);
+
+      // Inicializamos la capacidad actual de cada aeropuerto
+      const initialCapacities = airports.data.reduce((acc, airport) => {
+        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
+        return acc;
+      }, {});
+
+      setAirportCapacities(initialCapacities);
 
       setData((prevData) => ({
         ...prevData,
         airports: airports.data,
         continents: continents.data,
         countries: countries.data,
+        ciudad: ciudad.data
       }));
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -128,7 +138,8 @@ function App() {
     try {
       const response = await axios.post(url, { fecha_inicio: fechaInicio });
       const flightsResponse = response.data;
-      if (response.status !== 500) {
+
+      if (response.status !== 500 && flightsResponse && Array.isArray(flightsResponse)) {
         const flights = flightsResponse.map((flight) => {
           const departureDateTime = parseISO(flight.departure_date_time);
           const arrivalDateTime = parseISO(flight.arrival_date_time);
@@ -142,7 +153,7 @@ function App() {
             current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
-            duration: (arrivalDateTime - departureDateTime) / 60000, // duration in minutes
+            duration: (arrivalDateTime - departureDateTime) / 60000,
             flight_number: flight.code,
             origin: flight.departure_airport.code,
             estado_vuelo_id: 1,
@@ -160,8 +171,27 @@ function App() {
           ...prevData,
           flights: flights,
         }));
+
         startSimulationInterval();
-        console.log('Data fetched:', flights);
+
+        // Extraemos y agrupamos todos los shipments
+        const shipments = [];
+        flightsResponse.forEach((flight) => {
+          if (flight.shipments && Array.isArray(flight.shipments)) {
+            flight.shipments.forEach((shipment) => {
+              shipments.push({
+                ...shipment,
+                departure_date_time_plane: flight.departure_date_time,
+                arrival_date_time_plane: flight.arrival_date_time,
+                departure_airport_plane: flight.departure_airport.code,
+                arrival_airport_plane: flight.arrival_airport.code,
+              });
+            });
+          }
+        });
+
+        setAllShipments(shipments);
+
       } else {
         console.error('Internal Server Error', response);
       }
@@ -177,22 +207,33 @@ function App() {
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        console.log('Current DateTime before increment:', currentDateTime);
         const newDateTime = addMinutes(currentDateTime, 30);
-        console.log('Current DateTime after increment:', newDateTime);
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
-
-        console.log('New Date:', newDate);
-        console.log('New Time:', newTime);
-
         return {
           dia_actual: newDate,
           tiempo_actual: newTime,
         };
       });
     }, 1000);
+  };
+
+  const stopSimulationInterval = () => {
+    if (simulationIntervalRef.current) {
+      clearInterval(simulationIntervalRef.current);
+    }
+    setTipoSimulacion(null);
+    setTiempoSimulacion({
+      dia_actual: '',
+      tiempo_actual: '',
+    });
+    setData((prevData) => ({
+      ...prevData,
+      flights: [],
+    }));
+    setAllShipments([]);
+    fetchData();
   };
 
   useEffect(() => {
@@ -207,7 +248,6 @@ function App() {
 
   useEffect(() => {
     if (isMapLoaded && !loading) {
-      console.log('Map and data loaded, forcing re-render');
       setIsMapLoaded(false);
       setTimeout(() => setIsMapLoaded(true), 0);
     }
@@ -227,7 +267,6 @@ function App() {
   const handleMapLoad = (map) => {
     mapRef.current = map;
     setIsMapLoaded(true);
-    console.log('Map loaded');
   };
 
   const handleOpenPopup = (popupName) => {
@@ -278,7 +317,6 @@ function App() {
         const currentLng =
           parseFloat(originAirport.longitude) +
           progress * (parseFloat(destinationAirport.longitude) - parseFloat(originAirport.longitude));
-        console.log(`Calculated plane position: lat ${currentLat}, lng ${currentLng}`);
 
         let angle =
           Math.atan2(
@@ -287,7 +325,6 @@ function App() {
           ) *
           (180 / Math.PI);
 
-        // Ajustar el ángulo si el avión se mueve de derecha a izquierda
         const movingLeft = parseFloat(originAirport.longitude) > parseFloat(destinationAirport.longitude);
 
         return { lat: currentLat, lng: currentLng, angle, movingLeft };
@@ -315,6 +352,10 @@ function App() {
   };
 
   const renderMapContent = () => {
+    if (!window.google || !window.google.maps) {
+      return null;
+    }
+
     const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
     const activeFlights = data.flights.filter((flight) => {
@@ -322,6 +363,61 @@ function App() {
       const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
       return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
     });
+
+    const updatedAirports = { ...airportCapacities };
+
+    allShipments.forEach((shipment) => {
+      const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
+
+      const departureDateTime = parseISO(departure_date_time_plane);
+      const arrivalDateTime = parseISO(arrival_date_time_plane);
+
+      // Manejo del registro de envíos en el aeropuerto de origen
+      if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
+        if (updatedAirports[shipment.departure_airport]) {
+          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity;
+          console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
+        } else {
+          console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
+        }
+      }
+
+      if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
+        // El avión recoge los paquetes del aeropuerto de salida
+        if (currentDateTime.getTime() === departureDateTime.getTime()) {
+          if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
+            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity;
+            console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
+          } else {
+            console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
+          }
+        }
+        // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
+        if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
+          if (updatedAirports[arrival_airport_plane]) {
+            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
+            console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
+          } else {
+            console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
+          }
+        }
+      }
+    });
+
+    const getDotIcon = (airportCode) => {
+      const airport = updatedAirports[airportCode];
+      if (airport) {
+        const usage = airport.current_capacity / airport.max_capacity;
+        if (usage > 0.8) {
+          return redDot;
+        } else if (usage > 0.3) {
+          return yellowDot;
+        } else {
+          return greenDot;
+        }
+      }
+      return greenDot; // Valor por defecto si el aeropuerto no se encuentra
+    };
 
     return (
       <>
@@ -332,8 +428,8 @@ function App() {
               position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
               title={airport.code}
               icon={{
-                url: redDot,
-                scaledSize: new window.google.maps.Size(32, 32),
+                url: getDotIcon(airport.code),
+                scaledSize: new window.google.maps.Size(35, 35),
               }}
             />
           ))}
@@ -350,7 +446,7 @@ function App() {
                   position={{ lat: planePosition.lat, lng: planePosition.lng }}
                   icon={{
                     url: planePosition.movingLeft ? rotatedIcon : icon,
-                    scaledSize: new window.google.maps.Size(10, 10),
+                    scaledSize: new window.google.maps.Size(25, 25),
                     rotation: planePosition.angle,
                   }}
                   onClick={() => handleFlightClick(flight)}
@@ -392,6 +488,7 @@ function App() {
         onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
         onReportesClick={() => handleOpenPopup('Reportes')}
         onSimulacionClick={() => handleOpenPopup('Simulacion')}
+        onDetenerSimulacionClick={stopSimulationInterval}
       />
       <Content>
         <MainContent>
@@ -404,8 +501,17 @@ function App() {
               {isMapLoaded && (
                 <GoogleMap
                   mapContainerStyle={{ width: '100%', height: '100%' }}
-                  center={{ lat: -3.745, lng: -38.523 }}
+                  center={{ lat: 5.7942, lng: 60.8822 }}
                   zoom={3}
+                  options={{
+                    zoomControl: false,
+                    streetViewControl: false,
+                    mapTypeControl: false,
+                    fullscreenControl: false,
+                    mapTypeId: 'roadmap',
+                    disableDefaultUI: true,
+                    gestureHandling: 'none',
+                  }}
                   onLoad={handleMapLoad}
                   mapId="56d2948ec3b0b447"
                 >
@@ -414,7 +520,13 @@ function App() {
               )}
             </LoadScript>
           </MapContainer>
-          {activePopup === 'Simulacion' && <SimulacionSidebar onClose={handleClosePopup} onStartSimulation={handleStartSimulation} />}
+          {activePopup === 'Simulacion' && (
+            <SimulacionSidebar
+              onClose={handleClosePopup}
+              onStartSimulation={handleStartSimulation}
+              onStopSimulation={stopSimulationInterval}
+            />
+          )}
           {flightInfo && (
             <FlightInfoContainer>
               <button onClick={handleCloseFlightInfo}>Cerrar</button>

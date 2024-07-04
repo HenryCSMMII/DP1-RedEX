@@ -9,20 +9,27 @@ public class AirportDTO {
     private String longitude;
     private int max_capacity;
     private int countryId;
+    private int current_capacity;
 
     public AirportDTO() {
     }
 
-    public AirportDTO(int id, String code, String latitude, String longitude, int max_capacity, int countryId) {
+    public AirportDTO(int id, String code, String latitude, String longitude, int max_capacity, int countryId, int current_capacity) {
         this.id = id;
         this.code = code;
         this.latitude = latitude;
         this.longitude = longitude;
         this.max_capacity = max_capacity;
         this.countryId = countryId;
+        this.current_capacity = current_capacity;
     }
 
     public static AirportDTO fromAirport(Airport airport) {
+        int currentCapacity = 0;
+        if (airport.getStorage() != null && !airport.getStorage().isEmpty()) {
+            currentCapacity = airport.getStorage().get(0).getQuantity();
+        }
+
         AirportDTO dto = new AirportDTO();
         dto.setId(airport.getId());
         dto.setCode(airport.getCode());
@@ -30,7 +37,18 @@ public class AirportDTO {
         dto.setLongitude(airport.getLongitude());
         dto.setMax_capacity(airport.getMax_capacity());
         dto.setCountryId(airport.getCountry().getId());
+        dto.setCurrent_capacity(currentCapacity);
         return dto;
+    }
+
+    // Getters and setters...
+
+    public int getCurrent_capacity() {
+        return current_capacity;
+    }
+
+    public void setCurrent_capacity(int current_capacity) {
+        this.current_capacity = current_capacity;
     }
 
     public int getId() {
