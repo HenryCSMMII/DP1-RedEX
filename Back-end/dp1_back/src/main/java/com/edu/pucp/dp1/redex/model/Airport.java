@@ -40,14 +40,14 @@ public class Airport {
 		this.longitude = airport.getLongitude();
 		this.max_capacity = airport.getMax_capacity();
 		this.storage = new ArrayList<>();
-		
+		this.country = airport.getCountry();
+
 		if(airport.getStorage() != null) {
 			for(int i=0;i<airport.getStorage().size();i++) {
 				this.storage.add(i, new StorageCapacity(airport.getStorage().get(i)));
 			}
 		}
 		this.time_zone = airport.getTime_zone();
-		if(airport.getCountry()!=null) this.country = new Country(airport.getCountry());
 	}
 	
 	public int getId() {

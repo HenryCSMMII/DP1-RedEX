@@ -410,28 +410,31 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
 
     List<Integer> vuelos = new ArrayList<>();
     boolean noEncontrado = true;
-    
+    int j=0;
     for (int i = 0; i < tamanio; i++) {
         for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
             Integer idVuelo = flight.getId();
-            for (int j = 0; j < vuelos.size(); j++) {
-                if (vuelos.get(j).equals(idVuelo)) {
+            j=0;
+            for (Flight flightresolved : BD.flightsResolved) {
+                if (flightresolved.equals(flight)) {
                     BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
                     noEncontrado = false;
+                    if(flight.getUsed_capacity()[0]>30)System.out.println("Esta un poco lleno el vuelo "+flight.getId());
                     break;
                 }
+                j++;
             }
             if (noEncontrado) {
                 BD.flightsResolved.add(flight);
-                BD.flightsResolved.get(vuelos.size()).setShipments(new ArrayList<>());
-                BD.flightsResolved.get(vuelos.size()).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
+                BD.flightsResolved.get(j).setShipments(new ArrayList<>());
+                BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
                 vuelos.add(idVuelo);
             } else {
                 noEncontrado = true;
             }
         }
     }
-    System.out.println("ARREGLO VUELOS\n" + vuelos);
+    //System.out.println("ARREGLO VUELOS\n" + vuelos);
 
     return BD.flightsResolved;
 }

@@ -150,7 +150,7 @@ function App() {
             fecha_modificacion: flight.fecha_modificacion,
             arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
             capacity: flight.max_capacity,
-            current_load: flight.used_capacity.reduce((acc, val) => acc + val, 0),
+            current_load: flight.used_capacity[0],
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
             duration: (arrivalDateTime - departureDateTime) / 60000,
