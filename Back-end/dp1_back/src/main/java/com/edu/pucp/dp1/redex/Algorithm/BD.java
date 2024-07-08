@@ -267,7 +267,7 @@ public class BD {
 
     public static int read_list_shipment_with_date(long date_simulation, int type_simulation) {
         long limit_date_data = 0;
-        shipmentsTemp = new ArrayList<>();
+        //shipmentsTemp = new ArrayList<>();
         Calendar c = Calendar.getInstance();
         SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         SimpleDateFormat formatter_date_limit = new SimpleDateFormat("dd/MM/yyyy");
