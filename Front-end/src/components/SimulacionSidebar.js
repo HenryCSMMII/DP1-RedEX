@@ -79,10 +79,12 @@ const RadioGroup = styled.div`
 
 const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
-  const [fechaInicio, setFechaInicio] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('');
   const [isAvionesAeropuertosOpen, setIsAvionesAeropuertosOpen] = useState(false); // Estado para controlar el popup
 
   const handleStartSimulation = () => {
+    const fechaInicio = `${fecha}T${hora}:00`;
     onStartSimulation(tipoSimulacion, fechaInicio);
   };
 
@@ -99,7 +101,9 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+      <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+      <Label>Hora de inicio</Label>
+      <Input type="time" value={hora} onChange={(e) => setHora(e.target.value)} />
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
@@ -135,9 +139,7 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
       </RadioGroup>
       <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
       <Button danger onClick={onStopSimulation}>Detener simulación</Button>
-      <Button onClick={handleOpenAvionesAeropuertos}>Ver Aviones y Aeropuertos</Button> {/* Botón para abrir el popup */}
-      <Label>Consola de sucesos</Label>
-      <TextArea readOnly />
+ 
       <Label>Resultado</Label>
       <TextArea readOnly />
       <Button>Ampliar resultado</Button>

@@ -86,12 +86,11 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
   });
   const [cantidadPaquetes, setCantidadPaquetes] = useState(1);
   const [fechaEnvio, setFechaEnvio] = useState(new Date().toISOString().split('T')[0]);
+  const [horaEnvio, setHoraEnvio] = useState('00:00');
 
   useEffect(() => {
     if (selectedCountryRemitente) {
-      console.log('Selected Country Remitente ID:', selectedCountryRemitente);
       const filteredCities = data.ciudad.filter(city => city.countryId === parseInt(selectedCountryRemitente));
-      console.log('Filtered Cities Remitente:', filteredCities);
       setCitiesRemitente(filteredCities);
     } else {
       setCitiesRemitente([]);
@@ -100,9 +99,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
 
   useEffect(() => {
     if (selectedCountryDestinatario) {
-      console.log('Selected Country Destinatario ID:', selectedCountryDestinatario);
       const filteredCities = data.ciudad.filter(city => city.countryId === parseInt(selectedCountryDestinatario));
-      console.log('Filtered Cities Destinatario:', filteredCities);
       setCitiesDestinatario(filteredCities);
     } else {
       setCitiesDestinatario([]);
@@ -127,10 +124,6 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
 
   const handleSubmit = async () => {
     try {
-      console.log('Data Airports:', data.airports);
-      console.log('Remitente País ID:', remitente.pais);
-      console.log('Destinatario País ID:', destinatario.pais);
-
       const departureAirport = data.airports.find(airport => airport.countryId === parseInt(remitente.pais));
       const arrivalAirport = data.airports.find(airport => airport.countryId === parseInt(destinatario.pais));
 
@@ -149,11 +142,9 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
         arrivalAirport: {
           id: arrivalAirport.id
         },
-        departureTime: null,
+        departureTime: `${fechaEnvio}T${horaEnvio}:00`,
         arrivalTime: null,
       };
-
-      console.log('Payload:', JSON.stringify(shipmentPayload));
 
       const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
 
@@ -203,19 +194,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             placeholder="Nombre completo"
             onChange={(e) => handleInputChange(e, setRemitente, remitente)}
           />
-          <Input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            onChange={(e) => handleInputChange(e, setRemitente, remitente)}
-          />
-          <Input
-            type="tel"
-            name="telefono"
-            placeholder="Número de teléfono"
-            inputMode="numeric"
-            onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
-          />
+
           <Select name="pais" onChange={(e) => { setSelectedCountryRemitente(e.target.value); handleInputChange(e, setRemitente, remitente); }}>
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
@@ -253,19 +232,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             placeholder="Nombre completo"
             onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
           />
-          <Input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
-          />
-          <Input
-            type="tel"
-            name="telefono"
-            placeholder="Número de teléfono"
-            inputMode="numeric"
-            onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
-          />
+
           <Select name="pais" onChange={(e) => { setSelectedCountryDestinatario(e.target.value); handleInputChange(e, setDestinatario, destinatario); }}>
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
@@ -302,6 +269,15 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             type="date"
             value={fechaEnvio}
             onChange={(e) => setFechaEnvio(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="horaEnvio">Hora de envío</Label>
+          <Input
+            id="horaEnvio"
+            type="time"
+            value={horaEnvio}
+            onChange={(e) => setHoraEnvio(e.target.value)}
           />
         </FormGroup>
         <FormGroup>

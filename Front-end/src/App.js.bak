@@ -76,6 +76,11 @@ const InfoContainer = styled.div`
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
 
+const calculateSaturation = (currentLoad, capacity) => {
+  if (capacity === 0) return 'N/A';
+  return ((currentLoad / capacity) * 100).toFixed(2) + '%';
+};
+
 function App() {
   const [activePopup, setActivePopup] = useState('');
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
@@ -100,6 +105,8 @@ function App() {
   const [tipoSimulacion, setTipoSimulacion] = useState(null);
   const [allShipments, setAllShipments] = useState([]);
   const [airportCapacities, setAirportCapacities] = useState({});
+  const [simulationStopped, setSimulationStopped] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
 
   const fetchData = async () => {
     try {
@@ -150,7 +157,7 @@ function App() {
             fecha_modificacion: flight.fecha_modificacion,
             arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
             capacity: flight.max_capacity,
-            current_load: flight.used_capacity[0],
+            current_load: flight.used_capacity[0] * 3,
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
             duration: (arrivalDateTime - departureDateTime) / 60000,
@@ -163,8 +170,8 @@ function App() {
         });
 
         setTiempoSimulacion({
-          dia_actual: fechaInicio,
-          tiempo_actual: '00:00:00',
+          dia_actual: fechaInicio.split('T')[0],
+          tiempo_actual: fechaInicio.split('T')[1],
         });
 
         setData((prevData) => ({
@@ -223,6 +230,12 @@ function App() {
     if (simulationIntervalRef.current) {
       clearInterval(simulationIntervalRef.current);
     }
+    setSimulationStopped(true);
+  };
+
+  const resetSimulation = () => {
+    setSimulationStopped(false);
+    setResultMessage('');
     setTipoSimulacion(null);
     setTiempoSimulacion({
       dia_actual: '',
@@ -247,14 +260,7 @@ function App() {
   }, [loading]);
 
   useEffect(() => {
-    if (isMapLoaded && !loading) {
-      setIsMapLoaded(false);
-      setTimeout(() => setIsMapLoaded(true), 0);
-    }
-  }, [loading, data.flights]);
-
-  useEffect(() => {
-    if (tiempo_simulacion.dia_actual && tiempo_simulacion.tiempo_actual) {
+    if (tiempo_simulacion.dia_actual && tiempo_simulacion.tiempo_actual && !simulationStopped) {
       startSimulationInterval();
     }
     return () => {
@@ -262,7 +268,7 @@ function App() {
         clearInterval(simulationIntervalRef.current);
       }
     };
-  }, [tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual]);
+  }, [tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual, simulationStopped]);
 
   const handleMapLoad = (map) => {
     mapRef.current = map;
@@ -278,11 +284,7 @@ function App() {
   };
 
   const handleOpenNuevoEnvio = () => {
-    if (tipoSimulacion) {
-      setIsNuevoEnvioOpen(true);
-    } else {
-      alert('Por favor inicia un tipo de simulación');
-    }
+    setIsNuevoEnvioOpen(true);
   };
 
   const handleCloseNuevoEnvio = () => {
@@ -295,6 +297,20 @@ function App() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
+    let url = '';
+    if (tipoSimulacion === 'diario') {
+      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
+    } else if (tipoSimulacion === 'semanal') {
+      url = 'http://localhost:8080/api/algorithm/runSemanal/';
+    } else if (tipoSimulacion === 'colapso') {
+      url = 'http://localhost:8080/api/algorithm/run/';
+    }
+
+    setTipoSimulacion(tipoSimulacion);
+    runAlgorithm(url, fechaInicio);
   };
 
   const calculatePlanePosition = (flight, dia_actual, tiempo_actual) => {
@@ -377,7 +393,7 @@ function App() {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity;
+          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity * 25;
           console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
@@ -388,7 +404,7 @@ function App() {
         // El avión recoge los paquetes del aeropuerto de salida
         if (currentDateTime.getTime() === departureDateTime.getTime()) {
           if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
-            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity;
+            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity * 25;
             console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
           } else {
             console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
@@ -397,7 +413,7 @@ function App() {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
+            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity * 25;
             console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
           } else {
             console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
@@ -409,7 +425,7 @@ function App() {
     const getDotIcon = (airportCode) => {
       const airport = updatedAirports[airportCode];
       if (airport) {
-        const usage = airport.current_capacity / airport.max_capacity;
+        const usage = (airport.current_capacity) / airport.max_capacity;
         if (usage > 0.8) {
           return redDot;
         } else if (usage > 0.3) {
@@ -420,6 +436,30 @@ function App() {
       }
       return greenDot; // Valor por defecto si el aeropuerto no se encuentra
     };
+
+    const isCapacityExceeded = (airportCode, capacity) => {
+      if (updatedAirports[airportCode] && updatedAirports[airportCode].current_capacity > updatedAirports[airportCode].max_capacity) {
+        setResultMessage(`Capacidad excedida en el aeropuerto: ${airportCode}. Capacidad actual: ${updatedAirports[airportCode].current_capacity} / ${updatedAirports[airportCode].max_capacity}`);
+        stopSimulationInterval();
+        return true;
+      }
+      return false;
+    };
+
+    const checkCapacityExceeded = () => {
+      let capacityExceeded = false;
+      for (const airportCode in updatedAirports) {
+        if (isCapacityExceeded(airportCode, updatedAirports[airportCode].max_capacity)) {
+          capacityExceeded = true;
+          break;
+        }
+      }
+      return capacityExceeded;
+    };
+
+    if (checkCapacityExceeded()) {
+      return null;
+    }
 
     return (
       <>
@@ -462,27 +502,6 @@ function App() {
     );
   };
 
-  const clearMap = () => {
-    setData((prevData) => ({
-      ...prevData,
-      flights: [],
-    }));
-  };
-
-  const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
-    let url = '';
-    if (tipoSimulacion === 'diario') {
-      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
-    } else if (tipoSimulacion === 'semanal') {
-      url = 'http://localhost:8080/api/algorithm/runSemanal/';
-    } else if (tipoSimulacion === 'colapso') {
-      url = 'http://localhost:8080/api/algorithm/run/';
-    }
-
-    setTipoSimulacion(tipoSimulacion);
-    runAlgorithm(url, fechaInicio);
-  };
-
   return (
     <AppContainer>
       <Sidebar
@@ -492,6 +511,7 @@ function App() {
         onReportesClick={() => handleOpenPopup('Reportes')}
         onSimulacionClick={() => handleOpenPopup('Simulacion')}
         onDetenerSimulacionClick={stopSimulationInterval}
+        onResetSimulation={resetSimulation}
       />
       <Content>
         <MainContent>
@@ -528,6 +548,10 @@ function App() {
               onClose={handleClosePopup}
               onStartSimulation={handleStartSimulation}
               onStopSimulation={stopSimulationInterval}
+              onResetSimulation={resetSimulation}
+              data={data}
+              tiempo_simulacion={tiempo_simulacion}
+              resultMessage={resultMessage}
             />
           )}
           {(selectedFlight || selectedAirport) && (
@@ -545,6 +569,7 @@ function App() {
                     <p><strong>Fecha y hora de llegada:</strong> {new Date(`${selectedFlight.arrival_date}T${selectedFlight.arrival_time}`).toLocaleString()}</p>
                   )}
                   {<p><strong>Capacidad máxima:</strong> {selectedFlight.current_load}/{selectedFlight.capacity}</p>}
+                  {<p><strong>Saturación:</strong> {calculateSaturation(selectedFlight.current_load, selectedFlight.capacity)}</p>}
                 </div>
               )}
               {selectedAirport && (
@@ -556,7 +581,10 @@ function App() {
                   {selectedAirport.latitude && <p><strong>Latitud:</strong> {selectedAirport.latitude}</p>}
                   {selectedAirport.longitude && <p><strong>Longitud:</strong> {selectedAirport.longitude}</p>}
                   {airportCapacities[selectedAirport.code] && (
-                    <p><strong>Capacidad actual de paquetes:</strong> {airportCapacities[selectedAirport.code].current_capacity}/{airportCapacities[selectedAirport.code].max_capacity}</p>
+                    <>
+                      <p><strong>Capacidad actual de paquetes:</strong> {airportCapacities[selectedAirport.code].current_capacity}/{airportCapacities[selectedAirport.code].max_capacity}</p>
+                      <p><strong>Saturación:</strong> {calculateSaturation(airportCapacities[selectedAirport.code].current_capacity, airportCapacities[selectedAirport.code].max_capacity)}</p>
+                    </>
                   )}
                 </div>
               )}

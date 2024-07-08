@@ -86,6 +86,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
   });
   const [cantidadPaquetes, setCantidadPaquetes] = useState(1);
   const [fechaEnvio, setFechaEnvio] = useState(new Date().toISOString().split('T')[0]);
+  const [horaEnvio, setHoraEnvio] = useState('00:00');
 
   useEffect(() => {
     if (selectedCountryRemitente) {
@@ -123,10 +124,6 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
 
   const handleSubmit = async () => {
     try {
-      console.log('Data Airports:', data.airports);
-      console.log('Remitente País ID:', remitente.pais);
-      console.log('Destinatario País ID:', destinatario.pais);
-
       const departureAirport = data.airports.find(airport => airport.countryId === parseInt(remitente.pais));
       const arrivalAirport = data.airports.find(airport => airport.countryId === parseInt(destinatario.pais));
 
@@ -145,11 +142,9 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
         arrivalAirport: {
           id: arrivalAirport.id
         },
-        departureTime: null,
+        departureTime: `${fechaEnvio}T${horaEnvio}:00`,
         arrivalTime: null,
       };
-
-      console.log('Payload:', JSON.stringify(shipmentPayload));
 
       const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
 
@@ -298,6 +293,15 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             type="date"
             value={fechaEnvio}
             onChange={(e) => setFechaEnvio(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="horaEnvio">Hora de envío</Label>
+          <Input
+            id="horaEnvio"
+            type="time"
+            value={horaEnvio}
+            onChange={(e) => setHoraEnvio(e.target.value)}
           />
         </FormGroup>
         <FormGroup>
