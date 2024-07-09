@@ -235,7 +235,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
         }
     }
     System.out.println("ARREGLO VUELOS\n" + vuelos);
-
+    BD.shipmentsTemp = new ArrayList<>();
     return BD.flightsResolved;
 }
 

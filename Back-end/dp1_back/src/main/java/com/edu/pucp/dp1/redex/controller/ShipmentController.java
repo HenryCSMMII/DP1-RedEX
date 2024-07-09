@@ -16,6 +16,7 @@ import com.edu.pucp.dp1.redex.model.State;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +35,7 @@ public class ShipmentController {
                         shipment.getState() != null ? shipment.getState().name() : null,
                         shipment.getDepartureTime(),
                         shipment.getArrivalTime(),
+                        shipment.getRegisterDateTime(),
                         shipment.getClient() != null ? shipment.getClient().getDni() : null))
                 .collect(Collectors.toList());
     }
@@ -63,6 +65,7 @@ public class ShipmentController {
                                 state,
                                 shipment.getDepartureTime(),
                                 shipment.getArrivalTime(),
+                                shipment.getRegisterDateTime(),
                                 clientSenderId);
                     })
                     .collect(Collectors.toList());

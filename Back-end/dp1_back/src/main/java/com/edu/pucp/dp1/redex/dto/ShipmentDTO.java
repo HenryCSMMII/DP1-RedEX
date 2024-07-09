@@ -18,5 +18,6 @@ public class ShipmentDTO {
     private String state;
     private Date departureTime;
     private Date arrivalTime;
+    private Date registerDateTime;
     private Integer clientSenderId;  // Asegúrate de que este campo es Integer
 }

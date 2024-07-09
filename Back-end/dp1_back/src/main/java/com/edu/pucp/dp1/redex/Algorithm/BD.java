@@ -9,6 +9,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -224,46 +225,74 @@ public class BD {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
                 String[] split = data.split("-");
-                
-				Shipment shipment = new Shipment();
-				shipment.setId(shipmentsTemp.size());
+                if (split.length < 5) {
+                    System.out.println("Formato de línea inválido: " + data);
+                    continue;
+                }
+    
+                Shipment shipment = new Shipment();
+                shipment.setId(shipmentsTemp.size());
                 shipment.setCode(split[0]);
-                
-				Airport departure;
-                for (int i = 0; i < airports.size(); i++) {
-					if(airports.get(i).getCode().equals(split[0])){
-						departure = airports.get(i);
-						shipment.setDeparturAirport(departure);
-						break;
-					}	
+    
+                Airport departure = null;
+                for (Airport airport : airports) {
+                    if (airport.getCode().equals(split[0])) {
+                        departure = airport;
+                        break;
+                    }
                 }
-                
-		        String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
-		        SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		        Date register_date_time = formatter_date.parse(dateTime);
-				shipment.setRegisterDateTime(register_date_time);
-                
-				Airport arrival;
-                for (int i = 0; i < airports.size(); i++) {
-					if(airports.get(i).getCode().equals(split[4].substring(0, 4))){
-						arrival = airports.get(i);
-						shipment.setArrivalAirport(arrival);
-						break;
-					}
+                if (departure == null) {
+                    System.out.println("No se encontró el aeropuerto de salida: " + split[0]);
+                    continue;
                 }
-                shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
+                shipment.setDeparturAirport(departure);
+    
+                String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
+                SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                Date register_date_time;
+                try {
+                    register_date_time = formatter_date.parse(dateTime);
+                } catch (ParseException e) {
+                    System.out.println("Error parseando la fecha y hora: " + dateTime);
+                    continue;
+                }
+                shipment.setRegisterDateTime(register_date_time);
+    
+                Airport arrival = null;
+                for (Airport airport : airports) {
+                    if (airport.getCode().equals(split[4].substring(0, 4))) {
+                        arrival = airport;
+                        break;
+                    }
+                }
+                if (arrival == null) {
+                    System.out.println("No se encontró el aeropuerto de llegada: " + split[4].substring(0, 4));
+                    continue;
+                }
+                shipment.setArrivalAirport(arrival);
+    
+                try {
+                    shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
+                } catch (NumberFormatException e) {
+                    System.out.println("Error parseando la cantidad de paquetes: " + split[4].substring(5));
+                    continue;
+                }
+    
                 shipment.setDepartureTime(null);
                 shipment.setArrivalTime(null);
                 shipment.setFlightSchedule(null);
                 shipment.setClient(null);
                 shipment.setOperator(null);
                 shipment.setState(State.Creado);
+    
                 shipmentsTemp.add(shipment);
             }
         } catch (Exception e) {
             System.out.println("EXCEPTION SHIPMENTS SIN PARAMETRO: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+    
 
     public static int read_list_shipment_with_date(long date_simulation, int type_simulation) {
         long limit_date_data = 0;
