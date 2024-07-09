@@ -146,7 +146,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
         arrivalTime: null,
       };
 
-      const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
+      const shipmentResponse = await axios.post('http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/create/', shipmentPayload);
 
       alert('Envio creado exitosamente');
       onRequestClose();
