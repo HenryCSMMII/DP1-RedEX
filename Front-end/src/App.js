@@ -155,7 +155,7 @@ function App() {
             fecha_modificacion: flight.fecha_modificacion,
             arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
             capacity: flight.max_capacity,
-            current_load: flight.used_capacity[0]*3,
+            current_load: flight.used_capacity[0]*2,
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
             duration: (arrivalDateTime - departureDateTime) / 60000,
@@ -373,12 +373,12 @@ function App() {
       const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
 
       const departureDateTime = parseISO(departure_date_time_plane);
-      const arrivalDateTime = parseISO(arrival_date_time_plane);
+      const arrivalDateTime = parseISO(arrival_date_time_plane);	
 
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*25;
+          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*3;
           console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
@@ -389,7 +389,7 @@ function App() {
         // El avión recoge los paquetes del aeropuerto de salida
         if (currentDateTime.getTime() === departureDateTime.getTime()) {
           if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
-            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*25;
+            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*3;
             console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
           } else {
             console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
@@ -398,7 +398,7 @@ function App() {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*25;
+            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*3;
             console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
           } else {
             console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
@@ -450,7 +450,7 @@ function App() {
                   position={{ lat: planePosition.lat, lng: planePosition.lng }}
                   icon={{
                     url: planePosition.movingLeft ? rotatedIcon : icon,
-                    scaledSize: new window.google.maps.Size(25, 25),
+                    scaledSize: new window.google.maps.Size(12, 12),
                     rotation: planePosition.angle,
                   }}
                   onClick={() => handleFlightClick(flight)}
@@ -505,7 +505,7 @@ function App() {
               {isMapLoaded && (
                 <GoogleMap
                   mapContainerStyle={{ width: '100%', height: '100%' }}
-                  center={{ lat: 5.7942, lng: 60.8822 }}
+                  center={{ lat: 8.7942, lng: 58.8822 }}
                   zoom={3}
                   options={{
                     zoomControl: false,

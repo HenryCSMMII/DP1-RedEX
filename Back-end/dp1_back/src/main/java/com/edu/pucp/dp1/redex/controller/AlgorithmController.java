@@ -60,11 +60,11 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     int tamanio = BD.shipmentsTemp.size();
     BD.readAirports();
     BD.readFlights();
-    /*tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
+    //tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
 	if(tamanio==0){
 		System.out.println("No se encontraron nuevos envíos");
 		return BD.flightsResolved;
-	}*/
+	}
     CalendarFlightPool.generate_calendar();
 
     Population population = new Population(BD.POPULATION_NUM_INDIVIDUALS);
@@ -235,7 +235,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
         }
     }
     System.out.println("ARREGLO VUELOS\n" + vuelos);
-
+    BD.shipmentsTemp = new ArrayList<>();
     return BD.flightsResolved;
 }
 
