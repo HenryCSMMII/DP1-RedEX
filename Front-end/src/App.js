@@ -21,6 +21,15 @@ import planeYellow from './images/planeYellow.png';
 import planeYellowRotado from './images/planeYellowRotado.png';
 import planeGreen from './images/planeGreen.png';
 import planeGreenRotado from './images/planeGreenRotado.png';
+import redDotSelected from './images/red-dot-selected.png';
+import yellowDotSelected from './images/yellow-dot-selected.png';
+import greenDotSelected from './images/green-dot-selected.png';
+import planeRedWithBorder from './images/planeRedWithBorder.png';
+import planeRedRotadoWithBorder from './images/planeRedRotadoWithBorder.png';
+import planeYellowWithBorder from './images/planeYellowWithBorder.png';
+import planeYellowRotadoWithBorder from './images/planeYellowRotadoWithBorder.png';
+import planeGreenWithBorder from './images/planeGreenWithBorder.png';
+import planeGreenRotadoWithBorder from './images/planeGreenRotadoWithBorder.png';
 
 const AppContainer = styled.div`
   display: flex;
@@ -71,14 +80,100 @@ const InfoContainer = styled.div`
   left: 10px;
   z-index: 1;
   background: white;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid black; /* Añadir borde */
+  width: 260px;
+  font-size: 14px;
 `;
+
+const InfoContainerVuelo = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid black; /* Añadir borde */
+  width: 300px;
+  font-size: 14px;
+`;
+
+const CloseButton = styled.button`
+  margin-top: 10px;
+  background: #808080;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+`;
+
+const Header = styled.div`
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+`;
+const calculateCurrentCapacityPercentage = (currentLoad, capacity) => {
+  if (capacity === 0) return '0%';
+  return ((currentLoad / capacity) * 100).toFixed(2) + '%';
+};
 
 const calculateSaturation = (currentLoad, capacity) => {
   if (capacity === 0) return 'N/A';
   return ((currentLoad / capacity) * 100).toFixed(2) + '%';
+};
+
+
+const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, selected }) => {
+  if (!airport) return null;
+
+  return (
+    <InfoContainer selected={selected}>
+      <Header>Información del Aeropuerto</Header>
+      <div>
+        <p><strong style={{ color: 'green', fontSize: '16px' }}>País:</strong> <span style={{ color: 'green', fontSize: '16px' }}>{airport.city}</span></p>
+        <p><strong>Código del aeropuerto:</strong> {airport.code}</p>
+        <p><strong>Nombre del aeropuerto:</strong> {airport.name}</p>
+        <p><strong>Latitud:</strong> {airport.latitude}</p>
+        <p><strong>Longitud:</strong> {airport.longitude}</p>
+        {capacities[airport.code] && (
+          <>
+            <p><strong>Capacidad actual:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)</p>
+          </>
+        )}
+      </div>
+      <CloseButton onClick={() => { setSelectedFlight(null); setSelectedAirport(null); }}>Cerrar</CloseButton>
+    </InfoContainer>
+  );
+};
+
+const FlightInfoBox = ({ flight, setSelectedFlight }) => {
+  if (!flight) return null;
+
+  return (
+    <InfoContainerVuelo>
+      <Header>Información del Vuelo</Header>
+      <div>
+        {flight.id && <p><strong>ID del vuelo:</strong> {flight.id}</p>}
+        {flight.origin && <p><strong>Aeropuerto de salida:</strong> {flight.origin}</p>}
+        {flight.destination && <p><strong>Aeropuerto de llegada:</strong> {flight.destination}</p>}
+        {flight.departure_date && (
+          <p><strong>Fecha-hora de Salida:</strong> {new Date(`${flight.departure_date}T${flight.departure_time}`).toLocaleString()}</p>
+        )}
+        {flight.arrival_date && (
+          <p><strong>Fecha-hora de Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.arrival_time}`).toLocaleString()}</p>
+        )}
+        {<p><strong>Capacidad máxima:</strong> {flight.current_load}/{flight.capacity}</p>}
+        {<p><strong>Saturación:</strong> {calculateSaturation(flight.current_load, flight.capacity)}</p>}
+      </div>
+      <CloseButton onClick={() => setSelectedFlight(null)}>Cerrar</CloseButton>
+    </InfoContainerVuelo>
+  );
 };
 
 function App() {
@@ -108,11 +203,10 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [airports, continents, countries, ciudad] = await Promise.all([
+      const [airports, continents, countries] = await Promise.all([
         axios.get('http://localhost:8080/airport/'),
         axios.get('http://localhost:8080/continent/'),
         axios.get('http://localhost:8080/country/'),
-        axios.get('http://localhost:8080/ciudad/')
       ]);
 
       console.log('Airports data:', airports.data);
@@ -123,14 +217,22 @@ function App() {
         return acc;
       }, {});
 
+      // Combinar los datos de aeropuertos y países
+      const updatedAirports = airports.data.map((airport) => {
+        const country = countries.data.find((country) => country.id === airport.countryId);
+        return {
+          ...airport,
+          city: country ? country.name : 'Desconocido'
+        };
+      });
+
       setAirportCapacities(initialCapacities);
 
       setData((prevData) => ({
         ...prevData,
-        airports: airports.data,
+        airports: updatedAirports,
         continents: continents.data,
         countries: countries.data,
-        ciudad: ciudad.data
       }));
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -155,7 +257,7 @@ function App() {
             fecha_modificacion: flight.fecha_modificacion,
             arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
             capacity: flight.max_capacity,
-            current_load: flight.used_capacity[0]*2,
+            current_load: flight.used_capacity[0] * 2,
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
             duration: (arrivalDateTime - departureDateTime) / 60000,
@@ -204,7 +306,6 @@ function App() {
       console.error('Error fetching data:', error);
     }
   };
-
   const startSimulationInterval = () => {
     if (simulationIntervalRef.current) {
       clearInterval(simulationIntervalRef.current);
@@ -283,8 +384,8 @@ function App() {
   };
 
   const handleOpenNuevoEnvio = () => {
-	  setIsNuevoEnvioOpen(true);
-	};
+    setIsNuevoEnvioOpen(true);
+  };
 
   const handleCloseNuevoEnvio = () => {
     setIsNuevoEnvioOpen(false);
@@ -355,113 +456,138 @@ function App() {
   };
 
   const renderMapContent = () => {
-    if (!window.google || !window.google.maps) {
-      return null;
+  if (!window.google || !window.google.maps) {
+    return null;
+  }
+
+  const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
+
+  const activeFlights = data.flights.filter((flight) => {
+    const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+    const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+    return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
+  });
+
+  const updatedAirports = { ...airportCapacities };
+
+  allShipments.forEach((shipment) => {
+    const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
+
+    const departureDateTime = parseISO(departure_date_time_plane);
+    const arrivalDateTime = parseISO(arrival_date_time_plane);    
+
+    // Manejo del registro de envíos en el aeropuerto de origen
+    if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
+      if (updatedAirports[shipment.departure_airport]) {
+        updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*1;
+        console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
+      } else {
+        console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
+      }
     }
 
-    const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
-
-    const activeFlights = data.flights.filter((flight) => {
-      const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
-      const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
-      return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
-    });
-
-    const updatedAirports = { ...airportCapacities };
-
-    allShipments.forEach((shipment) => {
-      const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
-
-      const departureDateTime = parseISO(departure_date_time_plane);
-      const arrivalDateTime = parseISO(arrival_date_time_plane);	
-
-      // Manejo del registro de envíos en el aeropuerto de origen
-      if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
-        if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*3;
-          console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
+    if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
+      // El avión recoge los paquetes del aeropuerto de salida
+      if (currentDateTime.getTime() === departureDateTime.getTime()) {
+        if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
+          updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*1;
+          console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
         } else {
-          console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
+          console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
         }
       }
-
-      if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
-        // El avión recoge los paquetes del aeropuerto de salida
-        if (currentDateTime.getTime() === departureDateTime.getTime()) {
-          if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
-            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*3;
-            console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
-          } else {
-            console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
-          }
-        }
-        // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
-        if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
-          if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*3;
-            console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
-          } else {
-            console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
-          }
-        }
-      }
-    });
-
-    const getDotIcon = (airportCode) => {
-      const airport = updatedAirports[airportCode];
-      if (airport) {
-        const usage = (airport.current_capacity) / airport.max_capacity;
-        if (usage > 0.8) {
-          return redDot;
-        } else if (usage > 0.3) {
-          return yellowDot;
+      // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
+      if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
+        if (updatedAirports[arrival_airport_plane]) {
+          updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*1;
+          console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
         } else {
-          return greenDot;
+          console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
         }
       }
-      return greenDot; // Valor por defecto si el aeropuerto no se encuentra
-    };
+    }
+  });
 
-    return (
-      <>
-        {data.airports.length > 0 &&
-          data.airports.map((airport) => (
-            <MarkerF
-              key={airport.id}
-              position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
-              title={airport.code}
-              icon={{
-                url: getDotIcon(airport.code),
-                scaledSize: new window.google.maps.Size(35, 35),
-              }}
-              onClick={() => handleAirportClick(airport)}
-            />
-          ))}
-        {activeFlights.length > 0 &&
-          activeFlights.map((flight) => {
-            const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-            const capacityUsed = flight.current_load / flight.capacity;
-            const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
+  const getDotIcon = (airportCode) => {
+    const airport = updatedAirports[airportCode];
+    const isSelected = selectedAirport && selectedAirport.code === airportCode;
 
-            if (planePosition) {
-              return (
-                <MarkerF
-                  key={flight.id}
-                  position={{ lat: planePosition.lat, lng: planePosition.lng }}
-                  icon={{
-                    url: planePosition.movingLeft ? rotatedIcon : icon,
-                    scaledSize: new window.google.maps.Size(12, 12),
-                    rotation: planePosition.angle,
-                  }}
-                  onClick={() => handleFlightClick(flight)}
-                />
-              );
-            }
-            return null;
-          })}
-      </>
-    );
+    if (airport) {
+      const usage = (airport.current_capacity) / airport.max_capacity;
+      if (usage > 0.8) {
+        return isSelected ? redDotSelected : redDot;
+      } else if (usage > 0.3) {
+        return isSelected ? yellowDotSelected : yellowDot;
+      } else {
+        return isSelected ? greenDotSelected : greenDot;
+      }
+    }
+    return greenDot; // Valor por defecto si el aeropuerto no se encuentra
   };
+const getDotIconWithBorder = (airportCode, isSelected) => {
+  const airport = updatedAirports[airportCode];
+  const baseIcon = getDotIcon(airportCode);
+  
+  if (isSelected) {
+    return {
+      url: baseIcon,
+      scaledSize: new window.google.maps.Size(35, 35),
+      labelOrigin: new window.google.maps.Point(17, 45),
+      label: {
+        text: '',
+        color: 'red',
+        fontWeight: 'bold',
+        fontSize: '12px',
+        borderWidth: '4px',
+        borderColor: 'red'
+      }
+    };
+  }
+
+  return {
+    url: baseIcon,
+    scaledSize: new window.google.maps.Size(35, 35),
+  };
+};
+
+  return (
+    <>
+      {data.airports.length > 0 &&
+        data.airports.map((airport) => (
+          <MarkerF
+            key={airport.id}
+            position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
+            title={airport.code}
+            icon={getDotIconWithBorder(airport.code, selectedAirport && selectedAirport.code === airport.code)}
+            onClick={() => handleAirportClick(airport)}
+          />
+        ))}
+      {activeFlights.length > 0 &&
+        activeFlights.map((flight) => {
+          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+          const capacityUsed = flight.current_load / flight.capacity;
+          const { icon, rotatedIcon } = getPlaneIcon(capacityUsed);
+
+          if (planePosition) {
+            return (
+              <MarkerF
+                key={flight.id}
+                position={{ lat: planePosition.lat, lng: planePosition.lng }}
+                icon={{
+                  url: planePosition.movingLeft ? rotatedIcon : icon,
+                  scaledSize: new window.google.maps.Size(12, 12),
+                  rotation: planePosition.angle,
+                }}
+                onClick={() => handleFlightClick(flight)}
+              />
+            );
+          }
+          return null;
+        })}
+    </>
+  );
+};
+
 
   const clearMap = () => {
     setData((prevData) => ({
@@ -505,7 +631,7 @@ function App() {
               {isMapLoaded && (
                 <GoogleMap
                   mapContainerStyle={{ width: '100%', height: '100%' }}
-                  center={{ lat: 8.7942, lng: 58.8822 }}
+                  center={{ lat: 15.7942, lng: 5.8822 }}
                   zoom={3}
                   options={{
                     zoomControl: false,
@@ -531,42 +657,14 @@ function App() {
               onStopSimulation={stopSimulationInterval}
             />
           )}
-          {(selectedFlight || selectedAirport) && (
-            <InfoContainer>
-              <button onClick={() => { setSelectedFlight(null); setSelectedAirport(null); }}>Cerrar</button>
-              {selectedFlight && (
-                <div>
-                  {selectedFlight.id && <p><strong>ID del vuelo:</strong> {selectedFlight.id}</p>}
-                  {selectedFlight.origin && <p><strong>Aeropuerto de salida:</strong> {selectedFlight.origin}</p>}
-                  {selectedFlight.destination && <p><strong>Aeropuerto de llegada:</strong> {selectedFlight.destination}</p>}
-                  {selectedFlight.departure_date && (
-                    <p><strong>Fecha y hora de salida:</strong> {new Date(`${selectedFlight.departure_date}T${selectedFlight.departure_time}`).toLocaleString()}</p>
-                  )}
-                  {selectedFlight.arrival_date && (
-                    <p><strong>Fecha y hora de llegada:</strong> {new Date(`${selectedFlight.arrival_date}T${selectedFlight.arrival_time}`).toLocaleString()}</p>
-                  )}
-                  {<p><strong>Capacidad máxima:</strong> {selectedFlight.current_load}/{selectedFlight.capacity}</p>}
-                  {<p><strong>Saturación:</strong> {calculateSaturation(selectedFlight.current_load, selectedFlight.capacity)}</p>}
-                </div>
-              )}
-              {selectedAirport && (
-                <div>
-                  {selectedAirport.code && <p><strong>Código del aeropuerto:</strong> {selectedAirport.code}</p>}
-                  {selectedAirport.name && <p><strong>Nombre del aeropuerto:</strong> {selectedAirport.name}</p>}
-                  {selectedAirport.city && <p><strong>Ciudad:</strong> {selectedAirport.city}</p>}
-                  {selectedAirport.country && <p><strong>País:</strong> {selectedAirport.country}</p>}
-                  {selectedAirport.latitude && <p><strong>Latitud:</strong> {selectedAirport.latitude}</p>}
-                  {selectedAirport.longitude && <p><strong>Longitud:</strong> {selectedAirport.longitude}</p>}
-                  {airportCapacities[selectedAirport.code] && (
-                    <>
-                      <p><strong>Capacidad actual de paquetes:</strong> {airportCapacities[selectedAirport.code].current_capacity}/{airportCapacities[selectedAirport.code].max_capacity}</p>
-                      <p><strong>Saturación:</strong> {calculateSaturation(airportCapacities[selectedAirport.code].current_capacity, airportCapacities[selectedAirport.code].max_capacity)}</p>
-                    </>
-                  )}
-                </div>
-              )}
-            </InfoContainer>
-          )}
+         {selectedFlight && (
+          <FlightInfoBox flight={selectedFlight} />
+        )}
+
+        {/* Mostrar InfoBox si hay un aeropuerto seleccionado */}
+        {selectedAirport && (
+          <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
+        )}
         </MainContent>
         <Legend />
       </Content>
