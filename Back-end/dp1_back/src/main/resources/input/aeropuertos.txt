@@ -1,30 +1,30 @@
-01,SKBO,Bogota,Colombia,bogo,AS,America/Bogota,-5,4.7014,-74.1469,430
-02,SEQM,Quito,Ecuador,quit,AS,America/Quito,-5,0.1133,-78.3586,410
-03,SVMI,Caracas,Venezuela,cara,AS,America/Caracas,-4,10.6031,-66.9906,400
-04,SBBR,Brasilia,Brasil,bras,AS,America/Brasilia,-3,-15.8647,-47.9181,480
-05,SPIM,Lima,Peru,lima,AS,America/Lima,-5,-12.0219,-77.1144,440
-06,SLLP,La Paz,Bolivia,lapa,AS,America/La_Paz,-4,-16.5131,-68.1922,420
-07,SCEL,Santiago de Chile,Chile,sant,AS,America/Santiago,-3,-33.3964,-70.7947,460
-08,SABE,Buenos Aires,Argentina,buen,AS,America/Buenos_Aires,-3,-34.5592,-58.4156,460
-09,SGAS,Asunción,Paraguay,asun,AS,America/Asunción,-4,-25.2400,-57.5200,400
-10,SUAA,Montevideo,Uruguay,mont,AS,America/Montevideo,-3,-34.7892,-56.2647,400
-11,LATI,Tirana,Albania,tira,E,Europe/Tirana,+2,41.4147,19.7206,410
-12,EDDI,Berlin,Alemania,berl,E,Europe/Berlin,+2,52.4736,13.4017,480
-13,LOWW,Viena,Austria,vien,E,Europe/Viena,+2,48.1108,16.5708,430
-14,EBCI,Bruselas,Belgica,brus,E,Europe/Bruselas,+2,50.4592,4.4536,440
-15,UMMS,Minsk,Bielorrusia,mins,E,Europe/Minsk,+3,53.8825,28.0325,400
-16,LBSF,Sofia,Bulgaria,sofi,E,Europe/Sofia,+3,42.6903,23.4047,400
-17,LKPR,Praga,Checa,prag,E,Europe/Praga,+2,50.1014,14.2656,400
-18,LDZA,Zagreb,Croacia,zagr,E,Europe/Zagreb,+2,45.7428,16.0686,420
-19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhague,+2,55.6181,12.6561,480
-20,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam,+2,52.3000,4.7650,480
-21,VIDP,Delhi,India,delh,A,Asia/Delhi,+5,28.5664,77.1031,480
-22,OSDI,Damasco,Siria,dama,A,Asia/Damasco,+3,33.4114,36.5156,400
-23,OERK,Riad,Arabia Saudita,riad,A,Asia/Riad,+3,24.9578,46.6989,420
-24,OMDB,Dubai,Emiratos A.U,emir,A,Asia/Dubai,+4,25.2528,55.3644,420
-25,OAKB,Kabul,Afganistan,kabu,A,Asia/Kabul,+4,34.5656,69.2108,480
-26,OOMS,Mascate,Oman,masc,A,Asia/Mascate,+4,23.5894,58.2842,460
-27,OYSN,Sana,Yemen,sana,A,Asia/Sana,+3,15.4761,44.2197,420
-28,OPKC,Karachi,Pakistan,kara,A,Asia/Karachi,+5,24.9000,67.1500,410
-29,UBBB,Baku,Azerbaiyan,baku,A,Asia/Baku,+2,40.4672,50.0467,400
-30,OJAI,Aman,Jordania,aman,A,Asia/Aman,+3,31.7225,35.9933,400
+01,SKBO,Bogota,Colombia,bogo,AS,America/Bogota,-5,4.7014,-74.1469,1350
+02,SEQM,Quito,Ecuador,quit,AS,America/Quito,-5,0.1133,-78.3586,1350
+03,SVMI,Caracas,Venezuela,cara,AS,America/Caracas,-4,10.6031,-66.9906,1350
+04,SBBR,Brasilia,Brasil,bras,AS,America/Brasilia,-3,-15.8647,-47.9181,1350
+05,SPIM,Lima,Peru,lima,AS,America/Lima,-5,-12.0219,-77.1144,1350
+06,SLLP,La Paz,Bolivia,lapa,AS,America/La_Paz,-4,-16.5131,-68.1922,1350
+07,SCEL,Santiago de Chile,Chile,sant,AS,America/Santiago,-3,-33.3964,-70.7947,1350
+08,SABE,Buenos Aires,Argentina,buen,AS,America/Buenos_Aires,-3,-34.5592,-58.4156,1350
+09,SGAS,Asunción,Paraguay,asun,AS,America/Asunción,-4,-25.2400,-57.5200,1350
+10,SUAA,Montevideo,Uruguay,mont,AS,America/Montevideo,-3,-34.7892,-56.2647,1350
+11,LATI,Tirana,Albania,tira,E,Europe/Tirana,+2,41.4147,19.7206,1350
+12,EDDI,Berlin,Alemania,berl,E,Europe/Berlin,+2,52.4736,13.4017,1350
+13,LOWW,Viena,Austria,vien,E,Europe/Viena,+2,48.1108,16.5708,1350
+14,EBCI,Bruselas,Belgica,brus,E,Europe/Bruselas,+2,50.4592,4.4536,1350
+15,UMMS,Minsk,Bielorrusia,mins,E,Europe/Minsk,+3,53.8825,28.0325,1350
+16,LBSF,Sofia,Bulgaria,sofi,E,Europe/Sofia,+3,42.6903,23.4047,1350
+17,LKPR,Praga,Checa,prag,E,Europe/Praga,+2,50.1014,14.2656,1350
+18,LDZA,Zagreb,Croacia,zagr,E,Europe/Zagreb,+2,45.7428,16.0686,1350
+19,EKCH,Copenhague,Dinamarca,cope,E,Europe/Copenhague,+2,55.6181,12.6561,1350
+20,EHAM,Amsterdam,Holanda,amst,E,Europe/Amsterdam,+2,52.3000,4.7650,1350
+21,VIDP,Delhi,India,delh,A,Asia/Delhi,+5,28.5664,77.1031,1350
+22,OSDI,Damasco,Siria,dama,A,Asia/Damasco,+3,33.4114,36.5156,1350
+23,OERK,Riad,Arabia Saudita,riad,A,Asia/Riad,+3,24.9578,46.6989,1350
+24,OMDB,Dubai,Emiratos A.U,emir,A,Asia/Dubai,+4,25.2528,55.3644,1350
+25,OAKB,Kabul,Afganistan,kabu,A,Asia/Kabul,+4,34.5656,69.2108,1350
+26,OOMS,Mascate,Oman,masc,A,Asia/Mascate,+4,23.5894,58.2842,1350
+27,OYSN,Sana,Yemen,sana,A,Asia/Sana,+3,15.4761,44.2197,1350
+28,OPKC,Karachi,Pakistan,kara,A,Asia/Karachi,+5,24.9000,67.1500,1350
+29,UBBB,Baku,Azerbaiyan,baku,A,Asia/Baku,+2,40.4672,50.0467,1350
+30,OJAI,Aman,Jordania,aman,A,Asia/Aman,+3,31.7225,35.9933,1350

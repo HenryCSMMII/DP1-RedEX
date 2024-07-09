@@ -85,6 +85,9 @@ public class ShipmentController {
             // Set state
             request.setState(State.Creado);
             
+            // Set register date time
+            request.setRegisterDateTime(request.getRegisterDateTime());
+            
             BD.shipmentsTemp.add(request);
             return "Envío creado exitosamente.";
         } catch (Exception e) {

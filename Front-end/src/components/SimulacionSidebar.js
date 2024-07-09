@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import AvionesAeropuertosPopup from './AvionesAeropuertosPopup';
 
 const SidebarContainer = styled.div`
   width: 300px;
@@ -44,15 +45,19 @@ const Button = styled.button`
     background-color: #555;
   }
 
-  ${props => props.primary && `
-    background-color: #6ba292;
-    color: white;
-  `}
+  ${props =>
+    props.primary &&
+    css`
+      background-color: #6ba292;
+      color: white;
+    `}
 
-  ${props => props.danger && `
-    background-color: #e74c3c;
-    color: white;
-  `}
+  ${props =>
+    props.danger &&
+    css`
+      background-color: #e74c3c;
+      color: white;
+    `}
 `;
 
 const TextArea = styled.textarea`
@@ -72,19 +77,33 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation }) => {
+const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
-  const [fechaInicio, setFechaInicio] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('');
+  const [isAvionesAeropuertosOpen, setIsAvionesAeropuertosOpen] = useState(false); // Estado para controlar el popup
 
   const handleStartSimulation = () => {
+    const fechaInicio = `${fecha}T${hora}:00`;
     onStartSimulation(tipoSimulacion, fechaInicio);
+  };
+
+  const handleOpenAvionesAeropuertos = () => {
+    console.log("Abriendo popup de Aviones y Aeropuertos");
+    setIsAvionesAeropuertosOpen(true);
+  };
+
+  const handleCloseAvionesAeropuertos = () => {
+    setIsAvionesAeropuertosOpen(false);
   };
 
   return (
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
+      <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+      <Label>Hora de inicio</Label>
+      <Input type="time" value={hora} onChange={(e) => setHora(e.target.value)} />
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
@@ -120,11 +139,18 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation }) => 
       </RadioGroup>
       <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
       <Button danger onClick={onStopSimulation}>Detener simulación</Button>
-      <Label>Consola de sucesos</Label>
-      <TextArea readOnly />
+ 
       <Label>Resultado</Label>
       <TextArea readOnly />
       <Button>Ampliar resultado</Button>
+
+      {/* Popup para Aviones y Aeropuertos */}
+      <AvionesAeropuertosPopup
+        isOpen={isAvionesAeropuertosOpen}
+        onRequestClose={handleCloseAvionesAeropuertos}
+        data={data}
+        tiempo_simulacion={tiempo_simulacion}
+      />
     </SidebarContainer>
   );
 };
