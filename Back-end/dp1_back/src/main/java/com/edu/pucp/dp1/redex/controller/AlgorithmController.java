@@ -57,7 +57,7 @@ public class AlgorithmController {
 public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     long date_simulation = requestData.getFecha_inicio().getTime();
     int type_simulation = 1;
-    int tamanio = 0;
+    int tamanio = BD.shipmentsTemp.size();
     BD.readAirports();
     BD.readFlights();
     /*tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
