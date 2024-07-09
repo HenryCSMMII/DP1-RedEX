@@ -352,6 +352,96 @@ public class BD {
         return tamanio;
     }
 
+    
+    public static int read_list_shipment_with_date_weekly(long date_simulation, int type_simulation) {
+        long limit_date_data = 0;
+        shipmentsTemp = new ArrayList<>();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat formatter_date_limit = new SimpleDateFormat("dd/MM/yyyy");
+        if (type_simulation == 1) {
+            limit_date_data = date_simulation + ONE_DAY_MS + ONE_DAY_MS;
+        } else if (type_simulation == 7) {
+            limit_date_data = date_simulation + SEVEN_DAYS_MS + ONE_DAY_MS;
+        }
+        List<String> pack_files = new ArrayList<>();
+        Set<String> fileSet = new HashSet<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get( "/home/inf226.982.5e/DP1/DP1-RedEX/Back-end/dp1_back/src/main/resources/input/pack/"))) {
+            for (Path path : stream) {
+                if (!Files.isDirectory(path)) {
+                    fileSet.add(path.getFileName().toString());
+                }
+            }
+            pack_files = new ArrayList<>(fileSet);
+        } catch (Exception e) {
+            System.out.println("EXCEPCION FILES:" + e.getMessage());
+        }
+        try {
+            for (int j = 0; j < pack_files.size(); j++) {
+                File file = new File("/home/inf226.982.5e/DP1/DP1-RedEX/Back-end/dp1_back/src/main/resources/input/pack/" + pack_files.get(j));
+                try (Scanner scanner = new Scanner(file)) {
+                    while (scanner.hasNextLine()) {
+                        String data = scanner.nextLine();
+                        String[] split = data.split("-");
+						String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
+                        Date register_date_time = formatter_date.parse(dateTime);
+                        String actual_date_format = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4);
+                        Date actual_date = formatter_date_limit.parse(actual_date_format);
+                        if (actual_date.getTime() >= limit_date_data) {
+                            break;
+                        }
+                        if (register_date_time.getTime() >= date_simulation && register_date_time.getTime() <= limit_date_data && !processedShipments.contains(split[0]+"-"+split[1])) {
+                            Shipment shipment = new Shipment();
+                            shipment.setCode(split[0]+"-"+split[1]);
+                            
+							Airport departure;// = new Airport();
+                            for (int i = 0; i < airports.size(); i++) {
+								if(airports.get(i).getCode().equals(split[0])){
+									departure = airports.get(i);
+									shipment.setDeparturAirport(departure);
+									break;
+								}
+                            }
+                            //shipment.setDeparturAirport(departure);
+                            shipment.setRegisterDateTime(register_date_time);
+                            
+							Airport arrival;// = new Airport();
+                            //arrival.setCode(split[3].substring(0, 4));
+                            for (int i = 0; i < airports.size(); i++) {
+								if(airports.get(i).getCode().equals(split[4].substring(0, 4))){
+									arrival = airports.get(i);
+									shipment.setArrivalAirport(arrival);
+									break;
+								}
+                            }
+                            
+							shipment.setPackageQuantity(Integer.parseInt(split[4].substring(5)));
+
+							shipment.setDepartureTime(null);
+                            shipment.setArrivalTime(null);
+                            shipment.setFlightSchedule(null);
+                            shipment.setClient(null);
+                            shipment.setOperator(null);
+                            shipment.setState(null);
+                            
+							shipmentsTemp.add(shipment);
+                            processedShipments.add(split[0]+"-"+split[1]);
+                        }
+                    }
+                    System.out.println("ARCHIVO NUMERO: " + j);
+                    System.out.println("TAMANO DE LA LISTA DE ENVIOS: " + shipmentsTemp.size());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("EXCEPTION SHIPMENTS CON PARAMETRO: " + e.getMessage());
+        }
+        int tamanio = shipmentsTemp.size();
+        System.out.println("TAMANO DE LA LISTA DE ENVIOS EN TOTAL: " + tamanio);
+        return tamanio;
+    }
+
+    
+
     public static int read_list_shipment_with_date_REPLANIFICACION(long date_simulation) {
         long limit_date_data = 0;
         Calendar c = Calendar.getInstance();
