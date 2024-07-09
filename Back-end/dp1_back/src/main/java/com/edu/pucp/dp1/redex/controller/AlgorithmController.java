@@ -249,7 +249,7 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
     int tamanio = 0;
     BD.readAirports();
     BD.readFlights();
-    tamanio = BD.read_list_shipment_with_date(date_simulation, type_simulation);
+    tamanio = BD.read_list_shipment_with_date_weekly(date_simulation, type_simulation);
 	if(tamanio==0){
 		System.out.println("No se encontraron nuevos envíos");
 		return BD.flightsResolved;  
