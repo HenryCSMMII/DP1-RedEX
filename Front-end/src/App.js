@@ -1,8 +1,10 @@
+// App.js
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
 import { format, addMinutes, parseISO } from 'date-fns';
 import Sidebar from './components/Sidebar';
+import SidebarSearch from './components/SidebarSearch'; // Importa el nuevo componente
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
 import NuevoEnvioPopup from './components/NuevoEnvioPopup';
@@ -118,6 +120,7 @@ const Header = styled.div`
   font-weight: bold;
   margin-bottom: 10px;
 `;
+
 const calculateCurrentCapacityPercentage = (currentLoad, capacity) => {
   if (capacity === 0) return '0%';
   return ((currentLoad / capacity) * 100).toFixed(2) + '%';
@@ -127,7 +130,6 @@ const calculateSaturation = (currentLoad, capacity) => {
   if (capacity === 0) return 'N/A';
   return ((currentLoad / capacity) * 100).toFixed(2) + '%';
 };
-
 
 const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, selected }) => {
   if (!airport) return null;
@@ -306,6 +308,7 @@ function App() {
       console.error('Error fetching data:', error);
     }
   };
+
   const startSimulationInterval = () => {
     if (simulationIntervalRef.current) {
       clearInterval(simulationIntervalRef.current);
@@ -620,6 +623,7 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
         onSimulacionClick={() => handleOpenPopup('Simulacion')}
         onDetenerSimulacionClick={stopSimulationInterval}
       />
+      <SidebarSearch onSearch={(searchTerm) => console.log('Buscar:', searchTerm)} /> {/* Añadir el nuevo componente */}
       <Content>
         <MainContent>
           <MapContainer>
