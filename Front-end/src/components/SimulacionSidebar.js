@@ -77,7 +77,7 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion }) => {
+const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion, planeSaturation, airportSaturation }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
@@ -143,6 +143,11 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
       <Label>Resultado</Label>
       <TextArea readOnly />
       <Button>Ampliar resultado</Button>
+
+      <Label>Saturación de la flota de aviones:</Label>
+      <p>{planeSaturation}%</p>
+      <Label>Saturación de la flota de almacenes:</Label>
+      <p>{airportSaturation}%</p>
 
       {/* Popup para Aviones y Aeropuertos */}
       <AvionesAeropuertosPopup
