@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 const LegendWrapper = styled.div`
-  padding: 10px 20px;
+  // padding: 10px 20px;
   box-sizing: border-box;
   width: 100%;
 `;
@@ -31,7 +31,7 @@ const LegendTitle = styled.div`
 `;
 
 const LegendItemsContainer = styled.div`
-  display: flex;
+
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
