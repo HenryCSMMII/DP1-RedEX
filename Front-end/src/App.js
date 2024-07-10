@@ -212,7 +212,8 @@ function App() {
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        const newDateTime = addMinutes(currentDateTime, 30);
+        //CAMBIO DE TIEMPO        
+        const newDateTime = addMinutes(currentDateTime, 20);
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
@@ -378,7 +379,8 @@ function App() {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*3;
+          //CAMBIO DE CAPACIDAD
+          updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*1;
           console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
