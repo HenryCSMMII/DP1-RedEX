@@ -31,6 +31,8 @@ import planeYellowRotadoWithBorder from './images/planeYellowRotadoWithBorder.pn
 import planeGreenWithBorder from './images/planeGreenWithBorder.png';
 import planeGreenRotadoWithBorder from './images/planeGreenRotadoWithBorder.png';
 
+const LocalTimeContainer = styled.div`position: absolute;font-size: 8px; top: 10px; right: 10px; z-index: 1; background: white; padding: 5px; border-radius: 5px; box-shadow: 0px 0px 5px rgba(0,0,0,0.3);`;
+
 const AppContainer = styled.div`
   display: flex;
   height: 100vh;
@@ -178,6 +180,49 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
 };
 
 function App() {
+	const [localTime, setLocalTime] = useState({
+  currentDate: '',
+  currentTime: '',
+});
+
+const [startDateTime, setStartDateTime] = useState(null);
+const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
+useEffect(() => {
+  if (startDateTime) {
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const diff = now - startDateTime;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      setElapsedTime({ days, hours, minutes, seconds });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }
+}, [startDateTime]);
+
+const ElapsedTimeDisplay = () => (
+  <div>
+    <p><strong>Tiempo transcurrido:</strong> {elapsedTime.days} días {elapsedTime.hours} h {elapsedTime.minutes} min {elapsedTime.seconds} s</p>
+  </div>
+);
+useEffect(() => {
+  const updateLocalTime = () => {
+    const now = new Date();
+    const date = now.toISOString().split('T')[0];
+    const time = now.toTimeString().split(' ')[0];
+    setLocalTime({ currentDate: date, currentTime: time });
+  };
+
+  updateLocalTime(); // Actualiza inmediatamente
+  const intervalId = setInterval(updateLocalTime, 1000); // Actualiza cada segundo
+
+  return () => clearInterval(intervalId); // Limpia el intervalo al desmontar el componente
+}, []);
   const [activePopup, setActivePopup] = useState('');
   const [activePopupChiste, setActivePopupChiste] = useState(false);
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
@@ -605,22 +650,25 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
     }));
   };
 
-  const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
-    let url = '';
-    if (tipoSimulacion === 'diario') {
-      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
-    } else if (tipoSimulacion === 'semanal') {
-      url = 'http://localhost:8080/api/algorithm/runSemanal/';
-    } else if (tipoSimulacion === 'colapso') {
-      url = 'http://localhost:8080/api/algorithm/run/';
-    }
+const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
+  let url = '';
+  if (tipoSimulacion === 'diario') {
+    url = 'http://localhost:8080/api/algorithm/runDiaDia/';
+  } else if (tipoSimulacion === 'semanal') {
+    url = 'http://localhost:8080/api/algorithm/runSemanal/';
+  } else if (tipoSimulacion === 'colapso') {
+    url = 'http://localhost:8080/api/algorithm/run/';
+  }
 
-    setTipoSimulacion(tipoSimulacion);
-    runAlgorithm(url, fechaInicio);
-  };
+  setTipoSimulacion(tipoSimulacion);
+  setStartDateTime(parseISO(fechaInicio)); // Establecer la fecha y hora de inicio
+  runAlgorithm(url, fechaInicio);
+};
+
 
   return (
     <AppContainer>
+<<<<<<< Updated upstream
       <Sidebar
         onNuevoEnvioClick={handleOpenNuevoEnvio}
         onVuelosClick={() => handleOpenPopup('Vuelos')}
@@ -668,8 +716,58 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
           )}
          {selectedFlight && (
           <FlightInfoBox flight={selectedFlight} />
+=======
+    <Sidebar
+      onNuevoEnvioClick={handleOpenNuevoEnvio}
+      onVuelosClick={() => handleOpenPopup('Vuelos')}
+      onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
+      onReportesClick={() => handleOpenPopup('Reportes')}
+      onSimulacionClick={() => handleOpenPopup('Simulacion')}
+      onDetenerSimulacionClick={stopSimulationInterval}
+    />
+    <Content>
+      <MainContent>
+        <MapContainer>
+          <LoadScript
+            googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
+            libraries={libraries}
+            onLoad={handleMapLoad}
+          >
+            {isMapLoaded && (
+              <GoogleMap
+                mapContainerStyle={{ width: '100%', height: '100%' }}
+                center={{ lat: 15.7942, lng: 5.8822 }}
+                zoom={3}
+                options={{
+                  zoomControl: false,
+                  streetViewControl: false,
+                  mapTypeControl: false,
+                  fullscreenControl: false,
+                  mapTypeId: 'roadmap',
+                  disableDefaultUI: true,
+                  gestureHandling: 'none',
+                }}
+                onLoad={handleMapLoad}
+                mapId="56d2948ec3b0b447"
+              >
+                {!loading && renderMapContent()}
+              </GoogleMap>
+            )}
+          </LoadScript>
+        </MapContainer>
+        {activePopup === 'Simulacion' && (
+          <SimulacionSidebar
+            onClose={handleClosePopup}
+            onStartSimulation={handleStartSimulation}
+            onStopSimulation={stopSimulationInterval}
+          />
+>>>>>>> Stashed changes
         )}
+       {selectedFlight && (
+        <FlightInfoBox flight={selectedFlight} />
+      )}
 
+<<<<<<< Updated upstream
         {/* Mostrar InfoBox si hay un aeropuerto seleccionado */}
         {selectedAirport && (
           <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
@@ -698,6 +796,42 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
       <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
       <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
     </AppContainer>
+=======
+      {/* Mostrar InfoBox si hay un aeropuerto seleccionado */}
+      {selectedAirport && (
+        <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
+      )}
+      </MainContent>
+      <Legend />
+    </Content>
+    <InputContainer>
+	  <label>
+		Fecha:
+		<input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
+	  </label>
+	  <label>
+		Hora:
+		<input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
+	  </label>
+	  <ElapsedTimeDisplay />
+	</InputContainer>
+    <LocalTimeContainer>
+      <p><strong>Fecha actual:</strong> {localTime.currentDate}</p>
+      <p><strong>Hora actual:</strong> {localTime.currentTime}</p>
+    </LocalTimeContainer>
+    <NuevoEnvioPopup
+      isOpen={isNuevoEnvioOpen}
+      onRequestClose={handleCloseNuevoEnvio}
+      data={data}
+      tipoSimulacion={tipoSimulacion}
+      runAlgorithm={runAlgorithm}
+      tiempoSimulacion={tiempo_simulacion}
+    />
+    <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
+    <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
+    <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
+  </AppContainer>
+>>>>>>> Stashed changes
   );
 }
 
