@@ -65,14 +65,13 @@ Modal.setAppElement('#root');
 
 const InputContainer = styled.div`
   position: absolute;
-  bottom: 440px;
-  right: 100px;
+  top: 10px;
+  left: 10px;
   z-index: 1;
-  background: black;
-  color: white;
+  background: white;
   padding: 10px;
-  display: flex;
-  flex-direction: column;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
 
 const InfoContainer = styled.div`
@@ -179,7 +178,6 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
 
 function App() {
   const [activePopup, setActivePopup] = useState('');
-  const [activePopupChiste, setActivePopupChiste] = useState(false);
   const [isNuevoEnvioOpen, setIsNuevoEnvioOpen] = useState(false);
   const [data, setData] = useState({
     airports: [],
@@ -379,17 +377,10 @@ function App() {
 
   const handleOpenPopup = (popupName) => {
     setActivePopup(popupName);
-    setActivePopupChiste(false);
-  };
-
-  const handleOpenPopupSimulacion = (popupName) => {
-    setActivePopup(popupName);
-    setActivePopupChiste(true);
   };
 
   const handleClosePopup = () => {
     setActivePopup('');
-    setActivePopupChiste(false);
   };
 
   const handleOpenNuevoEnvio = () => {
@@ -626,7 +617,7 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
         onVuelosClick={() => handleOpenPopup('Vuelos')}
         onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
         onReportesClick={() => handleOpenPopup('Reportes')}
-        onSimulacionClick={() => handleOpenPopupSimulacion('Simulacion')}
+        onSimulacionClick={() => handleOpenPopup('Simulacion')}
         onDetenerSimulacionClick={stopSimulationInterval}
       />
       <Content>
@@ -675,8 +666,9 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
           <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
         )}
         </MainContent>
+        <Legend />
       </Content>
-{activePopupChiste &&      <InputContainer>
+      <InputContainer>
         <label>
           Fecha:
           <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
@@ -685,7 +677,7 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
           Hora:
           <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
         </label>
-      </InputContainer>}
+      </InputContainer>
       <NuevoEnvioPopup
         isOpen={isNuevoEnvioOpen}
         onRequestClose={handleCloseNuevoEnvio}

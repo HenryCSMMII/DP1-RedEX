@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import AvionesAeropuertosPopup from './AvionesAeropuertosPopup';
-import Legend from './Legend';
 
 const SidebarContainer = styled.div`
   width: 300px;
@@ -66,7 +65,7 @@ const TextArea = styled.textarea`
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%;
-  height: 30px;
+  height: 100px;
   resize: none;
   margin-bottom: 20px;
   box-sizing: border-box; /* Asegura que no se corte el contenido */
@@ -141,9 +140,9 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
       <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
       <Button danger onClick={onStopSimulation}>Detener simulación</Button>
  
-      {/* <Label>Resultado</Label>
+      <Label>Resultado</Label>
       <TextArea readOnly />
-      <Button>Ampliar resultado</Button> */}
+      <Button>Ampliar resultado</Button>
 
       {/* Popup para Aviones y Aeropuertos */}
       <AvionesAeropuertosPopup
@@ -152,7 +151,6 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
         data={data}
         tiempo_simulacion={tiempo_simulacion}
       />
-      <Legend/>
     </SidebarContainer>
   );
 };
