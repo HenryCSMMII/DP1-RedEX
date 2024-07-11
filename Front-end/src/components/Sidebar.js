@@ -9,10 +9,11 @@ const SidebarContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+  overflow-y: auto; /* Añade scroll cuando el contenido es largo */
 
   @media (min-width: 768px) {
     width: 250px;
-    height: 100vh;
   }
 `;
 
