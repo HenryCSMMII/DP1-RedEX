@@ -679,7 +679,7 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
         </MainContent>
         {/* <Legend /> */}
       </Content>
-      {/* <InputContainer>
+      { <InputContainer>
         <label>
           Fecha:
           <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
@@ -688,7 +688,7 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
           Hora:
           <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
         </label>
-      </InputContainer> */}
+      </InputContainer>}
       <NuevoEnvioPopup
         isOpen={isNuevoEnvioOpen}
         onRequestClose={handleCloseNuevoEnvio}
