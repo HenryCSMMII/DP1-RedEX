@@ -98,6 +98,8 @@ const InputContainer = styled.div`
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
 `;
 
+
+
 const InfoContainer = styled.div`
   position: absolute;
   bottom: 10px;
@@ -273,6 +275,7 @@ function App() {
   const [tipoSimulacion, setTipoSimulacion] = useState(null);
   const [allShipments, setAllShipments] = useState([]);
   const [airportCapacities, setAirportCapacities] = useState({});
+  const [filteredShipments, setFilteredShipments] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -318,7 +321,7 @@ function App() {
     try {
       const response = await axios.post(url, { fecha_inicio: fechaInicio });
       const flightsResponse = response.data;
-
+  
       if (response.status !== 500 && flightsResponse && Array.isArray(flightsResponse)) {
         const flights = flightsResponse.map((flight) => {
           const departureDateTime = parseISO(flight.departure_date_time);
@@ -341,20 +344,20 @@ function App() {
             departure_date: format(departureDateTime, 'yyyy-MM-dd'),
           };
         });
-
+  
         setTiempoSimulacion({
           dia_actual: fechaInicio.split('T')[0],
           tiempo_actual: fechaInicio.split('T')[1],
         });
-
+  
         setData((prevData) => ({
           ...prevData,
           flights: flights,
         }));
-
+  
         startSimulationInterval();
-
-        // Extraemos y agrupamos todos los shipments
+  
+        // Extraemos y agrupamos todos los envíos
         const shipments = [];
         flightsResponse.forEach((flight) => {
           if (flight.shipments && Array.isArray(flight.shipments)) {
@@ -369,9 +372,9 @@ function App() {
             });
           }
         });
-
+  
         setAllShipments(shipments);
-
+  
       } else {
         console.error('Internal Server Error', response);
       }
@@ -474,6 +477,24 @@ const startSimulationInterval = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (allShipments && Array.isArray(allShipments) && allShipments.length > 0) {
+      const currentDateTime = new Date(); // Asume que tienes acceso al tiempo actual simulado
+  
+      // Filtrar los envíos que están en vuelo o han llegado a un aeropuerto pero aún no a su destino final
+      const activeShipments = allShipments.filter(shipment => {
+        const departureDateTime = parseISO(shipment.departure_date_time_plane);
+        const arrivalDateTime = parseISO(shipment.arrival_date_time_plane);
+        return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
+      });
+  
+      setFilteredShipments(activeShipments);
+    }
+  }, [allShipments, tiempo_simulacion]); // Alrededor de la línea 290
+  
+  
+  
+  
   useEffect(() => {
     if (!loading) {
       runAlgorithm();
@@ -792,6 +813,7 @@ const calculateAirportSaturation = (airportCapacities) => {
           onSearch={(searchTerm) => console.log('Buscar:', searchTerm)}
           airports={data.airports}
           capacities={airportCapacities}
+          shipments={filteredShipments}
         />{}
       <Content>
         <MainContent>
@@ -807,13 +829,14 @@ const calculateAirportSaturation = (airportCapacities) => {
                   center={{ lat: 15.7942, lng: 5.8822 }}
                   zoom={3}
                   options={{
-                    zoomControl: false,
+                    zoomControl: true, // Habilita el control de zoom
                     streetViewControl: false,
                     mapTypeControl: false,
                     fullscreenControl: false,
                     mapTypeId: 'roadmap',
                     disableDefaultUI: true,
-                    gestureHandling: 'none',
+                    gestureHandling: 'auto', // Permite el arrastre y el zoom con el scroll del mouse
+                    scrollwheel: true, // Habilita el zoom con el scroll del mouse
                   }}
                   onLoad={handleMapLoad}
                   mapId="56d2948ec3b0b447"
