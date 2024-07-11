@@ -225,6 +225,7 @@ function App() {
 
   const [startDateTime, setStartDateTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [currentFlights, setCurrentFlights] = useState([]); // Nuevo estado para vuelos en curso
 
   useEffect(() => {
     if (startDateTime) {
@@ -246,7 +247,7 @@ function App() {
 
   const ElapsedTimeDisplay = ({ elapsedTime }) => (
     <div>
-      <p><strong>Tiempo transcurrido:</strong> {elapsedTime.days} días {elapsedTime.hours} h {elapsedTime.minutes} min {elapsedTime.seconds} s</p>
+      
     </div>
   );
 
@@ -452,10 +453,19 @@ const startSimulationInterval = () => {
       // Calcular saturaciones
       const fleetSaturation = calculateFleetSaturation(updatedFlights, newDateTime);
       const airportSaturation = calculateAirportSaturation(updatedAirportCapacities);
-      
+
+      // Filtrar vuelos en curso
+      const currentFlights = updatedFlights.filter((flight) => {
+        const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+        const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+        return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
+      });
+
       // Actualizar estados
       setPlaneSaturation(fleetSaturation);
       setAirportSaturation(airportSaturation);
+      setCurrentFlights(currentFlights); // Actualizar vuelos en curso
+      setAirportCapacities(updatedAirportCapacities); // Actualizar capacidades de aeropuertos
 
       return {
         dia_actual: newDate,
@@ -816,8 +826,10 @@ const calculateAirportSaturation = (airportCapacities) => {
         <SidebarSearch
           onSearch={handleSearch}
           airports={data.airports}
-          countries={data.countries} // Pasar los países a SidebarSearch
+          flights={currentFlights} // Pasar los vuelos en curso
           capacities={airportCapacities}
+          currentSimulationDate={tiempo_simulacion.dia_actual}
+          currentSimulationTime={tiempo_simulacion.tiempo_actual}
         />
         <Content>
           <MainContent>
@@ -895,11 +907,10 @@ const calculateAirportSaturation = (airportCapacities) => {
         <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
         <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
         <ReportesPopup
-		  isOpen={activePopup === 'Reportes'}
-		  onRequestClose={handleClosePopup}
-		  data={data}
-		  airportCapacities={airportCapacities}
-		/>
+          isOpen={activePopup === 'Reportes'}
+          onRequestClose={handleClosePopup}
+          airportCapacities={airportCapacities}
+        />
       </AppContainer>
     </>
   );

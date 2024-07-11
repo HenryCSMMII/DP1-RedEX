@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import { Bar } from 'react-chartjs-2';
@@ -75,35 +75,29 @@ const ChartContainer = styled.div`
 `;
 
 const ReportesPopup = ({ isOpen, onRequestClose, airportCapacities }) => {
-  const [chartData, setChartData] = useState(null);
+  const sortedCapacities = Object.entries(airportCapacities)
+    .map(([code, { current_capacity, max_capacity }]) => ({
+      code,
+      saturation: ((current_capacity / max_capacity) * 100).toFixed(2),
+    }))
+    .sort((a, b) => b.saturation - a.saturation)
+    .slice(0, 5);
 
-  useEffect(() => {
-    if (airportCapacities) {
-      const sortedCapacities = Object.entries(airportCapacities)
-        .map(([code, { current_capacity, max_capacity }]) => ({
-          code,
-          saturation: ((current_capacity / max_capacity) * 100).toFixed(2),
-        }))
-        .sort((a, b) => b.saturation - a.saturation)
-        .slice(0, 5);
+  const labels = sortedCapacities.map((airport) => airport.code);
+  const data = sortedCapacities.map((airport) => parseFloat(airport.saturation));
 
-      const labels = sortedCapacities.map((airport) => airport.code);
-      const data = sortedCapacities.map((airport) => parseFloat(airport.saturation));
-
-      setChartData({
-        labels,
-        datasets: [
-          {
-            label: 'Saturación (%)',
-            data,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-          },
-        ],
-      });
-    }
-  }, [airportCapacities]);
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: 'Saturación (%)',
+        data,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
     <Modal

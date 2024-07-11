@@ -134,21 +134,7 @@ const ReportesPopup = ({ isOpen, onRequestClose, airportCapacities }) => {
         <HeaderContainer>
           <h2>Reportes</h2>
         </HeaderContainer>
-        <FiltersContainer>
-          <FiltersTitle>
-            Filtros <FilterIcon>▼</FilterIcon>
-          </FiltersTitle>
-          <FiltersRow>
-            <FilterLabel>
-              Fecha de inicio
-              <FilterInput type="date" />
-            </FilterLabel>
-            <FilterLabel>
-              Fecha de fin
-              <FilterInput type="date" />
-            </FilterLabel>
-          </FiltersRow>
-        </FiltersContainer>
+
         <ChartContainer>
           {chartData && (
             <Bar
