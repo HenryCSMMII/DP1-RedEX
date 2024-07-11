@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
-import { format, addMinutes, parseISO } from 'date-fns';
+import { format, addMinutes, parseISO, formatDate, differenceInSeconds  } from 'date-fns';
 import Sidebar from './components/Sidebar';
 import SidebarSearch from './components/SidebarSearch'; // Importa el nuevo componente
 import Legend from './components/Legend';
@@ -210,37 +210,43 @@ function App() {
   const [airportSaturation, setAirportSaturation] = useState(0);
 
   const [startDateTime, setStartDateTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
-  useEffect(() => {
-    if (startDateTime) {
-      const intervalId = setInterval(() => {
-        const now = new Date();
-        const diff = now - startDateTime;
+  const ElapsedTimeDisplay = ({ elapsedTime }) => {
+    const simulationStartTime = parseISO(`${elapsedTime.dia_actual}T00:00:00`);
+    const currentTime = parseISO(`${elapsedTime.dia_actual}T${elapsedTime.tiempo_actual}`);
+    const diffInSeconds = differenceInSeconds(currentTime, simulationStartTime);
 
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((diff / 1000 / 60) % 60);
-        const seconds = Math.floor((diff / 1000) % 60);
+    const days = Math.floor(diffInSeconds / (24 * 60 * 60));
+    const hours = Math.floor((diffInSeconds % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((diffInSeconds % (60 * 60)) / 60);
+    const seconds = diffInSeconds % 60;
 
-        setElapsedTime({ days, hours, minutes, seconds });
-      }, 1000);
+    return (
+      <div>
+        <p><strong>Tiempo transcurrido:</strong> {days} días {hours} h {minutes} min {seconds} s</p>
+      </div>
+    );
+  };
 
-      return () => clearInterval(intervalId);
-    }
-  }, [startDateTime]);
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
-  const ElapsedTimeDisplay = ({ elapsedTime }) => (
-    <div>
-      <p><strong>Tiempo transcurrido:</strong> {elapsedTime.days} días {elapsedTime.hours} h {elapsedTime.minutes} min {elapsedTime.seconds} s</p>
-    </div>
-  );
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  };
 
   useEffect(() => {
     const updateLocalTime = () => {
       const now = new Date();
-      const date = now.toISOString().split('T')[0];
-      const time = now.toTimeString().split(' ')[0];
+      const date = formatDate(now);
+      const time = formatTime(now);
       setLocalTime({ currentDate: date, currentTime: time });
     };
 
@@ -277,9 +283,9 @@ function App() {
   const fetchData = async () => {
     try {
       const [airports, continents, countries] = await Promise.all([
-        axios.get('http://localhost:8080/airport/'),
-        axios.get('http://localhost:8080/continent/'),
-        axios.get('http://localhost:8080/country/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/airport/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/continent/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/country/'),
       ]);
 
       console.log('Airports data:', airports.data);
@@ -855,7 +861,7 @@ const calculateAirportSaturation = (airportCapacities) => {
           Hora:
           <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
         </label>
-        <ElapsedTimeDisplay elapsedTime={elapsedTime} />
+        <ElapsedTimeDisplay elapsedTime={tiempo_simulacion} />
       </InputContainer>
       <LocalTimeContainer>
         <p><strong>Fecha actual:</strong> {localTime.currentDate}</p>
