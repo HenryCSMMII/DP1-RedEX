@@ -35,9 +35,9 @@ import planeGreenRotadoWithBorder from './images/planeGreenRotadoWithBorder.png'
 
 const LocalTimeContainer = styled.div`
   position: absolute;
-  font-size: 8px; 
-  top: 10px; 
-  right: 10px; 
+  font-size: 20px; 
+  top: 20px; 
+  right: 330px; 
   z-index: 1; 
   background: white; 
   padding: 5px; 
