@@ -1,10 +1,9 @@
-// App.js
 import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
 import { format, addMinutes, parseISO } from 'date-fns';
 import Sidebar from './components/Sidebar';
-import SidebarSearch from './components/SidebarSearch'; // Importa el nuevo componente
+import SidebarSearch from './components/SidebarSearch';
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
 import NuevoEnvioPopup from './components/NuevoEnvioPopup';
@@ -33,6 +32,16 @@ import planeYellowRotadoWithBorder from './images/planeYellowRotadoWithBorder.pn
 import planeGreenWithBorder from './images/planeGreenWithBorder.png';
 import planeGreenRotadoWithBorder from './images/planeGreenRotadoWithBorder.png';
 
+const GlobalStyle = createGlobalStyle`
+  body, html, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+`;
+
 const LocalTimeContainer = styled.div`
   position: absolute;
   font-size: 20px; 
@@ -41,8 +50,10 @@ const LocalTimeContainer = styled.div`
   z-index: 1; 
   background: white; 
   padding: 5px; 
-  border-radius: 5px; 
+  border-radius: 5px;
+  border: 2px solid black;  
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+  font-size: 13px;
 `;
 
 const selectedPlaneIcons = {
@@ -56,6 +67,7 @@ const selectedPlaneIcons = {
 
 const AppContainer = styled.div`
   display: flex;
+  width: 100vw;
   height: 100vh;
   flex-direction: row;
 `;
@@ -77,7 +89,7 @@ const MainContent = styled.div`
 `;
 
 const MapContainer = styled.div`
-  width: calc(100% - 250px); /* Ajuste del ancho */
+  width: 100%;
   height: 100%;
   position: relative;
   z-index: 0;
@@ -90,12 +102,14 @@ Modal.setAppElement('#root');
 const InputContainer = styled.div`
   position: absolute;
   top: 10px;
-  left: 10px;
+  right: 1360px; 
   z-index: 1;
   background: white;
   padding: 10px;
   border-radius: 5px;
+  border: 2px solid black; 
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+   font-size: 12px;
 `;
 
 const InfoContainer = styled.div`
@@ -107,9 +121,9 @@ const InfoContainer = styled.div`
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid black; /* Añadir borde */
+  border: 2px solid black; 
   width: 260px;
-  font-size: 14px;
+  font-size: 12px;
 `;
 
 const InfoContainerVuelo = styled.div`
@@ -118,12 +132,12 @@ const InfoContainerVuelo = styled.div`
   left: 10px;
   z-index: 1;
   background: white;
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid black; /* Añadir borde */
-  width: 300px;
-  font-size: 14px;
+  border: 2px solid black; 
+  width: 250px;
+  font-size: 12px;
 `;
 
 const CloseButton = styled.button`
@@ -380,10 +394,7 @@ function App() {
     }
   };
 const updateFlights = (flights, currentDateTime) => {
-  // Aquí puedes agregar la lógica para actualizar los vuelos basados en el nuevo tiempo de simulación.
-  // Esto incluye actualizar la carga actual de cada vuelo.
   return flights.map(flight => {
-    // Lógica para actualizar cada vuelo
     return { ...flight };
   });
 };
@@ -602,6 +613,18 @@ const startSimulationInterval = () => {
     setSelectedFlight(null); // Limpiar la selección de vuelo
   };
 
+  const handleSearch = (searchTerm) => {
+    const filteredAirports = data.airports.filter((airport) =>
+      airport.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      airport.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      airport.code.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setData((prevData) => ({
+      ...prevData,
+      airports: filteredAirports,
+    }));
+  };
+
   const renderMapContent = () => {
     if (!window.google || !window.google.maps) {
       return null;
@@ -779,100 +802,106 @@ const calculateAirportSaturation = (airportCapacities) => {
 };
 
   return (
-    <AppContainer>
-      <Sidebar
-        onNuevoEnvioClick={handleOpenNuevoEnvio}
-        onVuelosClick={() => handleOpenPopup('Vuelos')}
-        onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
-        onReportesClick={() => handleOpenPopup('Reportes')}
-        onSimulacionClick={() => handleOpenPopup('Simulacion')}
-        onDetenerSimulacionClick={stopSimulationInterval}
-      />
-      <SidebarSearch
-          onSearch={(searchTerm) => console.log('Buscar:', searchTerm)}
+    <>
+      <GlobalStyle />
+      <AppContainer>
+        <Sidebar
+          onNuevoEnvioClick={handleOpenNuevoEnvio}
+          onVuelosClick={() => handleOpenPopup('Vuelos')}
+          onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
+          onReportesClick={() => handleOpenPopup('Reportes')}
+          onSimulacionClick={() => handleOpenPopup('Simulacion')}
+          onDetenerSimulacionClick={stopSimulationInterval}
+        />
+        <SidebarSearch
+          onSearch={handleSearch}
           airports={data.airports}
+          countries={data.countries} // Pasar los países a SidebarSearch
           capacities={airportCapacities}
-        />{}
-      <Content>
-        <MainContent>
-          <MapContainer>
-            <LoadScript
-              googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
-              libraries={libraries}
-              onLoad={handleMapLoad}
-            >
-              {isMapLoaded && (
-                <GoogleMap
-                  mapContainerStyle={{ width: '100%', height: '100%' }}
-                  center={{ lat: 15.7942, lng: 5.8822 }}
-                  zoom={3}
-                  options={{
-                    zoomControl: false,
-                    streetViewControl: false,
-                    mapTypeControl: false,
-                    fullscreenControl: false,
-                    mapTypeId: 'roadmap',
-                    disableDefaultUI: true,
-                    gestureHandling: 'none',
-                  }}
-                  onLoad={handleMapLoad}
-                  mapId="56d2948ec3b0b447"
-                >
-                  {!loading && renderMapContent()}
-                </GoogleMap>
+        />
+        <Content>
+          <MainContent>
+            <MapContainer>
+              <LoadScript
+                googleMapsApiKey="AIzaSyBdX7iNprWJj_wIt7mTBD2oCkJH5ewV6wI"
+                libraries={libraries}
+                onLoad={handleMapLoad}
+              >
+                {isMapLoaded && (
+                  <GoogleMap
+                    mapContainerStyle={{ width: '100%', height: '100%' }}
+                    center={{ lat: 15.7942, lng: 5.8822 }}
+                    zoom={3}
+                    options={{
+                      zoomControl: false,
+                      streetViewControl: false,
+                      mapTypeControl: false,
+                      fullscreenControl: false,
+                      mapTypeId: 'roadmap',
+                      disableDefaultUI: true,
+                      gestureHandling: 'none',
+                    }}
+                    onLoad={handleMapLoad}
+                    mapId="56d2948ec3b0b447"
+                  >
+                    {!loading && renderMapContent()}
+                  </GoogleMap>
+                )}
+              </LoadScript>
+            </MapContainer>
+            {activePopup === 'Simulacion' && (
+              <SimulacionSidebar
+                onClose={handleClosePopup}
+                onStartSimulation={handleStartSimulation}
+                onStopSimulation={stopSimulationInterval}
+                data={data}
+                tiempo_simulacion={tiempo_simulacion}
+                planeSaturation={planeSaturation}
+                airportSaturation={airportSaturation}
+              />
+            )}
+            {selectedFlight && (
+              <FlightInfoBox flight={selectedFlight} setSelectedFlight={setSelectedFlight} />
+            )}
 
-              )}
-            </LoadScript>
-          </MapContainer>
-          {activePopup === 'Simulacion' && (
-            <SimulacionSidebar
-              onClose={handleClosePopup}
-              onStartSimulation={handleStartSimulation}
-              onStopSimulation={stopSimulationInterval}
-              data={data}
-              tiempo_simulacion={tiempo_simulacion}
-              planeSaturation={planeSaturation}
-              airportSaturation={airportSaturation}
-            />
-          )}
-          {selectedFlight && (
-            <FlightInfoBox flight={selectedFlight} setSelectedFlight={setSelectedFlight} />
-          )}
-
-          {/* Mostrar InfoBox si hay un aeropuerto seleccionado */}
-          {selectedAirport && (
-            <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
-          )}
-        </MainContent>
-        {/* <Legend /> */}
-      </Content>
-       <InputContainer>
-        <label>
-          Fecha:
-          <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
-        </label>
-        <label>
-          Hora:
-          <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
-        </label>
-        <ElapsedTimeDisplay elapsedTime={elapsedTime} />
-      </InputContainer>
-      <LocalTimeContainer>
-        <p><strong>Fecha actual:</strong> {localTime.currentDate}</p>
-        <p><strong>Hora actual:</strong> {localTime.currentTime}</p>
-      </LocalTimeContainer>
-      <NuevoEnvioPopup
-        isOpen={isNuevoEnvioOpen}
-        onRequestClose={handleCloseNuevoEnvio}
-        data={data}
-        tipoSimulacion={tipoSimulacion}
-        runAlgorithm={runAlgorithm}
-        tiempoSimulacion={tiempo_simulacion}
-      />
-      <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
-      <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
-      <ReportesPopup isOpen={activePopup === 'Reportes'} onRequestClose={handleClosePopup} data={data} />
-    </AppContainer>
+            {selectedAirport && (
+              <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
+            )}
+          </MainContent>
+        </Content>
+        <InputContainer>
+          <label>
+            Fecha:
+            <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
+          </label>
+          <label>
+            Hora:
+            <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
+          </label>
+          <ElapsedTimeDisplay elapsedTime={elapsedTime} />
+        </InputContainer>
+        <LocalTimeContainer>
+          <p><strong>Fecha actual:</strong> {localTime.currentDate}</p>
+          <p><strong>Hora actual:</strong> {localTime.currentTime}</p>
+        </LocalTimeContainer>
+        <NuevoEnvioPopup
+          isOpen={isNuevoEnvioOpen}
+          onRequestClose={handleCloseNuevoEnvio}
+          data={data}
+          tipoSimulacion={tipoSimulacion}
+          runAlgorithm={runAlgorithm}
+          tiempoSimulacion={tiempo_simulacion}
+        />
+        <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
+        <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
+        <ReportesPopup
+		  isOpen={activePopup === 'Reportes'}
+		  onRequestClose={handleClosePopup}
+		  data={data}
+		  airportCapacities={airportCapacities}
+		/>
+      </AppContainer>
+    </>
   );
 }
 
