@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ModalContent = styled.div`
   background: #fff;
@@ -11,16 +15,19 @@ const ModalContent = styled.div`
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+  z-index: 9999999999;
 `;
 
 const FiltersContainer = styled.div`
   margin-bottom: 20px;
+  z-index: 9999999999;
 `;
 
 const FiltersTitle = styled.h3`
   margin: 0 0 10px 0;
   display: flex;
   align-items: center;
+  z-index: 9999999999;
 `;
 
 const FilterIcon = styled.span`
@@ -29,9 +36,16 @@ const FilterIcon = styled.span`
   display: inline-block;
 `;
 
+const FilterLabel = styled.label`
+  margin: 0 10px 10px 0;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+`;
+
 const FilterInput = styled.input`
   padding: 5px;
-  margin: 0 10px 10px 0;
+  margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 200px; /* Ajustar el ancho */
@@ -40,7 +54,7 @@ const FilterInput = styled.input`
 const FiltersRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
   justify-content: space-between;
 `;
 
@@ -53,18 +67,44 @@ const HeaderContainer = styled.div`
 
 const ChartContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-
-  > div {
-    flex: 1;
-    min-width: 250px; /* Ajusta el ancho mínimo de cada gráfico */
-    max-width: 48%; /* Ajusta el ancho máximo de cada gráfico */
-  }
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 `;
 
-const ReportesPopup = ({ isOpen, onRequestClose }) => {
+const ReportesPopup = ({ isOpen, onRequestClose, airportCapacities }) => {
+  const [chartData, setChartData] = useState(null);
+
+  useEffect(() => {
+    if (airportCapacities) {
+      const sortedCapacities = Object.entries(airportCapacities)
+        .map(([code, { current_capacity, max_capacity }]) => ({
+          code,
+          saturation: ((current_capacity / max_capacity) * 100).toFixed(2),
+        }))
+        .sort((a, b) => b.saturation - a.saturation)
+        .slice(0, 5);
+
+      const labels = sortedCapacities.map((airport) => airport.code);
+      const data = sortedCapacities.map((airport) => parseFloat(airport.saturation));
+
+      setChartData({
+        labels,
+        datasets: [
+          {
+            label: 'Saturación (%)',
+            data,
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+          },
+        ],
+      });
+    }
+  }, [airportCapacities]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -72,6 +112,7 @@ const ReportesPopup = ({ isOpen, onRequestClose }) => {
       style={{
         overlay: {
           backgroundColor: 'rgba(0, 0, 0, 0.75)',
+          zIndex: 9999999998,
         },
         content: {
           top: '50%',
@@ -83,8 +124,9 @@ const ReportesPopup = ({ isOpen, onRequestClose }) => {
           padding: 0,
           border: 'none',
           background: 'none',
-          width: '1000px', // Aumentar el ancho del contenido del modal
-          maxWidth: '1000px', // Asegurar que no se sobrepase este ancho
+          width: '80%',
+          height: '80%',
+          zIndex: 9999999999,
         },
       }}
     >
@@ -92,32 +134,26 @@ const ReportesPopup = ({ isOpen, onRequestClose }) => {
         <HeaderContainer>
           <h2>Reportes</h2>
         </HeaderContainer>
-        <FiltersContainer>
-          <FiltersTitle>
-            Filtros <FilterIcon>▼</FilterIcon>
-          </FiltersTitle>
-          <FiltersRow>
-            <FilterInput type="date" placeholder="Fecha de inicio" />
-            <FilterInput type="date" placeholder="Fecha de fin" />
-          </FiltersRow>
-        </FiltersContainer>
+
         <ChartContainer>
-          <div>
-            <h3>Total de envíos por día</h3>
-            <img src="https://via.placeholder.com/300x200" alt="Total de envíos por día" />
-          </div>
-          <div>
-            <h3>Destinos más frecuentes</h3>
-            <img src="https://via.placeholder.com/300x200" alt="Destinos más frecuentes" />
-          </div>
-          <div>
-            <h3>Volumen de envío por categoría de paquete</h3>
-            <img src="https://via.placeholder.com/300x200" alt="Volumen de envío por categoría de paquete" />
-          </div>
-          <div>
-            <h3>Tasa de cumplimiento de entrega a tiempo</h3>
-            <img src="https://via.placeholder.com/300x200" alt="Tasa de cumplimiento de entrega a tiempo" />
-          </div>
+          {chartData && (
+            <Bar
+              data={chartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Saturación de Aeropuertos (%)',
+                  },
+                },
+              }}
+            />
+          )}
         </ChartContainer>
       </ModalContent>
     </Modal>

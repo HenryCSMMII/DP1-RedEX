@@ -74,14 +74,14 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
   }
 };
 
-const handleSearchSubmit = (e) => {
+  const handleSearchSubmit = (e) => {
   e.preventDefault();
   if (selectedTab === 'Vuelos') {
     const filtered = flights.filter(
       (flight) => {
         const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
         const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
-        const isFlightIdMatch = String(flight.id).toLowerCase().includes(flightIdSearchTerm.toLowerCase());
+        const isFlightIdMatch = flight.id.toLowerCase().includes(flightIdSearchTerm.toLowerCase());
         const isWithinTimeFrame = isWithinInterval(parseISO(`${currentSimulationDate}T${currentSimulationTime}`), { start: departureDateTime, end: arrivalDateTime });
         return isFlightIdMatch && isWithinTimeFrame;
       }
@@ -91,6 +91,7 @@ const handleSearchSubmit = (e) => {
     onSearch(searchTerm, selectedTab);
   }
 };
+
   const handleTabSelect = (index) => {
     const tabNames = ['Aeropuertos', 'Vuelos'];
     setSelectedTab(tabNames[index]);

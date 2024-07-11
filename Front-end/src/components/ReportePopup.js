@@ -11,10 +11,12 @@ const ModalContent = styled.div`
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+
 `;
 
 const FiltersContainer = styled.div`
   margin-bottom: 20px;
+
 `;
 
 const FiltersTitle = styled.h3`
