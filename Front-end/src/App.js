@@ -315,7 +315,7 @@ function App() {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
         //CAMBIO DE TIEMPO        
-        const newDateTime = addMinutes(currentDateTime, 20);
+        const newDateTime = addMinutes(currentDateTime, 45);
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
@@ -482,7 +482,7 @@ function App() {
     if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
       if (updatedAirports[shipment.departure_airport]) {
         //CAMBIO EN CAPACIDAD
-        updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*1;
+        updatedAirports[shipment.departure_airport].current_capacity += shipment.packageQuantity*2;
         console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
       } else {
         console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
@@ -494,7 +494,7 @@ function App() {
       if (currentDateTime.getTime() === departureDateTime.getTime()) {
         if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
           
-          updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*1;
+          updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*2;
           console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
         } else {
           console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
@@ -503,7 +503,7 @@ function App() {
       // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
       if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
         if (updatedAirports[arrival_airport_plane]) {
-          updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*1;
+          updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*2;
           console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
         } else {
           console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
