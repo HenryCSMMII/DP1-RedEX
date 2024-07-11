@@ -643,14 +643,13 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
                   center={{ lat: 15.7942, lng: 5.8822 }}
                   zoom={3}
                   options={{
-                    zoomControl: true, // Habilita el control de zoom
+                    zoomControl: false,
                     streetViewControl: false,
                     mapTypeControl: false,
                     fullscreenControl: false,
                     mapTypeId: 'roadmap',
                     disableDefaultUI: true,
-                    gestureHandling: 'auto', // Permite el arrastre y el zoom con el scroll del mouse
-                    scrollwheel: true, // Habilita el zoom con el scroll del mouse
+                    gestureHandling: 'none',
                   }}
                   onLoad={handleMapLoad}
                   mapId="56d2948ec3b0b447"

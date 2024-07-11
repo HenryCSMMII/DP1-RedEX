@@ -45,6 +45,7 @@ const SidebarSearch = ({ onSearch, airports, capacities }) => {
           {selectedTab === 'Aeropuertos' && airports.map((airport) => (
             <div key={airport.code} style={{ marginBottom: '10px', textAlign: 'left', width: '80%' }}>
               <p><strong>{airport.name} ({airport.code})</strong></p>
+              <p>País: {[airport.city]}</p>
               <p>Capacidad: {capacities[airport.code]?.current_capacity}/{capacities[airport.code]?.max_capacity}</p>
             </div>
           ))}
