@@ -224,22 +224,32 @@ function App() {
   const [airportSaturation, setAirportSaturation] = useState(0);
 
   const [startDateTime, setStartDateTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  //const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0});
   const [currentFlights, setCurrentFlights] = useState([]); // Nuevo estado para vuelos en curso
 
-  const ElapsedTimeDisplay = ({ elapsedTime }) => {
-    const simulationStartTime = parseISO(`${elapsedTime.dia_actual}T00:00:00`);
+  const ElapsedTimeDisplay = ({ elapsedTime, startDate, startHour }) => {
+    
+    if (!tiempo_simulacion || !tiempo_simulacion.dia_actual || !tiempo_simulacion.tiempo_actual) {
+      return (
+        <div>
+          <p><strong>Tiempo transcurrido:</strong> 0 días 0 h 0 min</p>
+        </div>
+      );
+    }
+    //console.log("Inicio: "+startDate+"--"+startHour);
+    //console.log("Tiempo de simulación: "+elapsedTime.dia_actual+"--"+elapsedTime.tiempo_actual);
+    const simulationStartTime = parseISO(`${startDate}T${startHour}`)
+
     const currentTime = parseISO(`${elapsedTime.dia_actual}T${elapsedTime.tiempo_actual}`);
     const diffInSeconds = differenceInSeconds(currentTime, simulationStartTime);
 
     const days = Math.floor(diffInSeconds / (24 * 60 * 60));
     const hours = Math.floor((diffInSeconds % (24 * 60 * 60)) / (60 * 60));
     const minutes = Math.floor((diffInSeconds % (60 * 60)) / 60);
-    const seconds = diffInSeconds % 60;
 
     return (
       <div>
-        <p><strong>Tiempo transcurrido:</strong> {days} días {hours} h {minutes} min {seconds} s</p>
+        <p><strong>Tiempo transcurrido:</strong> {days} días {hours} h {minutes} min</p>
       </div>
     );
   };
@@ -293,6 +303,8 @@ function App() {
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [selectedAirport, setSelectedAirport] = useState(null);
   const [tipoSimulacion, setTipoSimulacion] = useState(null);
+  const [startDate, setStartDate] = useState(null);
+  const [startHour, setStartHour] = useState(null);
   const [allShipments, setAllShipments] = useState([]);
   const [airportCapacities, setAirportCapacities] = useState({});
 
@@ -797,6 +809,13 @@ const startSimulationInterval = () => {
     setTipoSimulacion(tipoSimulacion);
     setStartDateTime(parseISO(fechaInicio)); // Establecer la fecha y hora de inicio
     runAlgorithm(url, fechaInicio);
+    const startDate = format(parseISO(fechaInicio), 'yyyy-MM-dd'); // Extraer la fecha
+    const startHour = format(parseISO(fechaInicio), 'HH:mm:ss');
+
+    setStartDate(startDate); // Establecer la fecha de inicio
+    setStartHour(startHour);
+    // console.log("Fecha inicio: "+startDate);
+    // console.log("Hora inicio: "+startHour);
   };
 
 const calculateFleetSaturation = (flights, currentDateTime) => {
@@ -897,7 +916,7 @@ const calculateAirportSaturation = (airportCapacities) => {
             Hora:
             <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
           </label>
-          <ElapsedTimeDisplay elapsedTime={tiempo_simulacion} />
+          <ElapsedTimeDisplay elapsedTime={tiempo_simulacion} startDate={startDate} startHour={startHour}  />
         </InputContainer>
         <LocalTimeContainer>
           <p><strong>Fecha actual:</strong> {localTime.currentDate}</p>

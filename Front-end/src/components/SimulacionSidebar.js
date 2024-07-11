@@ -77,7 +77,7 @@ const RadioGroup = styled.div`
   margin-bottom: 20px;
 `;
 
-const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion, planeSaturation, airportSaturation }) => {
+const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion, planeSaturation, airportSaturation}) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
@@ -101,9 +101,9 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
     <SidebarContainer>
       <Title>Simulación</Title>
       <Label>Fecha de inicio</Label>
-      <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
+      <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)}/>
       <Label>Hora de inicio</Label>
-      <Input type="time" value={hora} onChange={(e) => setHora(e.target.value)} />
+      <Input type="time" value={hora} onChange={(e) => setHora(e.target.value)}/>
       <Label>Tipo de simulación</Label>
       <RadioGroup>
         <Label>
