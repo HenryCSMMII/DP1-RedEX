@@ -1,8 +1,10 @@
+// App.js
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
 import { format, addMinutes, parseISO } from 'date-fns';
 import Sidebar from './components/Sidebar';
+import SidebarSearch from './components/SidebarSearch'; // Importa el nuevo componente
 import Legend from './components/Legend';
 import EnviosPopup from './components/EnviosPopup';
 import NuevoEnvioPopup from './components/NuevoEnvioPopup';
@@ -75,8 +77,9 @@ const MainContent = styled.div`
 `;
 
 const MapContainer = styled.div`
-  width: 100%;
+  width: calc(100% - 250px); /* Ajuste del ancho */
   height: 100%;
+  position: relative;
   z-index: 0;
 `;
 
@@ -721,7 +724,7 @@ const startSimulationInterval = () => {
                   position={{ lat: planePosition.lat, lng: planePosition.lng }}
                   icon={{
                     url: planePosition.movingLeft ? rotatedIcon : icon,
-                    scaledSize: new window.google.maps.Size(12, 12),
+                    scaledSize: new window.google.maps.Size(20, 20),
                     rotation: planePosition.angle,
                   }}
                   onClick={() => handleFlightClick(flight)}
@@ -785,6 +788,11 @@ const calculateAirportSaturation = (airportCapacities) => {
         onSimulacionClick={() => handleOpenPopup('Simulacion')}
         onDetenerSimulacionClick={stopSimulationInterval}
       />
+      <SidebarSearch
+          onSearch={(searchTerm) => console.log('Buscar:', searchTerm)}
+          airports={data.airports}
+          capacities={airportCapacities}
+        />{}
       <Content>
         <MainContent>
           <MapContainer>
@@ -812,6 +820,7 @@ const calculateAirportSaturation = (airportCapacities) => {
                 >
                   {!loading && renderMapContent()}
                 </GoogleMap>
+
               )}
             </LoadScript>
           </MapContainer>
@@ -835,9 +844,9 @@ const calculateAirportSaturation = (airportCapacities) => {
             <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
           )}
         </MainContent>
-        <Legend />
+        {/* <Legend /> */}
       </Content>
-      <InputContainer>
+       <InputContainer>
         <label>
           Fecha:
           <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
