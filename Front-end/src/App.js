@@ -56,8 +56,9 @@ const MainContent = styled.div`
 `;
 
 const MapContainer = styled.div`
-  width: 100%;
+  width: calc(100% - 250px); /* Ajuste del ancho */
   height: 100%;
+  position: relative;
   z-index: 0;
 `;
 
@@ -623,7 +624,11 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
         onSimulacionClick={() => handleOpenPopup('Simulacion')}
         onDetenerSimulacionClick={stopSimulationInterval}
       />
-      <SidebarSearch onSearch={(searchTerm) => console.log('Buscar:', searchTerm)} /> {/* Añadir el nuevo componente */}
+      <SidebarSearch
+          onSearch={(searchTerm) => console.log('Buscar:', searchTerm)}
+          airports={data.airports}
+          capacities={airportCapacities}
+        />{}
       <Content>
         <MainContent>
           <MapContainer>
@@ -638,19 +643,21 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
                   center={{ lat: 15.7942, lng: 5.8822 }}
                   zoom={3}
                   options={{
-                    zoomControl: false,
+                    zoomControl: true, // Habilita el control de zoom
                     streetViewControl: false,
                     mapTypeControl: false,
                     fullscreenControl: false,
                     mapTypeId: 'roadmap',
                     disableDefaultUI: true,
-                    gestureHandling: 'none',
+                    gestureHandling: 'auto', // Permite el arrastre y el zoom con el scroll del mouse
+                    scrollwheel: true, // Habilita el zoom con el scroll del mouse
                   }}
                   onLoad={handleMapLoad}
                   mapId="56d2948ec3b0b447"
                 >
                   {!loading && renderMapContent()}
                 </GoogleMap>
+
               )}
             </LoadScript>
           </MapContainer>
@@ -670,9 +677,9 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
           <InfoBox airport={selectedAirport} capacities={airportCapacities} setSelectedFlight={setSelectedFlight} setSelectedAirport={setSelectedAirport} selected={true} />
         )}
         </MainContent>
-        <Legend />
+        {/* <Legend /> */}
       </Content>
-      <InputContainer>
+      {/* <InputContainer>
         <label>
           Fecha:
           <input type="date" name="dia_actual" value={tiempo_simulacion.dia_actual} onChange={handleSimulacionChange} />
@@ -681,7 +688,7 @@ const getDotIconWithBorder = (airportCode, isSelected) => {
           Hora:
           <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
         </label>
-      </InputContainer>
+      </InputContainer> */}
       <NuevoEnvioPopup
         isOpen={isNuevoEnvioOpen}
         onRequestClose={handleCloseNuevoEnvio}
