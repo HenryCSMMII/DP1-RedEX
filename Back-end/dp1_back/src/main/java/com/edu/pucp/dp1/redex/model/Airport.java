@@ -14,6 +14,7 @@ public class Airport {
 	private List<StorageCapacity> storage;
 	private String time_zone;
 	private Country country;
+	private City city;
 
 	public Airport() {
 	}
@@ -116,4 +117,11 @@ public class Airport {
 		this.country = country;
 	}
 	
+	public City getCity() {
+		return city;
+	}
+	
+	public void setCity(City city) {
+		this.city = city;
+	}
 }

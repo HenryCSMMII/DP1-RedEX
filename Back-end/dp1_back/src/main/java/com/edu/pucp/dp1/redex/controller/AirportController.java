@@ -29,6 +29,7 @@ public class AirportController {
                             airport.getLongitude(),
                             airport.getMax_capacity(),
                             airport.getCountry().getId(),
+                            airport.getCity().getId(),
                             currentCapacity
                     );
                 })

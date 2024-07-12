@@ -9,18 +9,20 @@ public class AirportDTO {
     private String longitude;
     private int max_capacity;
     private int countryId;
+    private int cityId;
     private int current_capacity;
 
     public AirportDTO() {
     }
 
-    public AirportDTO(int id, String code, String latitude, String longitude, int max_capacity, int countryId, int current_capacity) {
+    public AirportDTO(int id, String code, String latitude, String longitude, int max_capacity, int countryId, int cityId, int current_capacity) {
         this.id = id;
         this.code = code;
         this.latitude = latitude;
         this.longitude = longitude;
         this.max_capacity = max_capacity;
         this.countryId = countryId;
+        this.cityId = cityId;
         this.current_capacity = current_capacity;
     }
 
@@ -37,6 +39,7 @@ public class AirportDTO {
         dto.setLongitude(airport.getLongitude());
         dto.setMax_capacity(airport.getMax_capacity());
         dto.setCountryId(airport.getCountry().getId());
+        dto.setCityId(airport.getCity().getId());
         dto.setCurrent_capacity(currentCapacity);
         return dto;
     }
@@ -97,5 +100,13 @@ public class AirportDTO {
 
     public void setCountryId(int countryId) {
         this.countryId = countryId;
+    }
+
+    public int getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
     }
 }
