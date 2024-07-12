@@ -291,10 +291,11 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [airports, continents, countries] = await Promise.all([
+      const [airports, continents, countries, ciudad] = await Promise.all([
         axios.get('http://localhost:8080/airport/'),
         axios.get('http://localhost:8080/continent/'),
         axios.get('http://localhost:8080/country/'),
+        axios.get('http://localhost:8080/ciudad/'),
       ]);
 
       console.log('Airports data:', airports.data);
@@ -321,6 +322,7 @@ function App() {
         airports: updatedAirports,
         continents: continents.data,
         countries: countries.data,
+        ciudad: ciudad.data, // Agregamos las ciudades aquí
       }));
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -897,13 +899,13 @@ const calculateAirportSaturation = (airportCapacities) => {
           <p><strong>Hora actual:</strong> {localTime.currentTime}</p>
         </LocalTimeContainer>
         <NuevoEnvioPopup
-          isOpen={isNuevoEnvioOpen}
-          onRequestClose={handleCloseNuevoEnvio}
-          data={data}
-          tipoSimulacion={tipoSimulacion}
-          runAlgorithm={runAlgorithm}
-          tiempoSimulacion={tiempo_simulacion}
-        />
+		  isOpen={isNuevoEnvioOpen}
+		  onRequestClose={handleCloseNuevoEnvio}
+		  data={data}  // Asegúrate de que `data` incluye `countries`, `ciudad` y `airports`
+		  tipoSimulacion={tipoSimulacion}
+		  runAlgorithm={runAlgorithm}
+		  tiempoSimulacion={tiempo_simulacion}
+		/>
         <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
         <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
         <ReportesPopup
