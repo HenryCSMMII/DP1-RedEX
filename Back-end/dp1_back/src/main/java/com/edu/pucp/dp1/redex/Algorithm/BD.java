@@ -151,6 +151,22 @@ public class BD {
                     countries.add(country);
                     System.out.println("problema id: ");
                 }
+
+                City city = null;
+                for (City c : cities) {
+                    if (c.getName().trim().equals(split[2].trim())) {
+                        city = c;
+                        break;
+                    }
+                }
+                if (city == null) {
+                    city = new City();
+                    city.setName(split[2].trim());
+                    city.setCountryId(country.getId());
+                    cities.add(city);
+                    //System.out.println("problema id: ");
+                }
+
     
                 airport.setCountry(country);
                 airport.setTime_zone(split[7].trim());
@@ -158,6 +174,7 @@ public class BD {
                 airport.setLongitude(split[9].trim());
                 airport.setMax_capacity(Integer.valueOf(split[10].trim()));
                 airport.setStorage(new ArrayList<>());
+                airport.setCity(city);
                 airports.add(airport);
             }
         } catch (Exception e) {
