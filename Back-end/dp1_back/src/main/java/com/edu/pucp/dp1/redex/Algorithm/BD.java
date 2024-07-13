@@ -151,6 +151,22 @@ public class BD {
                     countries.add(country);
                     System.out.println("problema id: ");
                 }
+
+                City city = null;
+                for (City c : cities) {
+                    if (c.getName().trim().equals(split[2].trim())) {
+                        city = c;
+                        break;
+                    }
+                }
+                if (city == null) {
+                    city = new City();
+                    city.setName(split[2].trim());
+                    city.setCountryId(country.getId());
+                    cities.add(city);
+                    //System.out.println("problema id: ");
+                }
+
     
                 airport.setCountry(country);
                 airport.setTime_zone(split[7].trim());
@@ -158,6 +174,7 @@ public class BD {
                 airport.setLongitude(split[9].trim());
                 airport.setMax_capacity(Integer.valueOf(split[10].trim()));
                 airport.setStorage(new ArrayList<>());
+                airport.setCity(city);
                 airports.add(airport);
             }
         } catch (Exception e) {
@@ -211,7 +228,7 @@ public class BD {
                 flight.setDeparture_date_time(departure_time);
                 flight.setArrival_date_time(arrival_time);
                 flight.calcEstimatedTime();
-                flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), airports.get(0)) * 60 * 1000);
+                flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), flight.getArrival_airport()/*airports.get(0)*/) * 60 * 1000);
                 flightsTemp.add(flight);
             }
         } catch (Exception e) {
@@ -220,7 +237,7 @@ public class BD {
     }
 
     public static void readShipments(String filePath) {
-        shipmentsTemp = new ArrayList<>();
+        //shipmentsTemp = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filePath))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
@@ -231,7 +248,7 @@ public class BD {
                 }
     
                 Shipment shipment = new Shipment();
-                shipment.setId(shipmentsTemp.size());
+                //shipment.setId(shipmentsTemp.size());
                 shipment.setCode(split[0]);
     
                 Airport departure = null;

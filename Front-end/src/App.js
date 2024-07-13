@@ -175,14 +175,14 @@ const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, s
       <Header>Información del Aeropuerto</Header>
       <div>
         <p><strong style={{ color: 'green', fontSize: '16px' }}>País:</strong> <span style={{ color: 'green', fontSize: '16px' }}>{airport.city}</span></p>
-        <p><strong>Código del aeropuerto:</strong> {airport.code}</p>
-        <p><strong>Nombre del aeropuerto:</strong> {airport.name}</p>
+        <p><strong>Ciudad del aeropuerto:</strong> {airport.city}</p>
+        <p><strong>Nombre del aeropuerto:</strong> {airport.code}</p>
         <p><strong>Latitud:</strong> {airport.latitude}</p>
         <p><strong>Longitud:</strong> {airport.longitude}</p>
         {capacities[airport.code] && (
-          <>
-            <p><strong>Capacidad actual:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)</p>
-          </>
+          <p>
+            <strong>Capacidad:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)
+          </p>
         )}
       </div>
       <CloseButton onClick={() => { setSelectedFlight(null); setSelectedAirport(null); }}>Cerrar</CloseButton>
@@ -201,18 +201,20 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
         {flight.origin && <p><strong>Aeropuerto de salida:</strong> {flight.origin}</p>}
         {flight.destination && <p><strong>Aeropuerto de llegada:</strong> {flight.destination}</p>}
         {flight.departure_date && (
-          <p><strong>Fecha-hora de Salida:</strong> {new Date(`${flight.departure_date}T${flight.departure_time}`).toLocaleString()}</p>
+          <p><strong>Salida:</strong> {new Date(`${flight.departure_date}T${flight.departure_time}`).toLocaleString()}</p>
         )}
         {flight.arrival_date && (
-          <p><strong>Fecha-hora de Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.arrival_time}`).toLocaleString()}</p>
+          <p><strong>Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.arrival_time}`).toLocaleString()}</p>
         )}
-        {<p><strong>Capacidad máxima:</strong> {flight.current_load}/{flight.capacity}</p>}
-        {<p><strong>Saturación:</strong> {calculateSaturation(flight.current_load, flight.capacity)}</p>}
+        <p>
+          <strong>Capacidad:</strong> {flight.current_load}/{flight.capacity} (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
+        </p>
       </div>
       <CloseButton onClick={() => setSelectedFlight(null)}>Cerrar</CloseButton>
     </InfoContainerVuelo>
   );
 };
+
 
 function App() {
   const [localTime, setLocalTime] = useState({
@@ -310,44 +312,44 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const [airports, continents, countries] = await Promise.all([
+      const [airports, continents, countries, ciudad] = await Promise.all([
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/airport/'),
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/continent/'),
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/country/'),
+        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/ciudad/'),
       ]);
 
-      console.log('Airports data:', airports.data);
+    // Inicializamos la capacidad actual de cada aeropuerto
+    const initialCapacities = airports.data.reduce((acc, airport) => {
+      acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
+      return acc;
+    }, {});
 
-      // Inicializamos la capacidad actual de cada aeropuerto
-      const initialCapacities = airports.data.reduce((acc, airport) => {
-        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
-        return acc;
-      }, {});
+    // Combinar los datos de aeropuertos y países
+    const updatedAirports = airports.data.map((airport) => {
+      const country = countries.data.find((country) => country.id === airport.countryId);
+      return {
+        ...airport,
+        city: country ? country.name : 'Desconocido', // Aquí se asigna el país
+        country: country ? country.name : 'Desconocido', // Agregar país aquí
+      };
+    });
 
-      // Combinar los datos de aeropuertos y países
-      const updatedAirports = airports.data.map((airport) => {
-        const country = countries.data.find((country) => country.id === airport.countryId);
-        return {
-          ...airport,
-          city: country ? country.name : 'Desconocido'
-        };
-      });
+    setAirportCapacities(initialCapacities);
 
-      setAirportCapacities(initialCapacities);
-
-      setData((prevData) => ({
-        ...prevData,
-        airports: updatedAirports,
-        continents: continents.data,
-        countries: countries.data,
-      }));
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    setData((prevData) => ({
+      ...prevData,
+      airports: updatedAirports,
+      continents: continents.data,
+      countries: countries.data,
+      ciudad: ciudad.data, // Agregamos las ciudades aquí
+    }));
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setLoading(false);
+  }
+};
   const runAlgorithm = async (url, fechaInicio) => {
     try {
       const response = await axios.post(url, { fecha_inicio: fechaInicio });
@@ -842,21 +844,20 @@ const calculateAirportSaturation = (airportCapacities) => {
       <GlobalStyle />
       <AppContainer>
         <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          onCollapseToggle={toggleSidebar}
           onNuevoEnvioClick={handleOpenNuevoEnvio}
-          onVuelosClick={() => handleOpenPopup('Vuelos')}
-          onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
-          onReportesClick={() => handleOpenPopup('Reportes')}
           onSimulacionClick={() => handleOpenPopup('Simulacion')}
-          onDetenerSimulacionClick={stopSimulationInterval}
         />
         <SidebarSearch
-          onSearch={handleSearch}
-          airports={data.airports}
-          flights={currentFlights} // Pasar los vuelos en curso
-          capacities={airportCapacities}
-          currentSimulationDate={tiempo_simulacion.dia_actual}
-          currentSimulationTime={tiempo_simulacion.tiempo_actual}
-        />
+		  onSearch={handleSearch}
+		  airports={data.airports}
+		  flights={currentFlights} // Pasar los vuelos en curso
+		  capacities={airportCapacities}
+		  currentSimulationDate={tiempo_simulacion.dia_actual}
+		  currentSimulationTime={tiempo_simulacion.tiempo_actual}
+		  countries={data.countries} // Agregar países aquí
+		/>
         <Content>
           <MainContent>
             <MapContainer>
@@ -889,6 +890,8 @@ const calculateAirportSaturation = (airportCapacities) => {
             </MapContainer>
             {activePopup === 'Simulacion' && (
               <SimulacionSidebar
+                isCollapsed={isSimulationSidebarCollapsed}
+                onCollapseToggle={toggleSimulationSidebar}
                 onClose={handleClosePopup}
                 onStartSimulation={handleStartSimulation}
                 onStopSimulation={stopSimulationInterval}
@@ -923,20 +926,13 @@ const calculateAirportSaturation = (airportCapacities) => {
           <p><strong>Hora actual:</strong> {localTime.currentTime}</p>
         </LocalTimeContainer>
         <NuevoEnvioPopup
-          isOpen={isNuevoEnvioOpen}
-          onRequestClose={handleCloseNuevoEnvio}
-          data={data}
-          tipoSimulacion={tipoSimulacion}
-          runAlgorithm={runAlgorithm}
-          tiempoSimulacion={tiempo_simulacion}
-        />
-        <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
-        <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
-        <ReportesPopup
-          isOpen={activePopup === 'Reportes'}
-          onRequestClose={handleClosePopup}
-          airportCapacities={airportCapacities}
-        />
+		  isOpen={isNuevoEnvioOpen}
+		  onRequestClose={handleCloseNuevoEnvio}
+		  data={data}  // Asegúrate de que `data` incluye `countries`, `ciudad` y `airports`
+		  tipoSimulacion={tipoSimulacion}
+		  runAlgorithm={runAlgorithm}
+		  tiempoSimulacion={tiempo_simulacion}
+		/>
       </AppContainer>
     </>
   );

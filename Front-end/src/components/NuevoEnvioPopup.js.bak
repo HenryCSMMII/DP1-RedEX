@@ -24,27 +24,31 @@ const Label = styled.label`
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  font-size: 14px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
 `;
 
 const Select = styled.select`
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 20px;
 `;
 
@@ -52,13 +56,25 @@ const Button = styled.button`
   background-color: ${(props) => (props.$primary ? '#6ba292' : '#ccc')};
   color: ${(props) => (props.$primary ? '#fff' : '#000')};
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
 
   &:hover {
     background-color: ${(props) => (props.$primary ? '#5a8a7d' : '#bbb')};
   }
+`;
+
+const FileInput = styled.input`
+  display: block;
+  margin: 20px 0;
+`;
+
+const OrSeparator = styled.div`
+  margin: 0 20px;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
@@ -87,28 +103,36 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
   const [cantidadPaquetes, setCantidadPaquetes] = useState(1);
   const [fechaEnvio, setFechaEnvio] = useState(new Date().toISOString().split('T')[0]);
   const [horaEnvio, setHoraEnvio] = useState('00:00');
+  const [file, setFile] = useState(null);
 
   useEffect(() => {
-    if (selectedCountryRemitente) {
-      const filteredCities = data.ciudad.filter(city => city.countryId === parseInt(selectedCountryRemitente));
-      setCitiesRemitente(filteredCities);
-    } else {
-      setCitiesRemitente([]);
-    }
-  }, [selectedCountryRemitente, data.ciudad]);
+    console.log('Countries:', data.countries);
+    console.log('Cities:', data.ciudad);
+  }, [data]);
 
-  useEffect(() => {
-    if (selectedCountryDestinatario) {
-      const filteredCities = data.ciudad.filter(city => city.countryId === parseInt(selectedCountryDestinatario));
-      setCitiesDestinatario(filteredCities);
-    } else {
-      setCitiesDestinatario([]);
-    }
-  }, [selectedCountryDestinatario, data.ciudad]);
+  const handleCountryChange = (e, setState, setCities, setSelectedCountry) => {
+    const { name, value } = e.target;
+    console.log(`Country selected: ${value}`);
 
-  if (!data) {
-    return null;
-  }
+    // Actualizar el estado del país seleccionado
+    setSelectedCountry(value);
+
+    // Filtrar las ciudades basadas en el país seleccionado
+    const filteredCities = data.ciudad.filter(city => {
+      console.log(`Comparando ${city.countryId} con ${value}`);
+      return city.countryId === parseInt(value);
+    });
+
+    console.log('Filtered Cities:', filteredCities);
+
+    // Actualizar las ciudades en el estado
+    setCities(filteredCities);
+    setState(prevState => ({
+      ...prevState,
+      [name]: value,
+      ciudad: '' // Reiniciar la ciudad seleccionada
+    }));
+  };
 
   const handleInputChange = (e, setState, state) => {
     const { name, value } = e.target;
@@ -119,6 +143,36 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
     const { name, value } = e.target;
     if (/^\d*$/.test(value)) {
       setState({ ...state, [name]: value });
+    }
+  };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!file) {
+      alert('Por favor, seleccione un archivo primero.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post('http://localhost:8080/shipment/read/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert('Archivo procesado correctamente');
+    } catch (error) {
+      console.error('Error procesando el archivo:', error.message);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+      }
+      alert('Error procesando el archivo');
     }
   };
 
@@ -151,7 +205,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
       alert('Envio creado exitosamente');
       onRequestClose();
     } catch (error) {
-      console.error('Error creating envio:', error.message);
+      console.error('Error creando envio:', error.message);
       if (error.response) {
         console.error('Error response data:', error.response.data);
         console.error('Error response status:', error.response.status);
@@ -194,20 +248,11 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             placeholder="Nombre completo"
             onChange={(e) => handleInputChange(e, setRemitente, remitente)}
           />
-          <Input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            onChange={(e) => handleInputChange(e, setRemitente, remitente)}
-          />
-          <Input
-            type="tel"
-            name="telefono"
-            placeholder="Número de teléfono"
-            inputMode="numeric"
-            onChange={(e) => handleNumberInputChange(e, setRemitente, remitente)}
-          />
-          <Select name="pais" onChange={(e) => { setSelectedCountryRemitente(e.target.value); handleInputChange(e, setRemitente, remitente); }}>
+          <Select
+            name="pais"
+            value={remitente.pais}
+            onChange={(e) => handleCountryChange(e, setRemitente, setCitiesRemitente, setSelectedCountryRemitente)}
+          >
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -215,7 +260,11 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
               </option>
             ))}
           </Select>
-          <Select name="ciudad" onChange={(e) => handleInputChange(e, setRemitente, remitente)}>
+          <Select
+            name="ciudad"
+            value={remitente.ciudad}
+            onChange={(e) => handleInputChange(e, setRemitente, remitente)}
+          >
             <option value="">Seleccione una ciudad</option>
             {citiesRemitente.map((city) => (
               <option key={city.id} value={city.id}>
@@ -244,20 +293,11 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             placeholder="Nombre completo"
             onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
           />
-          <Input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
-          />
-          <Input
-            type="tel"
-            name="telefono"
-            placeholder="Número de teléfono"
-            inputMode="numeric"
-            onChange={(e) => handleNumberInputChange(e, setDestinatario, destinatario)}
-          />
-          <Select name="pais" onChange={(e) => { setSelectedCountryDestinatario(e.target.value); handleInputChange(e, setDestinatario, destinatario); }}>
+          <Select
+            name="pais"
+            value={destinatario.pais}
+            onChange={(e) => handleCountryChange(e, setDestinatario, setCitiesDestinatario, setSelectedCountryDestinatario)}
+          >
             <option value="">Seleccione un país</option>
             {data.countries.map((country) => (
               <option key={country.id} value={country.id}>
@@ -265,7 +305,11 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
               </option>
             ))}
           </Select>
-          <Select name="ciudad" onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}>
+          <Select
+            name="ciudad"
+            value={destinatario.ciudad}
+            onChange={(e) => handleInputChange(e, setDestinatario, destinatario)}
+          >
             <option value="">Seleccione una ciudad</option>
             {citiesDestinatario.map((city) => (
               <option key={city.id} value={city.id}>
@@ -314,8 +358,15 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
           />
         </FormGroup>
         <ButtonGroup>
-          <Button onClick={onRequestClose}>Cancelar</Button>
-          <Button $primary onClick={handleSubmit}>Crear envío</Button>
+          <div>
+            <Button onClick={onRequestClose}>Cancelar</Button>
+            <Button $primary onClick={handleSubmit}>Crear envío</Button>
+          </div>
+          <OrSeparator>O</OrSeparator>
+          <div>
+            <FileInput type="file" onChange={handleFileChange} />
+            <Button $primary onClick={handleFileUpload}>Cargar archivo</Button>
+          </div>
         </ButtonGroup>
       </ModalContent>
     </Modal>

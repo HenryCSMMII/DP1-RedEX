@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import AvionesAeropuertosPopup from './AvionesAeropuertosPopup';
 
 const SidebarContainer = styled.div`
-  width: 300px;
+  width: ${({ isCollapsed }) => (isCollapsed ? '50px' : '300px')};
   background-color: #000;
   color: #fff;
   padding: 20px;
@@ -14,16 +14,19 @@ const SidebarContainer = styled.div`
   top: 0;
   right: 0;
   height: 100%;
+  transition: width 0.3s ease;
 `;
 
 const Title = styled.h2`
   margin-bottom: 20px;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'block')};
 `;
 
 const Label = styled.label`
   margin-bottom: 10px;
   display: block;
   font-weight: bold;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'block')};
 `;
 
 const Input = styled.input`
@@ -32,6 +35,7 @@ const Input = styled.input`
   border: 1px solid #ccc;
   border-radius: 4px;
   width: 100%;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'block')};
 `;
 
 const Button = styled.button`
@@ -68,20 +72,34 @@ const TextArea = styled.textarea`
   height: 100px;
   resize: none;
   margin-bottom: 20px;
-  box-sizing: border-box; /* Asegura que no se corte el contenido */
+  box-sizing: border-box;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'block')};
 `;
 
 const RadioGroup = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'flex')};
 `;
 
-const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion, planeSaturation, airportSaturation}) => {
+const CollapseButton = styled.button`
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 10px;
+
+  &:hover {
+    color: #aaa;
+  }
+`;
+
+const SimulacionSidebar = ({ isCollapsed, onCollapseToggle, onClose, onStartSimulation, onStopSimulation, data, tiempo_simulacion, planeSaturation, airportSaturation }) => {
   const [tipoSimulacion, setTipoSimulacion] = useState('diario');
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
-  const [isAvionesAeropuertosOpen, setIsAvionesAeropuertosOpen] = useState(false); // Estado para controlar el popup
+  const [isAvionesAeropuertosOpen, setIsAvionesAeropuertosOpen] = useState(false);
 
   const handleStartSimulation = () => {
     const fechaInicio = `${fecha}T${hora}:00`;
@@ -89,7 +107,6 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
   };
 
   const handleOpenAvionesAeropuertos = () => {
-    console.log("Abriendo popup de Aviones y Aeropuertos");
     setIsAvionesAeropuertosOpen(true);
   };
 
@@ -98,14 +115,17 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
   };
 
   return (
-    <SidebarContainer>
-      <Title>Simulación</Title>
-      <Label>Fecha de inicio</Label>
-      <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)}/>
-      <Label>Hora de inicio</Label>
-      <Input type="time" value={hora} onChange={(e) => setHora(e.target.value)}/>
-      <Label>Tipo de simulación</Label>
-      <RadioGroup>
+    <SidebarContainer isCollapsed={isCollapsed}>
+      <CollapseButton onClick={onCollapseToggle}>
+        {isCollapsed ? 'Expandir' : 'Contraer'}
+      </CollapseButton>
+      <Title isCollapsed={isCollapsed}>Simulación</Title>
+      <Label isCollapsed={isCollapsed}>Fecha de inicio</Label>
+      <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} isCollapsed={isCollapsed} />
+      <Label isCollapsed={isCollapsed}>Hora de inicio</Label>
+      <Input type="time" value={hora} onChange={(e) => setHora(e.target.value)} isCollapsed={isCollapsed} />
+      <Label isCollapsed={isCollapsed}>Tipo de simulación</Label>
+      <RadioGroup isCollapsed={isCollapsed}>
         <Label>
           <Input 
             type="radio" 
@@ -137,19 +157,16 @@ const SimulacionSidebar = ({ onClose, onStartSimulation, onStopSimulation, data,
           Al colapso
         </Label>
       </RadioGroup>
-      <Button primary onClick={handleStartSimulation}>Iniciar simulación</Button>
-      <Button danger onClick={onStopSimulation}>Detener simulación</Button>
- 
-      <Label>Resultado</Label>
-      <TextArea readOnly />
-      <Button>Ampliar resultado</Button>
-
-      <Label>Saturación de la flota de aviones:</Label>
-      <p>{planeSaturation}%</p>
-      <Label>Saturación de la flota de almacenes:</Label>
-      <p>{airportSaturation}%</p>
-
-      {/* Popup para Aviones y Aeropuertos */}
+      <Button primary onClick={handleStartSimulation} isCollapsed={isCollapsed}>Iniciar simulación</Button>
+      <Button danger onClick={onStopSimulation} isCollapsed={isCollapsed}>Detener simulación</Button>
+      {/* <Label isCollapsed={isCollapsed}>Resultado</Label>
+      <TextArea readOnly isCollapsed={isCollapsed} />
+      <Button isCollapsed={isCollapsed}>Ampliar resultado</Button> */}
+      <p></p>
+      <Label isCollapsed={isCollapsed}>Saturación de la flota de aviones:</Label>
+      <p isCollapsed={isCollapsed}>{planeSaturation}%</p>
+      <Label isCollapsed={isCollapsed}>Saturación de la flota de almacenes:</Label>
+      <p isCollapsed={isCollapsed}>{airportSaturation}%</p>
       <AvionesAeropuertosPopup
         isOpen={isAvionesAeropuertosOpen}
         onRequestClose={handleCloseAvionesAeropuertos}
