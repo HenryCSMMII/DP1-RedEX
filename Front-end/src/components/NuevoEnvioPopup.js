@@ -176,43 +176,44 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      const departureAirport = data.airports.find(airport => airport.countryId === parseInt(remitente.pais));
-      const arrivalAirport = data.airports.find(airport => airport.countryId === parseInt(destinatario.pais));
+const handleSubmit = async () => {
+  try {
+    const departureAirport = data.airports.find(airport => airport.countryId === parseInt(remitente.pais));
+    const arrivalAirport = data.airports.find(airport => airport.countryId === parseInt(destinatario.pais));
 
-      if (!departureAirport) {
-        throw new Error(`No se encontró el aeropuerto correspondiente al país remitente con ID: ${remitente.pais}`);
-      }
-      if (!arrivalAirport) {
-        throw new Error(`No se encontró el aeropuerto correspondiente al país destinatario con ID: ${destinatario.pais}`);
-      }
-
-      const shipmentPayload = {
-        packageQuantity: cantidadPaquetes,
-        departureAirport: {
-          id: departureAirport.id
-        },
-        arrivalAirport: {
-          id: arrivalAirport.id
-        },
-        departureTime: `${fechaEnvio}T${horaEnvio}:00`,
-        arrivalTime: null,
-      };
-
-      const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
-
-      alert('Envio creado exitosamente');
-      onRequestClose();
-    } catch (error) {
-      console.error('Error creando envio:', error.message);
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-      }
-      alert('Error creando el envio');
+    if (!departureAirport) {
+      throw new Error(`No se encontró el aeropuerto correspondiente al país remitente con ID: ${remitente.pais}`);
     }
-  };
+    if (!arrivalAirport) {
+      throw new Error(`No se encontró el aeropuerto correspondiente al país destinatario con ID: ${destinatario.pais}`);
+    }
+
+    const shipmentPayload = {
+      packageQuantity: cantidadPaquetes,
+      departureAirport: {
+        id: departureAirport.id
+      },
+      arrivalAirport: {
+        id: arrivalAirport.id
+      },
+      registerDateTime: `${fechaEnvio}T${horaEnvio}:00`, // Cambiado a registerDateTime
+      arrivalTime: null,
+    };
+
+    const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
+
+    alert('Envio creado exitosamente');
+    onRequestClose();
+  } catch (error) {
+    console.error('Error creando envio:', error.message);
+    if (error.response) {
+      console.error('Error response data:', error.response.data);
+      console.error('Error response status:', error.response.status);
+    }
+    alert('Error creando el envio');
+  }
+};
+
 
   return (
     <Modal
