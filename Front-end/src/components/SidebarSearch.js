@@ -65,7 +65,7 @@ const ShipmentInfo = styled.div`
   width: 80%;
 `;
 
-const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {}, currentSimulationDate, currentSimulationTime }) => {
+const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {}, currentSimulationDate, currentSimulationTime, countries = [] }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('Aeropuertos');
   const [filteredAirports, setFilteredAirports] = useState(airports);
@@ -134,8 +134,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-
-  useEffect(() => {
+ useEffect(() => {
     if (selectedTab === 'Aeropuertos') {
       setFilteredAirports(
         airports.filter(
@@ -160,6 +159,11 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
       setFilteredShipments(shipments);
     }
   }, [searchTerm, selectedTab, airports, flights, shipments, currentSimulationDate, currentSimulationTime]);
+
+  const getCountryName = (airportCode) => {
+    const airport = airports.find((a) => a.id === airportCode);
+    return airport ? airport.city : 'Desconocido';
+  };
 
   return (
     <SidebarContainer isCollapsed={isCollapsed}>
@@ -233,8 +237,8 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
                 <ShipmentInfo key={shipment.id}>
                   <p><strong>ID del envio: {shipment.id}</strong></p>
                   <p>Cantidad de paquetes: {shipment.packageQuantity}</p>
-                  <p>ID Aeropuerto de salida: {shipment.departureAirportId}</p>
-                  <p>ID Aeropuerto de llegada: {shipment.arrivalAirportId}</p>
+                  <p>País de salida: {getCountryName(shipment.departureAirportId)}</p>
+                  <p>País de llegada: {getCountryName(shipment.arrivalAirportId)}</p>
                   <p>Estado: {shipment.state}</p>
                   <p>Fecha-hora de registro: {new Date(shipment.registerDateTime).toLocaleString()}</p>
                 </ShipmentInfo>

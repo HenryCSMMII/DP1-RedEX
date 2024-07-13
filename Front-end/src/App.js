@@ -303,47 +303,45 @@ function App() {
   const [airportCapacities, setAirportCapacities] = useState({});
 
   const fetchData = async () => {
-    try {
-      const [airports, continents, countries, ciudad] = await Promise.all([
-        axios.get('http://localhost:8080/airport/'),
-        axios.get('http://localhost:8080/continent/'),
-        axios.get('http://localhost:8080/country/'),
-        axios.get('http://localhost:8080/ciudad/'),
-      ]);
+  try {
+    const [airports, continents, countries, ciudad] = await Promise.all([
+      axios.get('http://localhost:8080/airport/'),
+      axios.get('http://localhost:8080/continent/'),
+      axios.get('http://localhost:8080/country/'),
+      axios.get('http://localhost:8080/ciudad/'),
+    ]);
 
-      console.log('Airports data:', airports.data);
+    // Inicializamos la capacidad actual de cada aeropuerto
+    const initialCapacities = airports.data.reduce((acc, airport) => {
+      acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
+      return acc;
+    }, {});
 
-      // Inicializamos la capacidad actual de cada aeropuerto
-      const initialCapacities = airports.data.reduce((acc, airport) => {
-        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
-        return acc;
-      }, {});
+    // Combinar los datos de aeropuertos y países
+    const updatedAirports = airports.data.map((airport) => {
+      const country = countries.data.find((country) => country.id === airport.countryId);
+      return {
+        ...airport,
+        city: country ? country.name : 'Desconocido', // Aquí se asigna el país
+        country: country ? country.name : 'Desconocido', // Agregar país aquí
+      };
+    });
 
-      // Combinar los datos de aeropuertos y países
-      const updatedAirports = airports.data.map((airport) => {
-        const country = countries.data.find((country) => country.id === airport.countryId);
-        return {
-          ...airport,
-          city: country ? country.name : 'Desconocido'
-        };
-      });
+    setAirportCapacities(initialCapacities);
 
-      setAirportCapacities(initialCapacities);
-
-      setData((prevData) => ({
-        ...prevData,
-        airports: updatedAirports,
-        continents: continents.data,
-        countries: countries.data,
-        ciudad: ciudad.data, // Agregamos las ciudades aquí
-      }));
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+    setData((prevData) => ({
+      ...prevData,
+      airports: updatedAirports,
+      continents: continents.data,
+      countries: countries.data,
+      ciudad: ciudad.data, // Agregamos las ciudades aquí
+    }));
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  } finally {
+    setLoading(false);
+  }
+};
   const runAlgorithm = async (url, fechaInicio) => {
     try {
       const response = await axios.post(url, { fecha_inicio: fechaInicio });
@@ -837,13 +835,14 @@ const calculateAirportSaturation = (airportCapacities) => {
           onSimulacionClick={() => handleOpenPopup('Simulacion')}
         />
         <SidebarSearch
-          onSearch={handleSearch}
-          airports={data.airports}
-          flights={currentFlights} // Pasar los vuelos en curso
-          capacities={airportCapacities}
-          currentSimulationDate={tiempo_simulacion.dia_actual}
-          currentSimulationTime={tiempo_simulacion.tiempo_actual}
-        />
+		  onSearch={handleSearch}
+		  airports={data.airports}
+		  flights={currentFlights} // Pasar los vuelos en curso
+		  capacities={airportCapacities}
+		  currentSimulationDate={tiempo_simulacion.dia_actual}
+		  currentSimulationTime={tiempo_simulacion.tiempo_actual}
+		  countries={data.countries} // Agregar países aquí
+		/>
         <Content>
           <MainContent>
             <MapContainer>
