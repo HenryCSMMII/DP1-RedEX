@@ -248,7 +248,7 @@ public class BD {
                 }
     
                 Shipment shipment = new Shipment();
-                shipment.setId(shipmentsTemp.size());
+                //shipment.setId(shipmentsTemp.size());
                 shipment.setCode(split[0]);
     
                 Airport departure = null;
