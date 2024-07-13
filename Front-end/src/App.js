@@ -175,14 +175,14 @@ const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, s
       <Header>Información del Aeropuerto</Header>
       <div>
         <p><strong style={{ color: 'green', fontSize: '16px' }}>País:</strong> <span style={{ color: 'green', fontSize: '16px' }}>{airport.city}</span></p>
-        <p><strong>Código del aeropuerto:</strong> {airport.code}</p>
-        <p><strong>Nombre del aeropuerto:</strong> {airport.name}</p>
+        <p><strong>Ciudad del aeropuerto:</strong> {airport.city}</p>
+        <p><strong>Nombre del aeropuerto:</strong> {airport.code}</p>
         <p><strong>Latitud:</strong> {airport.latitude}</p>
         <p><strong>Longitud:</strong> {airport.longitude}</p>
         {capacities[airport.code] && (
-          <>
-            <p><strong>Capacidad actual:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)</p>
-          </>
+          <p>
+            <strong>Capacidad:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)
+          </p>
         )}
       </div>
       <CloseButton onClick={() => { setSelectedFlight(null); setSelectedAirport(null); }}>Cerrar</CloseButton>
@@ -201,18 +201,20 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
         {flight.origin && <p><strong>Aeropuerto de salida:</strong> {flight.origin}</p>}
         {flight.destination && <p><strong>Aeropuerto de llegada:</strong> {flight.destination}</p>}
         {flight.departure_date && (
-          <p><strong>Fecha-hora de Salida:</strong> {new Date(`${flight.departure_date}T${flight.departure_time}`).toLocaleString()}</p>
+          <p><strong>Salida:</strong> {new Date(`${flight.departure_date}T${flight.departure_time}`).toLocaleString()}</p>
         )}
         {flight.arrival_date && (
-          <p><strong>Fecha-hora de Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.arrival_time}`).toLocaleString()}</p>
+          <p><strong>Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.arrival_time}`).toLocaleString()}</p>
         )}
-        {<p><strong>Capacidad máxima:</strong> {flight.current_load}/{flight.capacity}</p>}
-        {<p><strong>Saturación:</strong> {calculateSaturation(flight.current_load, flight.capacity)}</p>}
+        <p>
+          <strong>Capacidad:</strong> {flight.current_load}/{flight.capacity} (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
+        </p>
       </div>
       <CloseButton onClick={() => setSelectedFlight(null)}>Cerrar</CloseButton>
     </InfoContainerVuelo>
   );
 };
+
 
 function App() {
   const [localTime, setLocalTime] = useState({
@@ -226,6 +228,17 @@ function App() {
   const [startDateTime, setStartDateTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [currentFlights, setCurrentFlights] = useState([]); // Nuevo estado para vuelos en curso
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSimulationSidebarCollapsed, setIsSimulationSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const toggleSimulationSidebar = () => {
+    setIsSimulationSidebarCollapsed(!isSimulationSidebarCollapsed);
+  };
 
   useEffect(() => {
     if (startDateTime) {
@@ -818,12 +831,10 @@ const calculateAirportSaturation = (airportCapacities) => {
       <GlobalStyle />
       <AppContainer>
         <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          onCollapseToggle={toggleSidebar}
           onNuevoEnvioClick={handleOpenNuevoEnvio}
-          onVuelosClick={() => handleOpenPopup('Vuelos')}
-          onAeropuertosClick={() => handleOpenPopup('Aeropuertos')}
-          onReportesClick={() => handleOpenPopup('Reportes')}
           onSimulacionClick={() => handleOpenPopup('Simulacion')}
-          onDetenerSimulacionClick={stopSimulationInterval}
         />
         <SidebarSearch
           onSearch={handleSearch}
@@ -865,6 +876,8 @@ const calculateAirportSaturation = (airportCapacities) => {
             </MapContainer>
             {activePopup === 'Simulacion' && (
               <SimulacionSidebar
+                isCollapsed={isSimulationSidebarCollapsed}
+                onCollapseToggle={toggleSimulationSidebar}
                 onClose={handleClosePopup}
                 onStartSimulation={handleStartSimulation}
                 onStopSimulation={stopSimulationInterval}
@@ -906,13 +919,6 @@ const calculateAirportSaturation = (airportCapacities) => {
 		  runAlgorithm={runAlgorithm}
 		  tiempoSimulacion={tiempo_simulacion}
 		/>
-        <VuelosPopup isOpen={activePopup === 'Vuelos'} onRequestClose={handleClosePopup} data={data} />
-        <AeropuertosPopup isOpen={activePopup === 'Aeropuertos'} onRequestClose={handleClosePopup} data={data} />
-        <ReportesPopup
-          isOpen={activePopup === 'Reportes'}
-          onRequestClose={handleClosePopup}
-          airportCapacities={airportCapacities}
-        />
       </AppContainer>
     </>
   );

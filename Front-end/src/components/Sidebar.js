@@ -2,24 +2,26 @@ import React from 'react';
 import styled from 'styled-components';
 
 const SidebarContainer = styled.div`
-  width: 100%;
+  width: ${({ isCollapsed }) => (isCollapsed ? '50px' : '250px')};
   background-color: #000;
   color: #fff;
   padding: 20px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
-  overflow-y: auto; /* Añade scroll cuando el contenido es largo */
+  height: 100vh;
+  overflow-y: auto;
+  transition: width 0.3s ease;
 
   @media (min-width: 768px) {
-    width: 250px;
+    width: ${({ isCollapsed }) => (isCollapsed ? '50px' : '250px')};
   }
 `;
 
 const Title = styled.h1`
   text-align: center;
   margin-bottom: 30px;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'block')};
 `;
 
 const MenuItem = styled.div`
@@ -31,6 +33,8 @@ const MenuItem = styled.div`
   &:hover {
     background-color: #333;
   }
+
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'block')};
 `;
 
 const Profile = styled.div`
@@ -39,6 +43,7 @@ const Profile = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  display: ${({ isCollapsed }) => (isCollapsed ? 'none' : 'flex')};
 `;
 
 const ProfileImage = styled.img`
@@ -56,16 +61,28 @@ const Logout = styled.div`
   }
 `;
 
-const Sidebar = ({ onNuevoEnvioClick, onVuelosClick, onAeropuertosClick, onReportesClick, onSimulacionClick }) => {
+const CollapseButton = styled.button`
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 10px;
+
+  &:hover {
+    color: #aaa;
+  }
+`;
+
+const Sidebar = ({ isCollapsed, onCollapseToggle, onNuevoEnvioClick, onVuelosClick, onAeropuertosClick, onReportesClick, onSimulacionClick }) => {
   return (
-    <SidebarContainer>
-      <Title>RedEx</Title>
-      <MenuItem onClick={onNuevoEnvioClick}>Crear Envio</MenuItem>
-      <MenuItem onClick={onVuelosClick}>Vuelos</MenuItem>
-      <MenuItem onClick={onAeropuertosClick}>Aeropuertos</MenuItem>
-      <MenuItem onClick={onReportesClick}>Reportes</MenuItem>
-      <MenuItem onClick={onSimulacionClick}>Simulación</MenuItem>
-      <Profile>
+    <SidebarContainer isCollapsed={isCollapsed}>
+      <CollapseButton onClick={onCollapseToggle}>
+        {isCollapsed ? 'Expandir' : 'Contraer'}
+      </CollapseButton>
+      <Title isCollapsed={isCollapsed}>RedEx</Title>
+      <MenuItem isCollapsed={isCollapsed} onClick={onNuevoEnvioClick}>Crear Envio</MenuItem>
+      <MenuItem isCollapsed={isCollapsed} onClick={onSimulacionClick}>Simulación</MenuItem>
+      <Profile isCollapsed={isCollapsed}>
         <ProfileImage src="https://via.placeholder.com/40" alt="Profile" />
         <span>Raul Raulito</span>
         <Logout>Cerrar sesión</Logout>
