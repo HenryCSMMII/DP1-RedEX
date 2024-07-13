@@ -24,27 +24,31 @@ const Label = styled.label`
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  font-size: 14px;
 `;
 
 const Input = styled.input`
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
 `;
 
 const Select = styled.select`
   width: 100%;
-  padding: 8px;
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
 `;
 
 const ButtonGroup = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 20px;
 `;
 
@@ -52,9 +56,10 @@ const Button = styled.button`
   background-color: ${(props) => (props.$primary ? '#6ba292' : '#ccc')};
   color: ${(props) => (props.$primary ? '#fff' : '#000')};
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 14px;
 
   &:hover {
     background-color: ${(props) => (props.$primary ? '#5a8a7d' : '#bbb')};
@@ -64,6 +69,12 @@ const Button = styled.button`
 const FileInput = styled.input`
   display: block;
   margin: 20px 0;
+`;
+
+const OrSeparator = styled.div`
+  margin: 0 20px;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
@@ -346,11 +357,16 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
             onChange={(e) => setCantidadPaquetes(e.target.value)}
           />
         </FormGroup>
-        <FileInput type="file" onChange={handleFileChange} />
         <ButtonGroup>
-          <Button onClick={onRequestClose}>Cancelar</Button>
-          <Button $primary onClick={handleSubmit}>Crear envío</Button>
-          <Button $primary onClick={handleFileUpload}>Cargar archivo</Button>
+          <div>
+            <Button onClick={onRequestClose}>Cancelar</Button>
+            <Button $primary onClick={handleSubmit}>Crear envío</Button>
+          </div>
+          <OrSeparator>O</OrSeparator>
+          <div>
+            <FileInput type="file" onChange={handleFileChange} />
+            <Button $primary onClick={handleFileUpload}>Cargar archivo</Button>
+          </div>
         </ButtonGroup>
       </ModalContent>
     </Modal>
