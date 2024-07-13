@@ -229,6 +229,17 @@ function App() {
   //const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0});
   const [currentFlights, setCurrentFlights] = useState([]); // Nuevo estado para vuelos en curso
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSimulationSidebarCollapsed, setIsSimulationSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
+  const toggleSimulationSidebar = () => {
+    setIsSimulationSidebarCollapsed(!isSimulationSidebarCollapsed);
+  };
+
   const ElapsedTimeDisplay = ({ elapsedTime, startDate, startHour }) => {
     
     if (!tiempo_simulacion || !tiempo_simulacion.dia_actual || !tiempo_simulacion.tiempo_actual) {
@@ -462,7 +473,7 @@ const startSimulationInterval = () => {
   simulationIntervalRef.current = setInterval(() => {
     setTiempoSimulacion((prev) => {
       const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-      const newDateTime = addMinutes(currentDateTime, 45);
+      const newDateTime = addMinutes(currentDateTime, 10);
 
       const newDate = format(newDateTime, 'yyyy-MM-dd');
       const newTime = format(newDateTime, 'HH:mm:ss');

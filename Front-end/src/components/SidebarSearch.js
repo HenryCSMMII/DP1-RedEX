@@ -93,6 +93,32 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
     return () => clearInterval(intervalId); // Limpiar el intervalo al desmontar el componente
   }, []);
 
+  useEffect(() => {
+    if (selectedTab === 'Aeropuertos') {
+      setFilteredAirports(
+        airports.filter(
+          (airport) =>
+            (airport.name && airport.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (airport.code && airport.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (airport.city && airport.city.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+      );
+    } else if (selectedTab === 'Vuelos') {
+      const currentDateTime = parseISO(`${currentSimulationDate}T${currentSimulationTime}`);
+
+      const filtered = flights.filter(
+        (flight) => {
+          const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+          return isWithinInterval(currentDateTime, { start: departureDateTime, end: arrivalDateTime });
+        }
+      );
+      setFilteredFlights(filtered);
+    } else if (selectedTab === 'Envios') {
+      setFilteredShipments(shipments);
+    }
+  }, [searchTerm, selectedTab, airports, flights, shipments, currentSimulationDate, currentSimulationTime]);
+
   const handleSearchChange = (e) => {
     if (selectedTab === 'Vuelos') {
       setFlightIdSearchTerm(e.target.value);
@@ -134,31 +160,6 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
- useEffect(() => {
-    if (selectedTab === 'Aeropuertos') {
-      setFilteredAirports(
-        airports.filter(
-          (airport) =>
-            (airport.name && airport.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (airport.code && airport.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (airport.city && airport.city.toLowerCase().includes(searchTerm.toLowerCase()))
-        )
-      );
-    } else if (selectedTab === 'Vuelos') {
-      const currentDateTime = parseISO(`${currentSimulationDate}T${currentSimulationTime}`);
-
-      const filtered = flights.filter(
-        (flight) => {
-          const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
-          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
-          return isWithinInterval(currentDateTime, { start: departureDateTime, end: arrivalDateTime });
-        }
-      );
-      setFilteredFlights(filtered);
-    } else if (selectedTab === 'Envios') {
-      setFilteredShipments(shipments);
-    }
-  }, [searchTerm, selectedTab, airports, flights, shipments, currentSimulationDate, currentSimulationTime]);
 
   const getCountryName = (airportCode) => {
     const airport = airports.find((a) => a.id === airportCode);

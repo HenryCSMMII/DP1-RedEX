@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import axios from 'axios';
+import moment from 'moment-timezone';
 
 const ModalContent = styled.div`
   background: #fff;
@@ -187,7 +188,7 @@ const handleSubmit = async () => {
     if (!arrivalAirport) {
       throw new Error(`No se encontró el aeropuerto correspondiente al país destinatario con ID: ${destinatario.pais}`);
     }
-
+	const localDateTime = moment.tz(`${fechaEnvio}T${horaEnvio}:00`, 'YYYY-MM-DDTHH:mm:ss', 'America/Lima').format();
     const shipmentPayload = {
       packageQuantity: cantidadPaquetes,
       departureAirport: {
@@ -196,7 +197,7 @@ const handleSubmit = async () => {
       arrivalAirport: {
         id: arrivalAirport.id
       },
-      registerDateTime: `${fechaEnvio}T${horaEnvio}:00`, // Cambiado a registerDateTime
+      registerDateTime: localDateTime, // Cambiado a registerDateTime
       arrivalTime: null,
     };
 
