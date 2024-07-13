@@ -228,7 +228,7 @@ public class BD {
                 flight.setDeparture_date_time(departure_time);
                 flight.setArrival_date_time(arrival_time);
                 flight.calcEstimatedTime();
-                flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), airports.get(0)) * 60 * 1000);
+                flight.setDifference_system(TimeZoneAirport.calc_difference(flight.getDeparture_airport(), flight.getArrival_airport()/*airports.get(0)*/) * 60 * 1000);
                 flightsTemp.add(flight);
             }
         } catch (Exception e) {
