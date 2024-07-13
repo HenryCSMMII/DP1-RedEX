@@ -237,7 +237,7 @@ public class BD {
     }
 
     public static void readShipments(String filePath) {
-        shipmentsTemp = new ArrayList<>();
+        //shipmentsTemp = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filePath))) {
             while (scanner.hasNextLine()) {
                 String data = scanner.nextLine();
