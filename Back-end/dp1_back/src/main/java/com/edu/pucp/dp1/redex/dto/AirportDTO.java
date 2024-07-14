@@ -11,11 +11,12 @@ public class AirportDTO {
     private int countryId;
     private int cityId;
     private int current_capacity;
+    private String time_zone;
 
     public AirportDTO() {
     }
 
-    public AirportDTO(int id, String code, String latitude, String longitude, int max_capacity, int countryId, int cityId, int current_capacity) {
+    public AirportDTO(int id, String code, String latitude, String longitude, int max_capacity, int countryId, int cityId, int current_capacity,String time_zone) {
         this.id = id;
         this.code = code;
         this.latitude = latitude;
@@ -24,6 +25,7 @@ public class AirportDTO {
         this.countryId = countryId;
         this.cityId = cityId;
         this.current_capacity = current_capacity;
+        this.time_zone = time_zone;
     }
 
     public static AirportDTO fromAirport(Airport airport) {
@@ -41,6 +43,7 @@ public class AirportDTO {
         dto.setCountryId(airport.getCountry().getId());
         dto.setCityId(airport.getCity().getId());
         dto.setCurrent_capacity(currentCapacity);
+        dto.setTimeZone(airport.getTime_zone());
         return dto;
     }
 
@@ -108,5 +111,13 @@ public class AirportDTO {
 
     public void setCityId(int cityId) {
         this.cityId = cityId;
+    }
+
+    public String getTimeZone() {
+        return time_zone;
+    }
+
+    public void setTimeZone(String time_zone) {
+        this.time_zone = time_zone;
     }
 }

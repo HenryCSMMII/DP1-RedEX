@@ -195,10 +195,13 @@ public class BD {
                 flight.setCode(data);
 
                 Airport airport_1;
+                String time_zone_1=" ",time_zone_2=" ";
+
                 for (int i = 0; i < airports.size(); i++) {
 					if(airports.get(i).getCode().equals(split[0])) {
 						airport_1 = airports.get(i);
 						flight.setDeparture_airport(airport_1);
+                        time_zone_1 = airport_1.getTime_zone();
 						break;
 					}
                 }
@@ -210,13 +213,31 @@ public class BD {
 					if(airports.get(i).getCode().equals(split[1])) {
 						airport_2 = airports.get(i);
 						flight.setArrival_airport(airport_2);
+                        time_zone_2 = airport_2.getTime_zone();
 						break;
 					}
                 }
                 flight.setMax_capacity(Integer.valueOf(split[4]));
 				
+                SimpleDateFormat formatter_data = new SimpleDateFormat("HH:mm");
+                Date salida = formatter_data.parse(split[2]);
+                Date llegada = formatter_data.parse(split[3]);
+
+                flight.setSalida(salida);
+                flight.setLlegada(llegada);
+
+                System.out.println(split[0]+"-"+time_zone_1);
+                TimeZone timeZone = TimeZone.getTimeZone("GMT"+time_zone_1);
+
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                formatter.setTimeZone(timeZone);
+
                 Date departure_time = formatter.parse(split[2]);
+
+                //System.out.println(split[1]+"-"+time_zone_2);
+                timeZone = TimeZone.getTimeZone("GMT"+time_zone_2);
+                formatter.setTimeZone(timeZone);
+
                 Date arrival_time = formatter.parse(split[3]);
 
                 if (Integer.parseInt(split[2].substring(0, 2)) > Integer.parseInt(split[3].substring(0, 2))) {
@@ -265,9 +286,22 @@ public class BD {
                 shipment.setDeparturAirport(departure);
     
                 String dateTime = split[2].substring(6) + '/' + split[2].substring(4, 6) + '/' + split[2].substring(0, 4) + " " + split[3];
+
+                String time_zone = " ";
+
+                for(int i=0; i<airports.size(); i++){
+                    if(airports.get(i).getCode().equals(split[0])){
+                        time_zone = airports.get(i).getTime_zone();
+                    }
+                }
+                TimeZone timeZone = TimeZone.getTimeZone("GMT"+time_zone);
+
                 SimpleDateFormat formatter_date = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                formatter_date.setTimeZone(timeZone);
+
                 Date register_date_time;
                 try {
+                    ///////////////////////////REVISAR ESTO               
                     register_date_time = formatter_date.parse(dateTime);
                 } catch (ParseException e) {
                     System.out.println("Error parseando la fecha y hora: " + dateTime);

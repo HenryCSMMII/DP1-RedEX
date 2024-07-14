@@ -180,6 +180,8 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
+    formater_date.setTimeZone(TimeZone.getTimeZone("America/Lima"));
+    
     LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation)));
 
     int day_of_year = date_array.getDayOfYear();

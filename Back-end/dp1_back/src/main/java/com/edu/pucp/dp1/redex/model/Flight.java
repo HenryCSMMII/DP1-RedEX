@@ -22,6 +22,8 @@ public class Flight {
 	private long difference_system; // diferencia de peru con aeropuerto de salida
 	private List<Shipment> shipments;
 	private FlightState state;
+	private Date salida;
+	private Date llegada;
 
 	public List<Shipment> getShipments() {
 		return shipments;
@@ -129,6 +131,22 @@ public class Flight {
 	public Date getArrival_date_time() {
 		return arrival_date_time;
 	}
+
+	public void setSalida(Date salida) {
+		this.salida = salida;
+	}
+	
+	public Date getSalida() {
+		return salida;
+	}
+
+	public void setLlegada(Date llegada) {
+		this.llegada = llegada;
+	}
+	
+	public Date getLlegada() {
+		return llegada;
+	}		
 	
 	public void setArrival_date_time(Date arrival_date_time) {
 		this.arrival_date_time = arrival_date_time;

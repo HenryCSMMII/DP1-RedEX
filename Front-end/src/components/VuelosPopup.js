@@ -158,7 +158,6 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
 
   const filterVuelos = () => {
     let filtered = vuelos;
-
     if (filters.vuelo) {
       filtered = filtered.filter(vuelo => vuelo.id.toString().includes(filters.vuelo));
     }

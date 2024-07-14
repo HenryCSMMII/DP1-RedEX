@@ -30,7 +30,8 @@ public class AirportController {
                             airport.getMax_capacity(),
                             airport.getCountry().getId(),
                             airport.getCity().getId(),
-                            currentCapacity
+                            currentCapacity,
+                            airport.getTime_zone()
                     );
                 })
                 .collect(Collectors.toList());

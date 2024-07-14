@@ -12,6 +12,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.edu.pucp.dp1.redex.Algorithm.BD;
+
 @SpringBootApplication
 @EnableCaching
 public class RedExApplication {
@@ -20,6 +22,11 @@ public class RedExApplication {
 		try {
 			SpringApplication.run(RedExApplication.class, args);
         	System.out.println("Ejecutanding...");
+			BD.readContinents();
+			BD.readCountries();
+			BD.readCities();
+			BD.readAirports();
+			BD.readFlights();
 		} catch(Exception ex) {
 
 		}

@@ -241,7 +241,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
                   <p>País de salida: {getCountryName(shipment.departureAirportId)}</p>
                   <p>País de llegada: {getCountryName(shipment.arrivalAirportId)}</p>
                   <p>Estado: {shipment.state}</p>
-                  <p>Fecha-hora de registro: {new Date(shipment.registerDateTime).toLocaleString()}</p>
+                  <p>Fecha-hora de registro: {new Date(shipment.registerDateTime).toString()}</p>
                 </ShipmentInfo>
               ))}
             </>

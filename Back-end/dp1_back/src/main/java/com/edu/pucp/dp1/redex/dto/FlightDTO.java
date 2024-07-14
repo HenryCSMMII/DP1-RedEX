@@ -24,12 +24,15 @@ public class FlightDTO {
     private int arrival_airportId;
     private long estimated_time;
     private String state;
+    private Date salida;
+    private Date llegada;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private List<ShipmentDTO> shipment = null;
 
     public FlightDTO(int id, String code, int max_capacity, int used_capacity, Date departure_date_time,
-                     Date arrival_date_time, int departure_airportId, int arrival_airportId, long estimated_time, String state) {
+                     Date arrival_date_time, int departure_airportId, int arrival_airportId, long estimated_time, String state,
+                     Date salida, Date llegada) {
         this.id = id;
         this.code = code;
         this.max_capacity = max_capacity;
@@ -40,5 +43,7 @@ public class FlightDTO {
         this.arrival_airportId = arrival_airportId;
         this.estimated_time = estimated_time;
         this.state = state;
+        this.salida = salida;
+        this.llegada = llegada;
     }
 }

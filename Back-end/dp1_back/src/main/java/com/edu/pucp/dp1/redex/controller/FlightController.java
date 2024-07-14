@@ -28,7 +28,9 @@ public class FlightController {
                         flight.getDeparture_airport().getId(),
                         flight.getArrival_airport().getId(),
                         flight.getEstimated_time(),
-                        flight.getState().name()))
+                        flight.getState().name(),
+                        flight.getSalida(),
+                        flight.getLlegada()))
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +47,9 @@ public class FlightController {
                         flight.getDeparture_airport().getId(),
                         flight.getArrival_airport().getId(),
                         flight.getEstimated_time(),
-                        flight.getState().name()))
+                        flight.getState().name(),
+                        flight.getSalida(),
+                        flight.getLlegada()))
                 .collect(Collectors.toList()).get(id - 1);
     }
 
@@ -77,7 +81,9 @@ public class FlightController {
                         flight.getDeparture_airport().getId(),
                         flight.getArrival_airport().getId(),
                         flight.getEstimated_time(),
-                        flight.getState().name()))
+                        flight.getState().name(),
+                        flight.getSalida(),
+                        flight.getLlegada()))
                 .collect(Collectors.toList());
     }
 }
