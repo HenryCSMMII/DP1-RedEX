@@ -225,9 +225,6 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
                 }
             }
             if (noEncontrado) {
-                
-                flight.addHoursToConvertedDateTime();
-
                 BD.flightsResolved.add(flight);
                 BD.flightsResolved.get(vuelos.size()).setShipments(new ArrayList<>());
                 BD.flightsResolved.get(vuelos.size()).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
@@ -239,9 +236,6 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     }
     System.out.println("ARREGLO VUELOS\n" + vuelos);
     BD.shipmentsTemp = new ArrayList<>();
-
-    
-
     return BD.flightsResolved;
 }
 
