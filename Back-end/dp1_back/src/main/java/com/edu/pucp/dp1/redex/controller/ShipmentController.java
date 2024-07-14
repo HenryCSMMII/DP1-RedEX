@@ -26,7 +26,7 @@ public class ShipmentController {
 
     @GetMapping("/")
     public List<ShipmentDTO> getAllShipments() {
-        return BD.shipmentsTemp.stream()
+        return BD.shipmentsCreated.stream()
                 .map(shipment -> new ShipmentDTO(
                         shipment.getId(),
                         shipment.getPackageQuantity(),
@@ -100,6 +100,7 @@ public class ShipmentController {
             request.setRegisterDateTime(request.getRegisterDateTime());
             
             BD.shipmentsTemp.add(request);
+            BD.shipmentsCreated.add(request);
             return "Envío creado exitosamente.";
         } catch (Exception e) {
             e.printStackTrace();

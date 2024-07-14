@@ -23,7 +23,7 @@ public class Population {
 	
 	public void initialize(List<Shipment> originalList) {
 		
-		System.out.println(originalList.size());
+		//System.out.println(originalList.size());
 		for(int i=0; i<this.individuals.length;i++) {
 			
 			List<Shipment> shipments = new ArrayList<Shipment>();
@@ -68,10 +68,10 @@ public class Population {
 		for (int i = 0; i < population.getIndividuals().length; i++) {
 			sumFit += population.getIndividuals()[i].getFitness(i);
 			
-			System.out.println("Fitness individual = " + population.getIndividuals()[i].getFitness(i));
+			//System.out.println("Fitness individual = " + population.getIndividuals()[i].getFitness(i));
 		}
 		
-		System.out.println("Suma = " + sumFit);
+		//System.out.println("Suma = " + sumFit);
 		
 		fitness = 0;
 		bestFitness = random.nextDouble()*sumFit;

@@ -23,7 +23,7 @@ public class BD {
     public static List<Country> countries = new ArrayList<>();
     public static List<City> cities = new ArrayList<>();
     public static List<Shipment> shipmentsWaitingList = new ArrayList<>();
-    public static List<Shipment> shipmentsResolved = new ArrayList<>();
+    public static List<Shipment> shipmentsCreated = new ArrayList<>();
     public static List<Flight> flightsResolved = new ArrayList<>();
     public static Set<String> processedShipments = new HashSet<>();
     public static Set<Integer> processedFlights = new HashSet<>();
@@ -339,6 +339,7 @@ public class BD {
                 shipment.setState(State.Creado);
     
                 shipmentsTemp.add(shipment);
+                shipmentsCreated.add(shipment);
             }
         } catch (Exception e) {
             System.out.println("EXCEPTION SHIPMENTS SIN PARAMETRO: " + e.getMessage());
