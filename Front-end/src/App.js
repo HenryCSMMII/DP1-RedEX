@@ -349,8 +349,8 @@ function App() {
 
       if (response.status !== 500 && flightsResponse && Array.isArray(flightsResponse)) {
         const flights = flightsResponse.map((flight) => {
-          const departureDateTime = parseISO(flight.departureDateTimeConverted);
-          const arrivalDateTime = parseISO(flight.arrivalDateTimeConverted);
+          const departureDateTime = parseISO(flight.departure_date_time);
+          const arrivalDateTime = parseISO(flight.arrival_date_time);
           return {
             id: flight.id,
             activo: 1,
@@ -389,8 +389,8 @@ function App() {
             flight.shipments.forEach((shipment) => {
               shipments.push({
                 ...shipment,
-                departure_date_time_plane: flight.departureDateTimeConverted,
-                arrival_date_time_plane: flight.arrivalDateTimeConverted,
+                departure_date_time_plane: flight.departure_date_time,
+                arrival_date_time_plane: flight.arrival_date_time,
                 departure_airport_plane: flight.departure_airport.code,
                 arrival_airport_plane: flight.arrival_airport.code,
               });
