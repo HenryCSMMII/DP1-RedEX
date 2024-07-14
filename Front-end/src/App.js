@@ -348,6 +348,7 @@ function App() {
         axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/ciudad/'),
       ]);
 
+      
       // Inicializamos la capacidad actual de cada aeropuerto
       const initialCapacities = airports.data.reduce((acc, airport) => {
         acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
