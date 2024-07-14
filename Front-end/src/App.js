@@ -453,6 +453,12 @@ function App() {
     }
   };
 
+  const updateFlights = (flights, currentDateTime) => {
+    return flights.map(flight => {
+      return { ...flight };
+    });
+  };
+
 const updateAirportCapacities = (airportCapacities, allShipments, currentDateTime) => {
   const updatedCapacities = { ...airportCapacities };
 
