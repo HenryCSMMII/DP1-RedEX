@@ -23,7 +23,7 @@ public class Population {
 	
 	public void initialize(List<Shipment> originalList) {
 		
-		//System.out.println(originalList.size());
+		System.out.println(originalList.size());
 		for(int i=0; i<this.individuals.length;i++) {
 			
 			List<Shipment> shipments = new ArrayList<Shipment>();
