@@ -333,6 +333,7 @@ const [originalFlights, setOriginalFlights] = useState([]);
         axios.get('http://localhost:8080/ciudad/'),
       ]);
 
+      
       // Inicializamos la capacidad actual de cada aeropuerto
       const initialCapacities = airports.data.reduce((acc, airport) => {
         acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
