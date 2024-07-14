@@ -98,7 +98,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
         Population population_temp = new Population(BD.POPULATION_NUM_INDIVIDUALS * 2);
 
         for (int i = 0, k = 0; i < newGenerations.size(); i++, k += 2) {
-            System.out.println("i: " + i + " k: " + k);
+            //System.out.println("i: " + i + " k: " + k);
             population_temp.getIndividuals()[k] = newGenerations.get(i)[0];
             population_temp.getIndividuals()[k + 1] = newGenerations.get(i)[1];
         }
@@ -109,11 +109,11 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
 
         double[] list_fitness = population_temp.evaluate();
 
-        System.out.println("==========================");
+        //System.out.println("==========================");
         for (int i = 0; i < list_fitness.length; i++) {
-            System.out.println("Fitness de individuo " + i + ": " + list_fitness[i]);
+            //System.out.println("Fitness de individuo " + i + ": " + list_fitness[i]);
         }
-        System.out.println("==========================");
+        //System.out.println("==========================");
 
         double[] list_fitness_temp = Arrays.copyOf(list_fitness, list_fitness.length);
         Arrays.sort(list_fitness_temp);
