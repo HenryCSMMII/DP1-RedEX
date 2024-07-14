@@ -454,7 +454,7 @@ const startSimulationInterval = () => {
   simulationIntervalRef.current = setInterval(() => {
     setTiempoSimulacion((prev) => {
       const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-      const newDateTime = addMinutes(currentDateTime, 30);
+      const newDateTime = addMinutes(currentDateTime,0.017);
 
       const newDate = format(newDateTime, 'yyyy-MM-dd');
       const newTime = format(newDateTime, 'HH:mm:ss');
