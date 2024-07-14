@@ -1,5 +1,6 @@
 package com.edu.pucp.dp1.redex.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +17,8 @@ public class Flight {
 	private int[] used_capacity;
 	private Date departure_date_time;
 	private Date arrival_date_time;
+	private Date departureDateTimeConverted;
+	private Date arrivalDateTimeConverted;
 	private Airport departure_airport;
 	private Airport arrival_airport;
 	private long estimated_time;
@@ -134,6 +137,22 @@ public class Flight {
 		this.arrival_date_time = arrival_date_time;
 	}
 	
+	public Date getDepartureDateTimeConverted() {
+        return departureDateTimeConverted;
+    }
+
+    public void setDepartureDateTimeConverted(Date departureTimeConverted) {
+        this.departureDateTimeConverted = departureTimeConverted;
+    }
+    
+    public Date getArrivalDateTimeConverted() {
+        return arrivalDateTimeConverted;
+    }
+
+    public void setArrivalDateTimeConverted(Date arrivalTimeConverted) {
+        this.arrivalDateTimeConverted = arrivalTimeConverted;
+    }
+
 	public Airport getDeparture_airport() {
 		return departure_airport;
 	}
@@ -191,6 +210,18 @@ public class Flight {
     public int hashCode() {
         // Utiliza un método de utilidad para calcular el hash
         return Objects.hash(id, departure_date_time);
+    }
+
+	public void addHoursToConvertedDateTime() {
+		this.departureDateTimeConverted = addHours(this.departure_date_time, -5 - Integer.parseInt(departure_airport.getTime_zone()));
+		this.arrivalDateTimeConverted = addHours(this.arrival_date_time, -5 - Integer.parseInt(arrival_airport.getTime_zone()));
+    }
+
+    private Date addHours(Date date, int hoursToAdd) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, hoursToAdd);
+        return calendar.getTime();
     }
 
 }
