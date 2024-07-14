@@ -75,7 +75,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     int numGen = 0;
 
     while (numGen != BD.NUM_GENERATIONS) {
-        System.out.println("Generación número: " + numGen);
+        //System.out.println("Generación número: " + numGen);
 
         List<Individual[]> newGenerations = new ArrayList<>();
 
@@ -177,7 +177,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
         }
     }
 
-    System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
+    //System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
     LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation)));
@@ -205,7 +205,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
         }
     }
 
-    System.out.println("funciona");
+    //System.out.println("funciona");
 
     System.out.println("NUMERO DE ITINERARIOS: " + population.getIndividuals()[0].getList_flight_schedule().size());
     System.out.println("NUMERO DE PAQUETES: " + population.getIndividuals()[0].getList_shipments().size());
@@ -271,7 +271,7 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
     int numGen = 0;
 
     while (numGen != BD.NUM_GENERATIONS) {
-        System.out.println("Generación número: " + numGen);
+        //System.out.println("Generación número: " + numGen);
 
         List<Individual[]> newGenerations = new ArrayList<>();
         //22222222222222222222222222222222222222222222222222222222222222222222222222222222
@@ -373,7 +373,7 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
         }
     }
 
-    System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
+    //System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
     LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation)));
@@ -401,7 +401,7 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
         }
     }
 
-    System.out.println("funciona");
+    //System.out.println("funciona");
 
     System.out.println("NUMERO DE ITINERARIOS: " + population.getIndividuals()[0].getList_flight_schedule().size());
     System.out.println("NUMERO DE PAQUETES: " + population.getIndividuals()[0].getList_shipments().size());
@@ -488,7 +488,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
     int index_best_individual = 0;
 
     while (num_generations != BD.NUM_GENERATIONS) {
-        System.out.println("Generación número: " + num_generations);
+        //System.out.println("Generación número: " + num_generations);
 
         List<Individual[]> new_parents = new ArrayList<>();
 
@@ -590,7 +590,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
         }
     }
 
-    System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
+    //System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
     LocalDate date_array = LocalDate.parse(formater_date.format(fecha_inicio));
@@ -619,7 +619,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
         }
     }
 
-    System.out.println("funciona");
+    //System.out.println("funciona");
 
     System.out.println("NUMERO DE ITINERARIOS: " + population.getIndividuals()[0].getList_flight_schedule().size());
     System.out.println("NUMERO DE PAQUETES: " + population.getIndividuals()[0].getList_shipments().size());
@@ -796,7 +796,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
 						}
 					}
 					
-					System.out.println("EL FITNESS MEJOR ES: " +  population.getIndividuals()[0].getFitness(0));
+					//System.out.println("EL FITNESS MEJOR ES: " +  population.getIndividuals()[0].getFitness(0));
 					
 					/********************************* DAYS OF THE YEAR - ARRAY ***************************************/
 					DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
@@ -860,7 +860,7 @@ public List<Flight> weekly_genetic_algorithm_V2(@RequestBody YourRequestData req
 		
 		
 		
-        System.out.println("funciona");
+        //System.out.println("funciona");
 		
         System.out.println("NUMERO DE ITINERARIOS: "+population.getIndividuals()[0].getList_flight_schedule().size());
         System.out.println("NUMERO DE PAQUETES: "+population.getIndividuals()[0].getList_shipments().size());
