@@ -109,11 +109,11 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
 
         double[] list_fitness = population_temp.evaluate();
 
-        //System.out.println("==========================");
+        System.out.println("==========================");
         for (int i = 0; i < list_fitness.length; i++) {
-            //System.out.println("Fitness de individuo " + i + ": " + list_fitness[i]);
+            System.out.println("Fitness de individuo " + i + ": " + list_fitness[i]);
         }
-        //System.out.println("==========================");
+        System.out.println("==========================");
 
         double[] list_fitness_temp = Arrays.copyOf(list_fitness, list_fitness.length);
         Arrays.sort(list_fitness_temp);
@@ -177,7 +177,7 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
         }
     }
 
-    //System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
+    System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
     formater_date.setTimeZone(TimeZone.getTimeZone("America/Lima"));
@@ -370,7 +370,7 @@ public List<Flight> weekly_genetic_algorithm(@RequestBody YourRequestData reques
         }
     }
 
-    //System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
+    System.out.println("EL FITNESS MEJOR ES: " + population.getIndividuals()[0].getFitness(0));
 
     DateFormat formater_date = new SimpleDateFormat("yyyy-MM-dd");
     LocalDate date_array = LocalDate.parse(formater_date.format(new Date(date_simulation)));
