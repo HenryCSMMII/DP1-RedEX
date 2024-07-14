@@ -28,6 +28,8 @@ public class BD {
     public static Set<String> processedShipments = new HashSet<>();
     public static Set<Integer> processedFlights = new HashSet<>();
 
+    public static Date date_simulation_start;
+
     public static int numero_Run_Semanal = 0;
 
     // Constants
