@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.time.LocalDate;
+
 import com.edu.pucp.dp1.redex.model.Airport;
 import com.edu.pucp.dp1.redex.model.Flight;
 import com.edu.pucp.dp1.redex.model.FlightSchedule;
@@ -59,12 +59,7 @@ public class Individual {
 
 			for(int j=0;j<this.list_flight_schedule.size();j++) {
 				for(int k=0;k<this.list_flight_schedule.get(j).getFlights().size();k++) {
-					this.list_flight_schedule.get(j).getFlights().get(k).addHoursToConvertedDateTime();
-					
-					/*if(this.list_flight_schedule.get(j).getFlights().get(k).getDepartureDateTimeConverted().before(BD.date_simulation_start)){
-						System.out.println(this.list_flight_schedule.get(j).getFlights().get(k).getCode()+", Date: "+ this.list_flight_schedule.get(j).getFlights().get(k).getDepartureDateTimeConverted()+ ", PASA");
-					}*/
-					if(this.list_flight_schedule.get(j).getFlights().get(k).getUsed_capacity()[index] > this.list_flight_schedule.get(j).getFlights().get(k).getMax_capacity() || this.list_flight_schedule.get(j).getFlights().get(k).getDepartureDateTimeConverted().before(BD.date_simulation_start)) {
+					if(this.list_flight_schedule.get(j).getFlights().get(k).getUsed_capacity()[index] > this.list_flight_schedule.get(j).getFlights().get(k).getMax_capacity()) {
 						this.fitness = 0.000001;
 						return this.fitness;
 					}
