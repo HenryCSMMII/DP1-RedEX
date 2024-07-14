@@ -161,7 +161,7 @@ const NuevoEnvioPopup = ({ isOpen, onRequestClose, data }) => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/read/', formData, {
+      const response = await axios.post('http://localhost:8080/shipment/read/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -201,7 +201,7 @@ const handleSubmit = async () => {
       arrivalTime: null,
     };
 
-    const shipmentResponse = await axios.post('http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/create/', shipmentPayload);
+    const shipmentResponse = await axios.post('http://localhost:8080/shipment/create/', shipmentPayload);
 
     alert('Envio creado exitosamente');
     onRequestClose();

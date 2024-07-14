@@ -101,7 +101,7 @@ const ResumenEnvioPopup = ({ isOpen, onRequestClose, envioId, data }) => {
   useEffect(() => {
     const fetchEnvio = async () => {
       try {
-        const response = await axios.get(`http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/${envioId}`);
+        const response = await axios.get(`http://localhost:8080/shipment/${envioId}`);
         const envioData = response.data;
 
         const origen = data.airports.find(airport => airport.id === envioData.origenId)?.codigoIATA || 'Desconocido';

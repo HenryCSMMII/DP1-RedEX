@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
-import { format, addMinutes, parseISO, formatDate, differenceInSeconds, subHours  } from 'date-fns';
+import { format, addMinutes, parseISO, formatDate, differenceInSeconds, subHours } from 'date-fns';
 import Sidebar from './components/Sidebar';
 import SidebarSearch from './components/SidebarSearch';
 import Legend from './components/Legend';
@@ -170,7 +170,6 @@ const calculateSaturation = (currentLoad, capacity) => {
 
 const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, selected }) => {
   if (!airport) return null;
-  //console.log(airport);
   return (
     <InfoContainer selected={selected}>
       <Header>Información del Aeropuerto</Header>
@@ -194,16 +193,6 @@ const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, s
 const FlightInfoBox = ({ flight, setSelectedFlight }) => {
   if (!flight) return null;
 
-  console.log(flight);
-  // flight.origin=
-
-  // flight.destination=
-
-  // departure_date
-  // departure_time
-
-  // arrival_date
-  // arrival_time
   return (
     <InfoContainerVuelo>
       <Header>Información del Vuelo</Header>
@@ -226,7 +215,6 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
   );
 };
 
-
 function App() {
   const [localTime, setLocalTime] = useState({
     currentDate: '',
@@ -237,7 +225,6 @@ function App() {
   const [airportSaturation, setAirportSaturation] = useState(0);
 
   const [startDateTime, setStartDateTime] = useState(null);
-  //const [elapsedTime, setElapsedTime] = useState({ days: 0, hours: 0, minutes: 0});
   const [currentFlights, setCurrentFlights] = useState([]); // Nuevo estado para vuelos en curso
 
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -245,7 +232,9 @@ function App() {
 
   const [isFinalPopupOpen, setIsFinalPopupOpen] = useState(false); // Estado para el popup final
   const [finalItineraries, setFinalItineraries] = useState([]); // Estado para los itinerarios finales
-
+  const [isSimulationEnded, setIsSimulationEnded] = useState(false); // Nuevo estado para controlar el final de la simulación
+  const [currentItineraries, setCurrentItineraries] = useState([]); // Nuevo estado para itinerarios actuales
+const [originalFlights, setOriginalFlights] = useState([]); 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -255,7 +244,6 @@ function App() {
   };
 
   const ElapsedTimeDisplay = ({ elapsedTime, startDate, startHour }) => {
-    
     if (!tiempo_simulacion || !tiempo_simulacion.dia_actual || !tiempo_simulacion.tiempo_actual) {
       return (
         <div>
@@ -263,10 +251,7 @@ function App() {
         </div>
       );
     }
-    //console.log("Inicio: "+startDate+"--"+startHour);
-    //console.log("Tiempo de simulación: "+elapsedTime.dia_actual+"--"+elapsedTime.tiempo_actual);
-    const simulationStartTime = parseISO(`${startDate}T${startHour}`)
-
+    const simulationStartTime = parseISO(`${startDate}T${startHour}`);
     const currentTime = parseISO(`${elapsedTime.dia_actual}T${elapsedTime.tiempo_actual}`);
     const diffInSeconds = differenceInSeconds(currentTime, simulationStartTime);
 
@@ -342,10 +327,10 @@ function App() {
   const fetchData = async () => {
     try {
       const [airports, continents, countries, ciudad] = await Promise.all([
-        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/airport/'),
-        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/continent/'),
-        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/country/'),
-        axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/ciudad/'),
+        axios.get('http://localhost:8080/airport/'),
+        axios.get('http://localhost:8080/continent/'),
+        axios.get('http://localhost:8080/country/'),
+        axios.get('http://localhost:8080/ciudad/'),
       ]);
 
       // Inicializamos la capacidad actual de cada aeropuerto
@@ -380,78 +365,61 @@ function App() {
     }
   };
 
-  const runAlgorithm = async (url, fechaInicio) => {
-    try {
-      const response = await axios.post(url, { fecha_inicio: fechaInicio });
-      const flightsResponse = response.data;
+const runAlgorithm = async (url, fechaInicio) => {
+  try {
+    const response = await axios.post(url, { fecha_inicio: fechaInicio });
+    const flightsResponse = response.data;
 
-      if (response.status !== 500 && flightsResponse && Array.isArray(flightsResponse)) {
-        const flights = flightsResponse.map((flight) => {
-          const departureDateTime = parseISO(flight.departure_date_time);
-          const arrivalDateTime = parseISO(flight.arrival_date_time);
+    if (response.status !== 500 && flightsResponse && Array.isArray(flightsResponse)) {
+      const flights = flightsResponse.map((flight) => {
+        const departureDateTime = parseISO(flight.departure_date_time);
+        const arrivalDateTime = parseISO(flight.arrival_date_time);
 
-          const salidaAvion = flight.salida;
-          const llegadaAvion = flight.llegada;
-          return {
-            id: flight.id,
-            activo: 1,
-            fecha_creacion: flight.fecha_creacion,
-            fecha_modificacion: flight.fecha_modificacion,
-            arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
-            capacity: flight.max_capacity,
-            current_load: Math.trunc(flight.used_capacity[0] / 4),
-            departure_time: format(departureDateTime, 'HH:mm:ss'),
-            destination: flight.arrival_airport.code,
-            duration: (arrivalDateTime - departureDateTime) / 60000,
-            flight_number: flight.code,
-            origin: flight.departure_airport.code,
-            estado_vuelo_id: 1,
-            arrival_date: format(arrivalDateTime, 'yyyy-MM-dd'),
-            departure_date: format(departureDateTime, 'yyyy-MM-dd'),
-            salida: flight.salida,
-            llegada: flight.llegada,
-            salida_hora: extractTime(salidaAvion),
-            llegada_hora: extractTime(llegadaAvion),
-          };
-        });
+        const salidaAvion = flight.salida;
+        const llegadaAvion = flight.llegada;
+        return {
+          id: flight.id,
+          activo: 1,
+          fecha_creacion: flight.fecha_creacion,
+          fecha_modificacion: flight.fecha_modificacion,
+          arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
+          capacity: flight.max_capacity,
+          current_load: Math.trunc(flight.used_capacity[0] / 4),
+          departure_time: format(departureDateTime, 'HH:mm:ss'),
+          destination: flight.arrival_airport.code,
+          duration: (arrivalDateTime - departureDateTime) / 60000,
+          flight_number: flight.code,
+          origin: flight.departure_airport.code,
+          estado_vuelo_id: 1,
+          arrival_date: format(arrivalDateTime, 'yyyy-MM-dd'),
+          departure_date: format(departureDateTime, 'yyyy-MM-dd'),
+          salida: flight.salida,
+          llegada: flight.llegada,
+          salida_hora: extractTime(salidaAvion),
+          llegada_hora: extractTime(llegadaAvion),
+        };
+      });
 
-        setTiempoSimulacion({
-          dia_actual: fechaInicio.split('T')[0],
-          tiempo_actual: fechaInicio.split('T')[1],
-        });
+      setOriginalFlights(flights); // Guardar copia del JSON original
 
-        setData((prevData) => ({
-          ...prevData,
-          flights: flights,
-        }));
+      setTiempoSimulacion({
+        dia_actual: fechaInicio.split('T')[0],
+        tiempo_actual: fechaInicio.split('T')[1],
+      });
 
-        startSimulationInterval();
+      setData((prevData) => ({
+        ...prevData,
+        flights: flights,
+      }));
 
-        // Extraemos y agrupamos todos los shipments
-        const shipments = [];
-        flightsResponse.forEach((flight) => {
-          if (flight.shipments && Array.isArray(flight.shipments)) {
-            flight.shipments.forEach((shipment) => {
-              shipments.push({
-                ...shipment,
-                departure_date_time_plane: flight.departure_date_time,
-                arrival_date_time_plane: flight.arrival_date_time,
-                departure_airport_plane: flight.departure_airport.code,
-                arrival_airport_plane: flight.arrival_airport.code,
-              });
-            });
-          }
-        });
-
-        setAllShipments(shipments);
-
-      } else {
-        console.error('Internal Server Error', response);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      startSimulationInterval();
+    } else {
+      console.error('Internal Server Error', response);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
 
   const updateFlights = (flights, currentDateTime) => {
     return flights.map(flight => {
@@ -493,6 +461,7 @@ const updateAirportCapacities = (airportCapacities, allShipments, currentDateTim
 
   return updatedCapacities;
 };
+
 const startSimulationInterval = () => {
   if (simulationIntervalRef.current) {
     clearInterval(simulationIntervalRef.current);
@@ -500,8 +469,7 @@ const startSimulationInterval = () => {
   simulationIntervalRef.current = setInterval(() => {
     setTiempoSimulacion((prev) => {
       const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-      const newDateTime = addMinutes(currentDateTime, 0.017);
-      //  0.017 es 1 segundo
+      const newDateTime = addMinutes(currentDateTime, 1440); // 0.017 es 1 segundo
 
       const newDate = format(newDateTime, 'yyyy-MM-dd');
       const newTime = format(newDateTime, 'HH:mm:ss');
@@ -526,6 +494,64 @@ const startSimulationInterval = () => {
       setAirportSaturation(airportSaturation);
       setCurrentFlights(currentFlights); // Actualizar vuelos en curso
       setAirportCapacities(updatedAirportCapacities); // Actualizar capacidades de aeropuertos
+
+      // Calcular tiempo transcurrido
+      const simulationStartTime = parseISO(`${startDate}T${startHour}`);
+      const elapsedTimeInSeconds = differenceInSeconds(newDateTime, simulationStartTime);
+      const elapsedDays = Math.floor(elapsedTimeInSeconds / (24 * 60 * 60));
+      const elapsedHours = Math.floor((elapsedTimeInSeconds % (24 * 60 * 60)) / (60 * 60));
+
+      // Detener simulación si ha transcurrido una semana (7 días)
+      if (elapsedDays >= 8) {
+        clearInterval(simulationIntervalRef.current);
+        setIsSimulationEnded(true);
+        setIsFinalPopupOpen(true);
+
+        // Obtener itinerarios de los vuelos en curso al detener la simulación
+        const currentItineraries = originalFlights.filter((flight) => {
+          const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+          return currentDateTime >= departureDateTime && currentDateTime < arrivalDateTime;
+        });
+
+        setCurrentItineraries(currentItineraries);
+
+        // Obtener itinerarios de las últimas 6 horas
+        const endSimulationTime = newDateTime;
+        const startSimulationTime = subHours(endSimulationTime, 6);
+        const finalItineraries = updatedFlights.filter((flight) => {
+          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+          return arrivalDateTime >= startSimulationTime && arrivalDateTime <= endSimulationTime;
+        });
+
+        console.log("Itinerarios finales", finalItineraries); // Añadir esta línea para verificar la consola
+        setFinalItineraries(finalItineraries);
+
+        return prev; // No actualizar más el tiempo de simulación
+      }
+
+      // Comprobar si todos los vuelos han llegado a su destino
+      const allFlightsArrived = updatedFlights.every((flight) => {
+        const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+        return currentDateTime > arrivalDateTime;
+      });
+
+      if (allFlightsArrived) {
+        clearInterval(simulationIntervalRef.current);
+        setIsSimulationEnded(true);
+        setIsFinalPopupOpen(true);
+
+        // Obtener itinerarios de las últimas 6 horas
+        const endSimulationTime = newDateTime;
+        const startSimulationTime = subHours(endSimulationTime, 6);
+        const finalItineraries = updatedFlights.filter((flight) => {
+          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+          return arrivalDateTime >= startSimulationTime && arrivalDateTime <= endSimulationTime;
+        });
+
+        console.log("Itinerarios finales", finalItineraries); // Añadir esta línea para verificar la consola
+        setFinalItineraries(finalItineraries);
+      }
 
       return {
         dia_actual: newDate,
@@ -675,7 +701,6 @@ const startSimulationInterval = () => {
   };
 
   const handleFlightClick = (flight) => {
-    console.log(flight);
     setSelectedFlight(flight);
     setSelectedAirport(null); // Limpiar la selección de aeropuerto
   };
@@ -842,11 +867,11 @@ const startSimulationInterval = () => {
   const handleStartSimulation = (tipoSimulacion, fechaInicio) => {
     let url = '';
     if (tipoSimulacion === 'diario') {
-      url = 'http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/runDiaDia/';
+      url = 'http://localhost:8080/api/algorithm/runDiaDia/';
     } else if (tipoSimulacion === 'semanal') {
-      url = 'http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/runSemanal/';
+      url = 'http://localhost:8080/api/algorithm/runSemanal/';
     } else if (tipoSimulacion === 'colapso') {
-      url = 'http://inf226-982-5e.inf.pucp.edu.pe/back/api/algorithm/run/';
+      url = 'http://localhost:8080/api/algorithm/run/';
     }
 
     setTipoSimulacion(tipoSimulacion);
@@ -857,8 +882,6 @@ const startSimulationInterval = () => {
 
     setStartDate(startDate); // Establecer la fecha de inicio
     setStartHour(startHour);
-    // console.log("Fecha inicio: "+startDate);
-    // console.log("Hora inicio: "+startHour);
   };
 
   const calculateFleetSaturation = (flights, currentDateTime) => {
@@ -974,11 +997,13 @@ const startSimulationInterval = () => {
           runAlgorithm={runAlgorithm}
           tiempoSimulacion={tiempo_simulacion}
         />
-        <FinalSimulationPopup // Añadir el popup final
-          isOpen={isFinalPopupOpen}
-          onRequestClose={() => setIsFinalPopupOpen(false)}
-          itineraries={finalItineraries}
-        />
+       <FinalSimulationPopup
+		  isOpen={isFinalPopupOpen}
+		  onRequestClose={() => setIsFinalPopupOpen(false)}
+		  itineraries={finalItineraries}
+		  currentItineraries={currentItineraries} // Asegúrate de pasar los itinerarios actuales
+		/>
+
       </AppContainer>
     </>
   );

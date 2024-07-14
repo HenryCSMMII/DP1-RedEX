@@ -79,7 +79,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
   useEffect(() => {
     const fetchShipments = async () => {
       try {
-        const response = await axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/shipment/');
+        const response = await axios.get('http://localhost:8080/shipment/');
         setShipments(response.data);
       } catch (error) {
         console.error('Error fetching shipments:', error);

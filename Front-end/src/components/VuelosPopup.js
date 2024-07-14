@@ -132,7 +132,7 @@ const VuelosPopup = ({ isOpen, onRequestClose, data }) => {
     const fetchVuelos = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://inf226-982-5e.inf.pucp.edu.pe/back/vuelo/');
+        const response = await axios.get('http://localhost:8080/vuelo/');
         setVuelos(response.data);
         setFilteredVuelos(response.data);
       } catch (error) {
