@@ -52,7 +52,8 @@ public class Flight {
 	}
 	
 	public Flight(int id, String code, int max_capacity, int[] used_capacity, Date departure_date_time,
-			Date arrival_date_time, Airport departure_airport, Airport arrival_airport, long estimated_time) {
+			Date arrival_date_time, Airport departure_airport, Airport arrival_airport, long estimated_time,
+			Date salida, Date llegada) {
 		super();
 		this.id = id;
 		this.code = code;
@@ -63,6 +64,8 @@ public class Flight {
 		this.departure_airport = departure_airport;
 		this.arrival_airport = arrival_airport;
 		this.state = FlightState.En_Espera;
+		this.salida = salida;
+		this.llegada = llegada;
 	}
 	
 	public Flight(Flight flight) {
@@ -71,6 +74,8 @@ public class Flight {
 		this.max_capacity = flight.getMax_capacity();
 		if (flight.getDeparture_date_time() != null) this.departure_date_time = new Date(flight.getDeparture_date_time().getTime());
 		if (flight.getArrival_date_time() != null) this.arrival_date_time = new Date(flight.getArrival_date_time().getTime());
+		if (flight.getSalida() != null) this.salida = new Date(flight.getSalida().getTime());
+		if (flight.getLlegada() != null) this.llegada = new Date(flight.getLlegada().getTime());
 		if (flight.getDeparture_airport() != null) this.departure_airport = new Airport(flight.getDeparture_airport());
 		if (flight.getArrival_airport() != null) this.arrival_airport = new Airport(flight.getArrival_airport());
 		if (flight.getUsed_capacity() != null) {

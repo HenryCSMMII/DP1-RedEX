@@ -210,12 +210,12 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
         {flight.id && <p><strong>ID del vuelo:</strong> {flight.id}</p>}
         {flight.origin && <p><strong>Aeropuerto de salida:</strong> {flight.origin}</p>}
         {flight.destination && <p><strong>Aeropuerto de llegada:</strong> {flight.destination}</p>}
-        {/* {flight.departure_date && (
-          <p><strong>Salida:</strong> {new Date('${flight.salida_fecha}T${flight.salida_hora}')}</p>
+        {flight.departure_date && (
+          <p><strong>Salida:</strong> {new Date(`${flight.departure_date}T${flight.salida_hora}`).toLocaleString()}</p>
         )}
         {flight.arrival_date && (
-          <p><strong>Llegada:</strong> {flight.llegada}</p>
-        )} */}
+          <p><strong>Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.llegada_hora}`).toLocaleString()}</p>
+        )}
         <p>
           <strong>Capacidad:</strong> {flight.current_load}/{flight.capacity} (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
         </p>
@@ -290,6 +290,10 @@ function App() {
     const seconds = String(date.getSeconds()).padStart(2, '0');
     return `${hours}:${minutes}:${seconds}`;
   };
+
+  function extractTime(isoString) {
+    return isoString.split('T')[1].split('.')[0];
+  }
 
   useEffect(() => {
     const updateLocalTime = () => {
@@ -381,8 +385,8 @@ function App() {
           const departureDateTime = parseISO(flight.departure_date_time);
           const arrivalDateTime = parseISO(flight.arrival_date_time);
 
-          const salidaAvion = flight.salida ? parseISO(flight.salida) : null;
-          const llegadaAvion = flight.llegada ? parseISO(flight.llegada) : null;
+          const salidaAvion = flight.salida;
+          const llegadaAvion = flight.llegada;
           return {
             id: flight.id,
             activo: 1,
@@ -400,10 +404,9 @@ function App() {
             arrival_date: format(arrivalDateTime, 'yyyy-MM-dd'),
             departure_date: format(departureDateTime, 'yyyy-MM-dd'),
             salida: flight.salida,
-            // salida_fecha: format(salidaAvion, 'yyyy-MM-dd'),
-            // salida_hora: format(salidaAvion,'HH:mm:ss'),
-            // llegada_fecha: format(llegadaAvion,'yyyy-MM-dd'),
-            // llegada_hora: format(llegadaAvion,'HH:mm:ss'),
+            llegada: flight.llegada,
+            salida_hora: extractTime(salidaAvion),
+            llegada_hora: extractTime(llegadaAvion),
           };
         });
 
@@ -491,7 +494,7 @@ const startSimulationInterval = () => {
   simulationIntervalRef.current = setInterval(() => {
     setTiempoSimulacion((prev) => {
       const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-      const newDateTime = addMinutes(currentDateTime, 50);
+      const newDateTime = addMinutes(currentDateTime, 0.017);
       //  0.017 es 1 segundo
 
       const newDate = format(newDateTime, 'yyyy-MM-dd');

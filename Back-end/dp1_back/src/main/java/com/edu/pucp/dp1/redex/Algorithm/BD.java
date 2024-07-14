@@ -223,10 +223,12 @@ public class BD {
                 Date salida = formatter_data.parse(split[2]);
                 Date llegada = formatter_data.parse(split[3]);
 
+
+                //System.out.println("Salida: "+salida+" - Llegada: "+ llegada);
                 flight.setSalida(salida);
                 flight.setLlegada(llegada);
 
-                System.out.println(split[0]+"-"+time_zone_1);
+                //System.out.println(split[0]+"-"+time_zone_1);
                 TimeZone timeZone = TimeZone.getTimeZone("GMT"+time_zone_1);
 
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
