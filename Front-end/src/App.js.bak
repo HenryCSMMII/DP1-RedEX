@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { GoogleMap, LoadScript, MarkerF } from '@react-google-maps/api';
-import { format, addMinutes, parseISO, formatDate, differenceInSeconds, subHours } from 'date-fns';
+import { format, addMinutes, parseISO, differenceInSeconds, subHours } from 'date-fns';
 import Sidebar from './components/Sidebar';
 import SidebarSearch from './components/SidebarSearch';
 import Legend from './components/Legend';
@@ -32,6 +32,7 @@ import planeYellowWithBorder from './images/planeYellowWithBorder.png';
 import planeYellowRotadoWithBorder from './images/planeYellowRotadoWithBorder.png';
 import planeGreenWithBorder from './images/planeGreenWithBorder.png';
 import planeGreenRotadoWithBorder from './images/planeGreenRotadoWithBorder.png';
+
 const GlobalStyle = createGlobalStyle`
   body, html, #root {
     margin: 0;
@@ -156,6 +157,8 @@ const Header = styled.div`
   font-weight: bold;
   margin-bottom: 10px;
 `;
+
+const processedShipments = new Set();
 const calculateCurrentCapacityPercentage = (currentLoad, capacity) => {
   if (capacity === 0) return '0%';
   return ((currentLoad / capacity) * 100).toFixed(2) + '%';
@@ -444,55 +447,46 @@ function App() {
     }
   }, [allShipments]);
 
-  const updateAirportCapacities = (airportCapacities, allShipments, currentDateTime, previousDateTime) => {
-  const updatedCapacities = { ...airportCapacities };
+  const updateAirportCapacities = (airportCapacities, allShipments, currentDateTime, previousDateTime, processedShipments) => {
+    const updatedCapacities = { ...airportCapacities };
 
-  /*allShipments.forEach((shipment) => {
-    console.log("hola1");
-    const { departure_date_time_plane, registerDateTime, packageQuantity, departure_airport, arrival_airport } = shipment;
+    allShipments.forEach((shipment) => {
+		console.log("hola")
+      const { departure_date_time_plane, registerDateTime, packageQuantity, departure_airport, arrival_airport } = shipment;
+	console.log("hola")
+      const departureDateTime = parseISO(departure_date_time_plane);
+      const registerDateTimeObj = parseISO(shipment.registerDateTime);
 
-    if (!departure_date_time_plane || !registerDateTime) {
-      console.error('departure_date_time_plane or registerDateTime is undefined');
-      return; // Skip this shipment if critical data is missing
-    }
-
-    console.log("hola2");
-    const departureDateTime = parseISO(departure_date_time_plane);
-    const registerDateTimeObj = parseISO(shipment.registerDateTime);
-
-    console.log("Comparing register times:", registerDateTimeObj, previousDateTime, currentDateTime);
-
-    // Incrementar capacidad al registrar el envío
-    //if (registerDateTimeObj >= previousDateTime && registerDateTimeObj <= currentDateTime) {
-	if (registerDateTimeObj === currentDateTime) {
-      console.log("hola5");
-      console.log(registerDateTimeObj);
-      console.log(previousDateTime);
-      console.log(currentDateTime);
-      if (updatedCapacities[departure_airport]) {
-        updatedCapacities[departure_airport].current_capacity += packageQuantity;
-        console.log(`Increased capacity at ${departure_airport} by ${packageQuantity}. Current capacity: ${updatedCapacities[departure_airport].current_capacity}`);
-      } else {
-        console.error(`Error: Aeropuerto ${departure_airport} no encontrado.`);
+      // Evitar procesar un envío más de una vez
+      if (processedShipments.has(shipment.id)) {
+        return;
       }
-    }
-
-    console.log("Comparing departure times:", departureDateTime, previousDateTime, currentDateTime);
-
-    // Reducir capacidad al salir el vuelo
-    //if (departureDateTime >= previousDateTime && departureDateTime <= currentDateTime) {
-		if ( departureDateTime === currentDateTime) {
-      if (updatedCapacities[departure_airport] && updatedCapacities[departure_airport].current_capacity >= packageQuantity) {
-        updatedCapacities[departure_airport].current_capacity -= packageQuantity;
-        console.log(`Decreased capacity at ${departure_airport} by ${packageQuantity}. Current capacity: ${updatedCapacities[departure_airport].current_capacity}`);
-      } else {
-        console.error(`Error: Capacidad insuficiente en ${departure_airport} para retirar ${packageQuantity} paquetes.`);
+console.log(registerDateTimeObj)
+console.log(departureDateTime)
+console.log(shipment.id)
+      // Incrementar capacidad al registrar el envío
+      if (registerDateTimeObj.getTime() === currentDateTime.getTime()) {
+        if (updatedCapacities[departure_airport]) {
+          updatedCapacities[departure_airport].current_capacity += packageQuantity;
+          processedShipments.add(shipment.id); // Marcar el envío como procesado
+        } else {
+          console.error(`Error: Aeropuerto ${departure_airport} no encontrado.`);
+        }
       }
-    }
-  });*/
 
-  return updatedCapacities;
-};
+      // Reducir capacidad al salir el vuelo
+      if (departureDateTime.getTime() === currentDateTime.getTime()) {
+        if (updatedCapacities[departure_airport] && updatedCapacities[departure_airport].current_capacity >= packageQuantity) {
+          updatedCapacities[departure_airport].current_capacity -= packageQuantity;
+          processedShipments.add(shipment.id); // Marcar el envío como procesado
+        } else {
+          console.error(`Error: Capacidad insuficiente en ${departure_airport} para retirar ${packageQuantity} paquetes.`);
+        }
+      }
+    });
+
+    return updatedCapacities;
+  };
 
 
   const startSimulationInterval = () => {
@@ -507,9 +501,12 @@ function App() {
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
 
+        // Inicializar un conjunto para rastrear los envíos procesados
+    
+
         // Actualizar las capacidades de aeropuertos y vuelos aquí basado en la nueva fecha y hora de simulación
         const updatedFlights = updateFlights(data.flights, newDateTime);
-        const updatedAirportCapacities = updateAirportCapacities(airportCapacities, allShipments,newDateTime, currentDateTime,);
+        const updatedAirportCapacities = updateAirportCapacities(airportCapacities, allShipments, newDateTime, currentDateTime, processedShipments);
 
         // Calcular saturaciones
         const fleetSaturation = calculateFleetSaturation(updatedFlights, newDateTime);
@@ -748,145 +745,145 @@ function App() {
     }));
   };
 
-  const renderMapContent = () => {
-    if (!window.google || !window.google.maps) {
-      return null;
-    }
+const processedShipments = new Set();
 
-    const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
+const renderMapContent = () => {
+  if (!window.google || !window.google.maps) {
+    return null;
+  }
 
-    const activeFlights = data.flights.filter((flight) => {
-      const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
-      const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
-      return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
-    });
+  const currentDateTime = parseISO(`${tiempo_simulacion.dia_actual}T${tiempo_simulacion.tiempo_actual}`);
 
-    const updatedAirports = { ...airportCapacities };
+  const activeFlights = data.flights.filter((flight) => {
+    const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+    const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+    return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
+  });
 
-    allShipments.forEach((shipment) => {
-      const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
+  const updatedAirports = { ...airportCapacities };
 
-      const departureDateTime = parseISO(departure_date_time_plane);
-      const arrivalDateTime = parseISO(arrival_date_time_plane);    
+  allShipments.forEach((shipment) => {
+    const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
 
+    const departureDateTime = parseISO(departure_date_time_plane);
+    const arrivalDateTime = parseISO(arrival_date_time_plane);
+
+    // Solo procesamos el envío si no ha sido procesado antes
+    if (!processedShipments.has(shipment.id)) {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
-		  console.log("hola")
-		  console.log(shipment.registerDateTime)
-
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity);
-          console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
+          updatedAirports[shipment.departure_airport].current_capacity += packageQuantity;
+          processedShipments.add(shipment.id); // Marcar el envío como procesado
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
         }
       }
 
-      //if (currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime) {
-		  if (currentDateTime === arrivalDateTime) {
+      if (currentDateTime.getTime() === arrivalDateTime.getTime()) {
         // El avión recoge los paquetes del aeropuerto de salida
         if (currentDateTime.getTime() === departureDateTime.getTime()) {
           if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
-            updatedAirports[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity);
-            console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
+            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity;
+            processedShipments.add(shipment.id); // Marcar el envío como procesado
           } else {
             console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
           }
         }
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
-        if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
+        if (shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity);
-            console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
+            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
+            processedShipments.add(shipment.id); // Marcar el envío como procesado
           } else {
             console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
           }
         }
       }
-    });
+    }
+  });
 
-    const getDotIcon = (airportCode) => {
-      const airport = updatedAirports[airportCode];
-      const isSelected = selectedAirport && selectedAirport.code === airportCode;
+  const getDotIcon = (airportCode) => {
+    const airport = updatedAirports[airportCode];
+    const isSelected = selectedAirport && selectedAirport.code === airportCode;
 
-      if (airport) {
-        const usage = (airport.current_capacity) / airport.max_capacity;
-        if (usage > 0.8) {
-          return isSelected ? redDotSelected : redDot;
-        } else if (usage > 0.3) {
-          return isSelected ? yellowDotSelected : yellowDot;
-        } else {
-          return isSelected ? greenDotSelected : greenDot;
-        }
+    if (airport) {
+      const usage = (airport.current_capacity) / airport.max_capacity;
+      if (usage > 0.8) {
+        return isSelected ? redDotSelected : redDot;
+      } else if (usage > 0.3) {
+        return isSelected ? yellowDotSelected : yellowDot;
+      } else {
+        return isSelected ? greenDotSelected : greenDot;
       }
-      return greenDot; // Valor por defecto si el aeropuerto no se encuentra
-    };
+    }
+    return greenDot; // Valor por defecto si el aeropuerto no se encuentra
+  };
 
-    const getDotIconWithBorder = (airportCode, isSelected) => {
-      const airport = updatedAirports[airportCode];
-      const baseIcon = getDotIcon(airportCode);
+  const getDotIconWithBorder = (airportCode, isSelected) => {
+    const airport = updatedAirports[airportCode];
+    const baseIcon = getDotIcon(airportCode);
   
-      if (isSelected) {
-        return {
-          url: baseIcon,
-          scaledSize: new window.google.maps.Size(35, 35),
-          labelOrigin: new window.google.maps.Point(17, 45),
-          label: {
-            text: '',
-            color: 'red',
-            fontWeight: 'bold',
-            fontSize: '12px',
-            borderWidth: '4px',
-            borderColor: 'red'
-          }
-        };
-      }
-
+    if (isSelected) {
       return {
         url: baseIcon,
         scaledSize: new window.google.maps.Size(35, 35),
+        labelOrigin: new window.google.maps.Point(17, 45),
+        label: {
+          text: '',
+          color: 'red',
+          fontWeight: 'bold',
+          fontSize: '12px',
+          borderWidth: '4px',
+          borderColor: 'red'
+        }
       };
+    }
+
+    return {
+      url: baseIcon,
+      scaledSize: new window.google.maps.Size(35, 35),
     };
-
-    return (
-      <>
-        {data.airports.length > 0 &&
-          data.airports.map((airport) => (
-            <MarkerF
-              key={airport.id}
-              position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
-              title={airport.code}
-              icon={getDotIconWithBorder(airport.code, selectedAirport && selectedAirport.code === airport.code)}
-              onClick={() => handleAirportClick(airport)}
-            />
-          ))}
-        {activeFlights.length > 0 &&
-          activeFlights.map((flight) => {
-            const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
-            const capacityUsed = flight.current_load / flight.capacity;
-            const isSelected = selectedFlight && selectedFlight.id === flight.id;
-            const { icon, rotatedIcon } = getPlaneIcon(capacityUsed, isSelected);
-
-            if (planePosition) {
-              return (
-                <MarkerF
-                  key={flight.id}
-                  position={{ lat: planePosition.lat, lng: planePosition.lng }}
-                  icon={{
-                    url: planePosition.movingLeft ? rotatedIcon : icon,
-                    scaledSize: new window.google.maps.Size(20, 20),
-                    rotation: planePosition.angle,
-                  }}
-                  onClick={() => handleFlightClick(flight)}
-                />
-              );
-            }
-            return null;
-          })}
-      </>
-    );
   };
 
+  return (
+    <>
+      {data.airports.length > 0 &&
+        data.airports.map((airport) => (
+          <MarkerF
+            key={airport.id}
+            position={{ lat: parseFloat(airport.latitude), lng: parseFloat(airport.longitude) }}
+            title={airport.code}
+            icon={getDotIconWithBorder(airport.code, selectedAirport && selectedAirport.code === airport.code)}
+            onClick={() => handleAirportClick(airport)}
+          />
+        ))}
+      {activeFlights.length > 0 &&
+        activeFlights.map((flight) => {
+          const planePosition = calculatePlanePosition(flight, tiempo_simulacion.dia_actual, tiempo_simulacion.tiempo_actual);
+          const capacityUsed = flight.current_load / flight.capacity;
+          const isSelected = selectedFlight && selectedFlight.id === flight.id;
+          const { icon, rotatedIcon } = getPlaneIcon(capacityUsed, isSelected);
+
+          if (planePosition) {
+            return (
+              <MarkerF
+                key={flight.id}
+                position={{ lat: planePosition.lat, lng: planePosition.lng }}
+                icon={{
+                  url: planePosition.movingLeft ? rotatedIcon : icon,
+                  scaledSize: new window.google.maps.Size(20, 20),
+                  rotation: planePosition.angle,
+                }}
+                onClick={() => handleFlightClick(flight)}
+              />
+            );
+          }
+          return null;
+        })}
+    </>
+  );
+};
   const clearMap = () => {
     setData((prevData) => ({
       ...prevData,
@@ -1013,7 +1010,7 @@ function App() {
             Hora:
             <input type="time" name="tiempo_actual" value={tiempo_simulacion.tiempo_actual} onChange={handleSimulacionChange} />
           </label>
-          <ElapsedTimeDisplay elapsedTime={tiempo_simulacion} startDate={startDate} startHour={startHour}  />
+          <ElapsedTimeDisplay elapsedTime={tiempo_simulacion} startDate={startDate} startHour={startHour} />
         </InputContainer>
         <LocalTimeContainer>
           <p><strong>Fecha actual:</strong> {localTime.currentDate}</p>
@@ -1027,13 +1024,12 @@ function App() {
           runAlgorithm={runAlgorithm}
           tiempoSimulacion={tiempo_simulacion}
         />
-       <FinalSimulationPopup
-		  isOpen={isFinalPopupOpen}
-		  onRequestClose={() => setIsFinalPopupOpen(false)}
-		  itineraries={finalItineraries}
-		  currentItineraries={currentItineraries} // Asegúrate de pasar los itinerarios actuales
-		/>
-
+        <FinalSimulationPopup
+          isOpen={isFinalPopupOpen}
+          onRequestClose={() => setIsFinalPopupOpen(false)}
+          itineraries={finalItineraries}
+          currentItineraries={currentItineraries} // Asegúrate de pasar los itinerarios actuales
+        />
       </AppContainer>
     </>
   );
