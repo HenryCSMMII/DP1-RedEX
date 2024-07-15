@@ -467,9 +467,10 @@ console.log(shipment.id)
       // Incrementar capacidad al registrar el envío
       if (registerDateTimeObj.getTime() === currentDateTime.getTime()) {
         if (updatedCapacities[departure_airport]) {
-			
+		if (updatedCapacities[departure_airport].current_capacity  + packageQuantity <= 850) {
           updatedCapacities[departure_airport].current_capacity += packageQuantity;
           processedShipments.add(shipment.id); // Marcar el envío como procesado
+		}
         } else {
           console.error(`Error: Aeropuerto ${departure_airport} no encontrado.`);
         }

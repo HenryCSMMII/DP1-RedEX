@@ -819,7 +819,7 @@ const renderMapContent = () => {
     const isSelected = selectedAirport && selectedAirport.code === airportCode;
 
     if (airport) {
-      const usage = (airport.current_capacity) / airport.max_capacity;
+      const usage = (airport.current_capacity) / 850;
       if (usage > 0.8) {
         return isSelected ? redDotSelected : redDot;
       } else if (usage > 0.3) {
