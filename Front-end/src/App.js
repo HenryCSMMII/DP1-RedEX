@@ -11,7 +11,7 @@ import VuelosPopup from './components/VuelosPopup';
 import AeropuertosPopup from './components/AeropuertosPopup';
 import ReportesPopup from './components/ReportesPopup';
 import SimulacionSidebar from './components/SimulacionSidebar';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import Modal from 'react-modal';
 import FinalSimulationPopup from './components/FinalSimulationPopup'; // Import the new component
 import redDot from './images/red-dot.png';
@@ -336,7 +336,7 @@ const [originalFlights, setOriginalFlights] = useState([]);
       
       // Inicializamos la capacidad actual de cada aeropuerto
       const initialCapacities = airports.data.reduce((acc, airport) => {
-        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
+        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0};
         return acc;
       }, {});
 
@@ -385,7 +385,7 @@ const runAlgorithm = async (url, fechaInicio) => {
           fecha_modificacion: flight.fecha_modificacion,
           arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
           capacity: flight.max_capacity,
-          current_load: Math.trunc(flight.used_capacity[0] / 4),
+          current_load: Math.trunc(flight.used_capacity[0]),
           departure_time: format(departureDateTime, 'HH:mm:ss'),
           destination: flight.arrival_airport.code,
           duration: (arrivalDateTime - departureDateTime) / 60000,
@@ -431,6 +431,7 @@ const runAlgorithm = async (url, fechaInicio) => {
 const updateAirportCapacities = (airportCapacities, allShipments, currentDateTime) => {
   const updatedCapacities = { ...airportCapacities };
 
+  console.log(allShipments);
   allShipments.forEach((shipment) => {
     const { departure_date_time_plane, arrival_date_time_plane, departure_airport_plane, arrival_airport_plane, packageQuantity } = shipment;
 
@@ -440,7 +441,7 @@ const updateAirportCapacities = (airportCapacities, allShipments, currentDateTim
     // Manejo del registro de envíos en el aeropuerto de origen
     if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
       if (updatedCapacities[shipment.departure_airport]) {
-        updatedCapacities[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity / 4);
+        updatedCapacities[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity*1);
       }
     }
 
@@ -448,13 +449,13 @@ const updateAirportCapacities = (airportCapacities, allShipments, currentDateTim
       // El avión recoge los paquetes del aeropuerto de salida
       if (currentDateTime.getTime() === departureDateTime.getTime()) {
         if (updatedCapacities[departure_airport_plane] && updatedCapacities[departure_airport_plane].current_capacity >= packageQuantity) {
-          updatedCapacities[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity / 4);
+          updatedCapacities[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity*1);
         }
       }
       // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
       if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
         if (updatedCapacities[arrival_airport_plane]) {
-          updatedCapacities[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity / 4);
+          updatedCapacities[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity*1);
         }
       }
     }
@@ -470,7 +471,7 @@ const startSimulationInterval = () => {
   simulationIntervalRef.current = setInterval(() => {
     setTiempoSimulacion((prev) => {
       const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-      const newDateTime = addMinutes(currentDateTime, 1440); // 0.017 es 1 segundo
+      const newDateTime = addMinutes(currentDateTime, 1); // 0.017 es 1 segundo
 
       const newDate = format(newDateTime, 'yyyy-MM-dd');
       const newTime = format(newDateTime, 'HH:mm:ss');
@@ -559,7 +560,7 @@ const startSimulationInterval = () => {
         tiempo_actual: newTime,
       };
     });
-  }, 1000);
+  });
 };
 
   const stopSimulationInterval = () => {
@@ -747,7 +748,8 @@ const startSimulationInterval = () => {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity/4);
+          updatedAirports[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity*1);
+          console.log(shipment);
           console.log(`Envio ID: ${shipment.id} registrado en ${shipment.departure_airport} con ${shipment.packageQuantity} paquetes. Capacidad actual: ${updatedAirports[shipment.departure_airport].current_capacity}`);
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
@@ -758,7 +760,7 @@ const startSimulationInterval = () => {
         // El avión recoge los paquetes del aeropuerto de salida
         if (currentDateTime.getTime() === departureDateTime.getTime()) {
           if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
-            updatedAirports[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity/4);
+            updatedAirports[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity*1);
             console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes se fue de ${departure_airport_plane}. Capacidad actual: ${updatedAirports[departure_airport_plane].current_capacity}`);
           } else {
             console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
@@ -767,7 +769,7 @@ const startSimulationInterval = () => {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity/4);
+            updatedAirports[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity*1);
             console.log(`Envio ID: ${shipment.id} con ${packageQuantity} paquetes llegó a ${arrival_airport_plane}. Capacidad actual: ${updatedAirports[arrival_airport_plane].current_capacity}`);
           } else {
             console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
