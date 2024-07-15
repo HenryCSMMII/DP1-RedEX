@@ -11,7 +11,7 @@ import VuelosPopup from './components/VuelosPopup';
 import AeropuertosPopup from './components/AeropuertosPopup';
 import ReportesPopup from './components/ReportesPopup';
 import SimulacionSidebar from './components/SimulacionSidebar';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import Modal from 'react-modal';
 import FinalSimulationPopup from './components/FinalSimulationPopup'; // Import the new component
 import redDot from './images/red-dot.png';
@@ -336,7 +336,7 @@ function App() {
 
       // Inicializamos la capacidad actual de cada aeropuerto
       const initialCapacities = airports.data.reduce((acc, airport) => {
-        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0 };
+        acc[airport.code] = { max_capacity: airport.max_capacity, current_capacity: 0};
         return acc;
       }, {});
 
