@@ -93,6 +93,32 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
     return () => clearInterval(intervalId); // Limpiar el intervalo al desmontar el componente
   }, []);
 
+  useEffect(() => {
+    if (selectedTab === 'Aeropuertos') {
+      setFilteredAirports(
+        airports.filter(
+          (airport) =>
+            (airport.name && airport.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (airport.code && airport.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (airport.city && airport.city.toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+      );
+    } else if (selectedTab === 'Vuelos') {
+      const currentDateTime = parseISO(`${currentSimulationDate}T${currentSimulationTime}`);
+
+      const filtered = flights.filter(
+        (flight) => {
+          const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
+          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
+          return isWithinInterval(currentDateTime, { start: departureDateTime, end: arrivalDateTime });
+        }
+      );
+      setFilteredFlights(filtered);
+    } else if (selectedTab === 'Envios') {
+      setFilteredShipments(shipments);
+    }
+  }, [searchTerm, selectedTab, airports, flights, shipments, currentSimulationDate, currentSimulationTime]);
+
   const handleSearchChange = (e) => {
     if (selectedTab === 'Vuelos') {
       setFlightIdSearchTerm(e.target.value);
@@ -134,34 +160,9 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
- useEffect(() => {
-    if (selectedTab === 'Aeropuertos') {
-      setFilteredAirports(
-        airports.filter(
-          (airport) =>
-            (airport.name && airport.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (airport.code && airport.code.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (airport.city && airport.city.toLowerCase().includes(searchTerm.toLowerCase()))
-        )
-      );
-    } else if (selectedTab === 'Vuelos') {
-      const currentDateTime = parseISO(`${currentSimulationDate}T${currentSimulationTime}`);
-
-      const filtered = flights.filter(
-        (flight) => {
-          const departureDateTime = parseISO(`${flight.departure_date}T${flight.departure_time}`);
-          const arrivalDateTime = parseISO(`${flight.arrival_date}T${flight.arrival_time}`);
-          return isWithinInterval(currentDateTime, { start: departureDateTime, end: arrivalDateTime });
-        }
-      );
-      setFilteredFlights(filtered);
-    } else if (selectedTab === 'Envios') {
-      setFilteredShipments(shipments);
-    }
-  }, [searchTerm, selectedTab, airports, flights, shipments, currentSimulationDate, currentSimulationTime]);
 
   const getCountryName = (airportCode) => {
-    const airport = airports.find((a) => a.code === airportCode);
+    const airport = airports.find((a) => a.id === airportCode);
     return airport ? airport.city : 'Desconocido';
   };
 
@@ -190,7 +191,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
             <AirportInfo key={airport.code}>
               <p><strong>{airport.name} ({airport.code})</strong></p>
               <p>País: {airport.city}</p>
-              <p>Capacidad: {capacities[airport.code]?.current_capacity}/{capacities[airport.code]?.max_capacity}</p>
+              <p>Capacidad: {capacities[airport.code]?.current_capacity}/850</p>
             </AirportInfo>
           ))}
         </TabPanel>
@@ -240,7 +241,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
                   <p>País de salida: {getCountryName(shipment.departureAirportId)}</p>
                   <p>País de llegada: {getCountryName(shipment.arrivalAirportId)}</p>
                   <p>Estado: {shipment.state}</p>
-                  <p>Fecha-hora de registro: {new Date(shipment.registerDateTime).toLocaleString()}</p>
+                  <p>Fecha-hora de registro: {new Date(shipment.registerDateTime).toString()}</p>
                 </ShipmentInfo>
               ))}
             </>

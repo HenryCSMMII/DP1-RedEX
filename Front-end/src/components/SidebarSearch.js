@@ -191,7 +191,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
             <AirportInfo key={airport.code}>
               <p><strong>{airport.name} ({airport.code})</strong></p>
               <p>País: {airport.city}</p>
-              <p>Capacidad: {capacities[airport.code]?.current_capacity}/{capacities[airport.code]?.max_capacity}</p>
+              <p>Capacidad: {capacities[airport.code]?.current_capacity}/850</p>
             </AirportInfo>
           ))}
         </TabPanel>
@@ -215,7 +215,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
                   <p>Destino: {flight.destination}</p>
                   <p>Salida: {flight.departure_date} {flight.departure_time}</p>
                   <p>Llegada: {flight.arrival_date} {flight.arrival_time}</p>
-                  <p>Capacidad: {flight.current_load}/{flight.capacity}</p>
+                  <p>Capacidad: {flight.current_load}/120</p>
                 </FlightInfo>
               ))}
             </>
