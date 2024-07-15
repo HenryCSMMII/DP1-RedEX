@@ -385,7 +385,7 @@ function App() {
             fecha_modificacion: flight.fecha_modificacion,
             arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
             capacity: flight.max_capacity,
-            current_load: Math.trunc(flight.used_capacity[0] / 4),
+            current_load: Math.trunc(flight.used_capacity[0]*4), //Se,amañ cambios
             departure_time: format(departureDateTime, 'HH:mm:ss'),
             destination: flight.arrival_airport.code,
             duration: (arrivalDateTime - departureDateTime) / 60000,
@@ -467,7 +467,7 @@ console.log(shipment.id)
       // Incrementar capacidad al registrar el envío
       if (registerDateTimeObj.getTime() === currentDateTime.getTime()) {
         if (updatedCapacities[departure_airport]) {
-          updatedCapacities[departure_airport].current_capacity += packageQuantity;
+          updatedCapacities[departure_airport].current_capacity += packageQuantity*8; //Se,amañ cambios
           processedShipments.add(shipment.id); // Marcar el envío como procesado
         } else {
           console.error(`Error: Aeropuerto ${departure_airport} no encontrado.`);
@@ -477,7 +477,7 @@ console.log(shipment.id)
       // Reducir capacidad al salir el vuelo
       if (departureDateTime.getTime() === currentDateTime.getTime()) {
         if (updatedCapacities[departure_airport] && updatedCapacities[departure_airport].current_capacity >= packageQuantity) {
-          updatedCapacities[departure_airport].current_capacity -= packageQuantity;
+          updatedCapacities[departure_airport].current_capacity -= packageQuantity * 2;
           processedShipments.add(shipment.id); // Marcar el envío como procesado
         } else {
           console.error(`Error: Capacidad insuficiente en ${departure_airport} para retirar ${packageQuantity} paquetes.`);
@@ -496,7 +496,7 @@ console.log(shipment.id)
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        const newDateTime = addMinutes(currentDateTime, 1440);
+        const newDateTime = addMinutes(currentDateTime, 30);
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
@@ -532,7 +532,7 @@ console.log(shipment.id)
         const elapsedHours = Math.floor((elapsedTimeInSeconds % (24 * 60 * 60)) / (60 * 60));
 
         // Detener simulación si ha transcurrido una semana (7 días)
-        if (elapsedDays >= 8) {
+        if (elapsedDays >= 7) {
           clearInterval(simulationIntervalRef.current);
           setIsSimulationEnded(true);
           setIsFinalPopupOpen(true);
@@ -773,7 +773,7 @@ const renderMapContent = () => {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += packageQuantity;
+          updatedAirports[shipment.departure_airport].current_capacity += packageQuantity*4; //Se,amañ cambios
           processedShipments.add(shipment.id); // Marcar el envío como procesado
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
@@ -784,7 +784,7 @@ const renderMapContent = () => {
         // El avión recoge los paquetes del aeropuerto de salida
         if (currentDateTime.getTime() === departureDateTime.getTime()) {
           if (updatedAirports[departure_airport_plane] && updatedAirports[departure_airport_plane].current_capacity >= packageQuantity) {
-            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity;
+            updatedAirports[departure_airport_plane].current_capacity -= packageQuantity*2;
             processedShipments.add(shipment.id); // Marcar el envío como procesado
           } else {
             console.error(`Error: Capacidad insuficiente en ${departure_airport_plane} para retirar ${packageQuantity} paquetes.`);
@@ -793,7 +793,7 @@ const renderMapContent = () => {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
+            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity*8; //Se,amañ cambios
             processedShipments.add(shipment.id); // Marcar el envío como procesado
           } else {
             console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
