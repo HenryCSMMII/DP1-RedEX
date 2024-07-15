@@ -175,7 +175,7 @@ const SidebarSearch = ({ onSearch, airports = [], flights = [], capacities = {},
         <TabList style={{ display: 'flex', justifyContent: 'center' }}>
           <Tab>Aeropuertos</Tab>
           <Tab>Vuelos</Tab>
-          {/* <Tab>Envios</Tab> */}
+          <Tab>Envios</Tab>
         </TabList>
         <TabPanel>
           <Form onSubmit={handleSearchSubmit} isCollapsed={isCollapsed}>
