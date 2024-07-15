@@ -745,7 +745,7 @@ console.log(shipment.id)
     }));
   };
 
-const processedShipments = new Set();
+
 
 const renderMapContent = () => {
   if (!window.google || !window.google.maps) {
