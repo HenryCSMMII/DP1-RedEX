@@ -480,6 +480,7 @@ const startSimulationInterval = () => {
         return currentDateTime >= departureDateTime && currentDateTime <= arrivalDateTime;
       });
 
+      
       // Actualizar estados
       setPlaneSaturation(fleetSaturation);
       setAirportSaturation(airportSaturation);
