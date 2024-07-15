@@ -224,7 +224,7 @@ public class BD {
                 Date llegada = formatter_data.parse(split[3]);
 
 
-                //System.out.println("Salida: "+salida+" - Llegada: "+ llegada);
+                System.out.println("Salida: "+salida+" - Llegada: "+ llegada);
                 flight.setSalida(salida);
                 flight.setLlegada(llegada);
 

@@ -375,7 +375,7 @@ function App() {
         const flights = flightsResponse.map((flight) => {
           const departureDateTime = parseISO(flight.departure_date_time);
           const arrivalDateTime = parseISO(flight.arrival_date_time);
-
+          console.log("SALIDA: ",flight.salida," LLEGADA: ",flight.llegada);
           const salidaAvion = flight.salida;
           const llegadaAvion = flight.llegada;
           return {
