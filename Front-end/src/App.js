@@ -385,7 +385,7 @@ const runAlgorithm = async (url, fechaInicio) => {
           fecha_modificacion: flight.fecha_modificacion,
           arrival_time: format(arrivalDateTime, 'HH:mm:ss'),
           capacity: flight.max_capacity,
-          current_load: Math.trunc(flight.used_capacity[0] / 4),
+          current_load: Math.trunc(flight.used_capacity[0]),
           departure_time: format(departureDateTime, 'HH:mm:ss'),
           destination: flight.arrival_airport.code,
           duration: (arrivalDateTime - departureDateTime) / 60000,
@@ -440,7 +440,7 @@ const updateAirportCapacities = (airportCapacities, allShipments, currentDateTim
     // Manejo del registro de envíos en el aeropuerto de origen
     if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
       if (updatedCapacities[shipment.departure_airport]) {
-        updatedCapacities[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity / 4);
+        updatedCapacities[shipment.departure_airport].current_capacity += Math.trunc(shipment.packageQuantity);
       }
     }
 
@@ -448,13 +448,13 @@ const updateAirportCapacities = (airportCapacities, allShipments, currentDateTim
       // El avión recoge los paquetes del aeropuerto de salida
       if (currentDateTime.getTime() === departureDateTime.getTime()) {
         if (updatedCapacities[departure_airport_plane] && updatedCapacities[departure_airport_plane].current_capacity >= packageQuantity) {
-          updatedCapacities[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity / 4);
+          updatedCapacities[departure_airport_plane].current_capacity -= Math.trunc(packageQuantity);
         }
       }
       // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
       if (currentDateTime.getTime() === arrivalDateTime.getTime() && shipment.arrival_airport !== arrival_airport_plane) {
         if (updatedCapacities[arrival_airport_plane]) {
-          updatedCapacities[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity / 4);
+          updatedCapacities[arrival_airport_plane].current_capacity += Math.trunc(packageQuantity);
         }
       }
     }
@@ -470,7 +470,7 @@ const startSimulationInterval = () => {
   simulationIntervalRef.current = setInterval(() => {
     setTiempoSimulacion((prev) => {
       const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-      const newDateTime = addMinutes(currentDateTime, 1440); // 0.017 es 1 segundo
+      const newDateTime = addMinutes(currentDateTime, 1); // 0.017 es 1 segundo
 
       const newDate = format(newDateTime, 'yyyy-MM-dd');
       const newTime = format(newDateTime, 'HH:mm:ss');
