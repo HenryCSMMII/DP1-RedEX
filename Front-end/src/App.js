@@ -182,7 +182,7 @@ const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, s
         <p><strong>Longitud:</strong> {airport.longitude}</p>
         {capacities[airport.code] && (
           <p>
-            <strong>Capacidad:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)
+            <strong>Capacidad:</strong> {capacities[airport.code].current_capacity}/850 (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)
           </p>
         )}
       </div>
@@ -208,7 +208,7 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
           <p><strong>Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.llegada_hora}`).toLocaleString()}</p>
         )}
         <p>
-          <strong>Capacidad:</strong> {flight.current_load}/{flight.capacity} (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
+          <strong>Capacidad:</strong> {flight.current_load}/120 (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
         </p>
       </div>
       <CloseButton onClick={() => setSelectedFlight(null)}>Cerrar</CloseButton>
