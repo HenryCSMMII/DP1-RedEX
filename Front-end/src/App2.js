@@ -158,7 +158,6 @@ const Header = styled.div`
   margin-bottom: 10px;
 `;
 
-const processedShipments = new Set();
 const calculateCurrentCapacityPercentage = (currentLoad, capacity) => {
   if (capacity === 0) return '0%';
   return ((currentLoad / capacity) * 100).toFixed(2) + '%';
@@ -496,13 +495,13 @@ console.log(shipment.id)
     simulationIntervalRef.current = setInterval(() => {
       setTiempoSimulacion((prev) => {
         const currentDateTime = parseISO(`${prev.dia_actual}T${prev.tiempo_actual}`);
-        const newDateTime = addMinutes(currentDateTime, 0.1);
+        const newDateTime = addMinutes(currentDateTime, 0.017);
 
         const newDate = format(newDateTime, 'yyyy-MM-dd');
         const newTime = format(newDateTime, 'HH:mm:ss');
 
         // Inicializar un conjunto para rastrear los envíos procesados
-    
+        const processedShipments = new Set();
 
         // Actualizar las capacidades de aeropuertos y vuelos aquí basado en la nueva fecha y hora de simulación
         const updatedFlights = updateFlights(data.flights, newDateTime);
@@ -745,7 +744,7 @@ console.log(shipment.id)
     }));
   };
 
-
+const processedShipments = new Set();
 
 const renderMapContent = () => {
   if (!window.google || !window.google.maps) {

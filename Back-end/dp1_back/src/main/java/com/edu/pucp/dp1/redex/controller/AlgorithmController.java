@@ -219,10 +219,8 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     for (int i = 0; i < tamanio; i++) {
         for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
             //System.out.println("Salidas: "+flight.getSalida()+" - Llegadas: "+flight.getLlegada());
-            
             if (flight.getCode().charAt(0) == 'S') {
                 Integer idVuelo = flight.getId();
-
                 for (int j = 0; j < vuelos.size(); j++) {
                     if (vuelos.get(j).equals(idVuelo)) {
                         BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
