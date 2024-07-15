@@ -217,27 +217,36 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     boolean noEncontrado = true;
     System.out.println("Tamaño: " + tamanio);
     tamanio = population.getIndividuals()[0].getList_shipments().size();
+
     for (int i = 0; i < tamanio; i++) {
+        BD.shipmentsCreated.get(i).setDepartureTime(population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights().get(0).getDeparture_date_time());
+        BD.shipmentsCreated.get(i).setArrivalTime(population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights().get(population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights().size()-1).getArrival_date_time());
+
         for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
-            Integer idVuelo = flight.getId();
-            for (int j = 0; j < vuelos.size(); j++) {
-                if (vuelos.get(j).equals(idVuelo)) {
-                    BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
-                    noEncontrado = false;
-                    break;
+            //System.out.println("Salidas: "+flight.getSalida()+" - Llegadas: "+flight.getLlegada());
+
+            if (flight.getCode().charAt(0) == 'S' && flight.getDepartureDateTimeConverted().after(BD.date_simulation_start)) {
+                Integer idVuelo = flight.getId();
+                for (int j = 0; j < vuelos.size(); j++) {
+                    if (vuelos.get(j).equals(idVuelo)) {
+                        BD.flightsResolved.get(j).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
+                        noEncontrado = false;
+                        break;
+                    }
+                }
+                if (noEncontrado) {
+                    
+                    flight.addHoursToConvertedDateTime();
+
+                    BD.flightsResolved.add(flight);
+                    BD.flightsResolved.get(vuelos.size()).setShipments(new ArrayList<>());
+                    BD.flightsResolved.get(vuelos.size()).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
+                    vuelos.add(idVuelo);
+                } else {
+                    noEncontrado = true;
                 }
             }
-            if (noEncontrado) {
-                
-                flight.addHoursToConvertedDateTime();
-
-                BD.flightsResolved.add(flight);
-                BD.flightsResolved.get(vuelos.size()).setShipments(new ArrayList<>());
-                BD.flightsResolved.get(vuelos.size()).getShipments().add(population.getIndividuals()[0].getList_shipments().get(i));
-                vuelos.add(idVuelo);
-            } else {
-                noEncontrado = true;
-            }
+            
         }
     }
     System.out.println("ARREGLO VUELOS\n" + vuelos);
