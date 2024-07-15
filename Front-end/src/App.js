@@ -467,8 +467,10 @@ console.log(shipment.id)
       // Incrementar capacidad al registrar el envío
       if (registerDateTimeObj.getTime() === currentDateTime.getTime()) {
         if (updatedCapacities[departure_airport]) {
+		if (updatedCapacities[departure_airport].current_capacity  + packageQuantity <= 850) {
           updatedCapacities[departure_airport].current_capacity += packageQuantity;
           processedShipments.add(shipment.id); // Marcar el envío como procesado
+		}
         } else {
           console.error(`Error: Aeropuerto ${departure_airport} no encontrado.`);
         }
@@ -773,10 +775,11 @@ const renderMapContent = () => {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          if (updatedAirports[shipment.departure_airport].current_capacity + packageQuantity <= updatedAirports[shipment.departure_airport].max_capacity) {
+          if (updatedAirports[shipment.departure_airport].current_capacity + packageQuantity <= 850) {
             updatedAirports[shipment.departure_airport].current_capacity += packageQuantity;
             processedShipments.add(shipment.id); // Marcar el envío como procesado
           } else {
+			  
             console.error(`Error: Capacidad máxima excedida en ${shipment.departure_airport} al intentar agregar ${packageQuantity} paquetes.`);
           }
         } else {
@@ -797,7 +800,7 @@ const renderMapContent = () => {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            if (updatedAirports[arrival_airport_plane].current_capacity + packageQuantity <= updatedAirports[arrival_airport_plane].max_capacity) {
+            if (updatedAirports[arrival_airport_plane].current_capacity + packageQuantity <= 850) {
               updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
               processedShipments.add(shipment.id); // Marcar el envío como procesado
             } else {

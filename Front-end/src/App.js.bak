@@ -182,7 +182,7 @@ const InfoBox = ({ airport, capacities, setSelectedFlight, setSelectedAirport, s
         <p><strong>Longitud:</strong> {airport.longitude}</p>
         {capacities[airport.code] && (
           <p>
-            <strong>Capacidad:</strong> {capacities[airport.code].current_capacity}/{capacities[airport.code].max_capacity} (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)
+            <strong>Capacidad:</strong> {capacities[airport.code].current_capacity}/850 (<span style={{ color: 'orange' }}>{calculateCurrentCapacityPercentage(capacities[airport.code].current_capacity, capacities[airport.code].max_capacity)}</span>)
           </p>
         )}
       </div>
@@ -208,7 +208,7 @@ const FlightInfoBox = ({ flight, setSelectedFlight }) => {
           <p><strong>Llegada:</strong> {new Date(`${flight.arrival_date}T${flight.llegada_hora}`).toLocaleString()}</p>
         )}
         <p>
-          <strong>Capacidad:</strong> {flight.current_load}/{flight.capacity} (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
+          <strong>Capacidad:</strong> {flight.current_load}/120 (<span style={{ color: 'orange' }}>{calculateSaturation(flight.current_load, flight.capacity)}</span>)
         </p>
       </div>
       <CloseButton onClick={() => setSelectedFlight(null)}>Cerrar</CloseButton>
@@ -467,6 +467,7 @@ console.log(shipment.id)
       // Incrementar capacidad al registrar el envío
       if (registerDateTimeObj.getTime() === currentDateTime.getTime()) {
         if (updatedCapacities[departure_airport]) {
+			
           updatedCapacities[departure_airport].current_capacity += packageQuantity;
           processedShipments.add(shipment.id); // Marcar el envío como procesado
         } else {
@@ -773,10 +774,11 @@ const renderMapContent = () => {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          if (updatedAirports[shipment.departure_airport].current_capacity + packageQuantity <= updatedAirports[shipment.departure_airport].max_capacity) {
+          if (updatedAirports[shipment.departure_airport].current_capacity + packageQuantity <= 850) {
             updatedAirports[shipment.departure_airport].current_capacity += packageQuantity;
             processedShipments.add(shipment.id); // Marcar el envío como procesado
           } else {
+			  
             console.error(`Error: Capacidad máxima excedida en ${shipment.departure_airport} al intentar agregar ${packageQuantity} paquetes.`);
           }
         } else {
@@ -797,7 +799,7 @@ const renderMapContent = () => {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            if (updatedAirports[arrival_airport_plane].current_capacity + packageQuantity <= updatedAirports[arrival_airport_plane].max_capacity) {
+            if (updatedAirports[arrival_airport_plane].current_capacity + packageQuantity <= 850) {
               updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
               processedShipments.add(shipment.id); // Marcar el envío como procesado
             } else {
