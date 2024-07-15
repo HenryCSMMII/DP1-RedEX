@@ -64,7 +64,7 @@ public class Individual {
 					/*if(this.list_flight_schedule.get(j).getFlights().get(k).getDepartureDateTimeConverted().before(BD.date_simulation_start)){
 						System.out.println(this.list_flight_schedule.get(j).getFlights().get(k).getCode()+", Date: "+ this.list_flight_schedule.get(j).getFlights().get(k).getDepartureDateTimeConverted()+ ", PASA");
 					}*/
-					if(this.list_flight_schedule.get(j).getFlights().get(k).getUsed_capacity()[index] > this.list_flight_schedule.get(j).getFlights().get(k).getMax_capacity() || this.list_flight_schedule.get(j).getFlights().get(k).getDepartureDateTimeConverted().before(BD.date_simulation_start)) {
+					if(this.list_flight_schedule.get(j).getFlights().get(k).getUsed_capacity()[index] > this.list_flight_schedule.get(j).getFlights().get(k).getMax_capacity()) {
 						this.fitness = 0.000001;
 						return this.fitness;
 					}
