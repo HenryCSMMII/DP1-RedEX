@@ -773,8 +773,12 @@ const renderMapContent = () => {
       // Manejo del registro de envíos en el aeropuerto de origen
       if (currentDateTime.getTime() === parseISO(shipment.registerDateTime).getTime()) {
         if (updatedAirports[shipment.departure_airport]) {
-          updatedAirports[shipment.departure_airport].current_capacity += packageQuantity;
-          processedShipments.add(shipment.id); // Marcar el envío como procesado
+          if (updatedAirports[shipment.departure_airport].current_capacity + packageQuantity <= updatedAirports[shipment.departure_airport].max_capacity) {
+            updatedAirports[shipment.departure_airport].current_capacity += packageQuantity;
+            processedShipments.add(shipment.id); // Marcar el envío como procesado
+          } else {
+            console.error(`Error: Capacidad máxima excedida en ${shipment.departure_airport} al intentar agregar ${packageQuantity} paquetes.`);
+          }
         } else {
           console.error(`Error: Aeropuerto ${shipment.departure_airport} no encontrado.`);
         }
@@ -793,8 +797,12 @@ const renderMapContent = () => {
         // El avión deja los paquetes en el aeropuerto de llegada (excepto si es el destino final)
         if (shipment.arrival_airport !== arrival_airport_plane) {
           if (updatedAirports[arrival_airport_plane]) {
-            updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
-            processedShipments.add(shipment.id); // Marcar el envío como procesado
+            if (updatedAirports[arrival_airport_plane].current_capacity + packageQuantity <= updatedAirports[arrival_airport_plane].max_capacity) {
+              updatedAirports[arrival_airport_plane].current_capacity += packageQuantity;
+              processedShipments.add(shipment.id); // Marcar el envío como procesado
+            } else {
+              console.error(`Error: Capacidad máxima excedida en ${arrival_airport_plane} al intentar agregar ${packageQuantity} paquetes.`);
+            }
           } else {
             console.error(`Error: Aeropuerto ${arrival_airport_plane} no encontrado.`);
           }
@@ -802,7 +810,7 @@ const renderMapContent = () => {
       }
     }
   });
-
+  
   const getDotIcon = (airportCode) => {
     const airport = updatedAirports[airportCode];
     const isSelected = selectedAirport && selectedAirport.code === airportCode;
