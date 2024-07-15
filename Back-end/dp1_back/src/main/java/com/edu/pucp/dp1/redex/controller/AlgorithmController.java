@@ -55,7 +55,7 @@ public class AlgorithmController {
 	@CrossOrigin
 @RequestMapping(value="runDiaDia/", method = RequestMethod.POST)
 public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
-    long date_simulation = requestData.getFecha_inicio().getTime() - 18000000L;
+    long date_simulation = requestData.getFecha_inicio().getTime() + 18000000L;
     int type_simulation = 1;
     int tamanio = BD.shipmentsTemp.size();
     //BD.readAirports();
@@ -216,9 +216,17 @@ public List<Flight> genetic_algorithm(@RequestBody YourRequestData requestData){
     boolean noEncontrado = true;
     System.out.println("Tamaño: " + tamanio);
     tamanio = population.getIndividuals()[0].getList_shipments().size();
+
+    
+
     for (int i = 0; i < tamanio; i++) {
+
+        BD.shipmentsCreated.get(i).setDepartureTime(population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights().get(0).getDeparture_date_time());
+        BD.shipmentsCreated.get(i).setArrivalTime(population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights().get(population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights().size()-1).getArrival_date_time());
+
         for (Flight flight : population.getIndividuals()[0].getList_flight_schedule().get(i).getFlights()) {
             //System.out.println("Salidas: "+flight.getSalida()+" - Llegadas: "+flight.getLlegada());
+
             if (flight.getCode().charAt(0) == 'S') {
                 Integer idVuelo = flight.getId();
                 for (int j = 0; j < vuelos.size(); j++) {
