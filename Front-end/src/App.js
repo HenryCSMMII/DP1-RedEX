@@ -534,7 +534,7 @@ console.log(shipment.id)
         const elapsedHours = Math.floor((elapsedTimeInSeconds % (24 * 60 * 60)) / (60 * 60));
 
         // Detener simulación si ha transcurrido una semana (7 días)
-        if (elapsedDays >= 8) {
+        if (elapsedDays >= 15) {
           clearInterval(simulationIntervalRef.current);
           setIsSimulationEnded(true);
           setIsFinalPopupOpen(true);
