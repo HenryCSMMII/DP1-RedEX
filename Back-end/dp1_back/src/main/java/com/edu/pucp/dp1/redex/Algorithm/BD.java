@@ -224,7 +224,7 @@ public class BD {
                 Date llegada = formatter_data.parse(split[3]);
 
 
-                System.out.println("Salida: "+salida+" - Llegada: "+ llegada);
+                //System.out.println("Salida: "+salida+" - Llegada: "+ llegada);
                 flight.setSalida(salida);
                 flight.setLlegada(llegada);
 
@@ -420,6 +420,7 @@ public class BD {
                             shipment.setState(null);
                             
 							shipmentsTemp.add(shipment);
+                            shipmentsCreated.add(shipment);
                             processedShipments.add(split[0]+"-"+split[1]);
                         }
                     }
