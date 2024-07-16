@@ -38,7 +38,7 @@ public class BD {
     public static final int NUM_GENERATIONS = 10;
 
     public static final long ONE_DAY_MS = 86400000;
-    public static final long SEVEN_DAYS_MS = 604800000;
+    public static final long SEVEN_DAYS_MS = 1296000000;
     public static final int SEMANAL_DAYS = 15;
     public static final int SHIPMENTS_PER_ITERATION = 1000000;
  
